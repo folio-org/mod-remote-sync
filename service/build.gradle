@@ -1,0 +1,338 @@
+buildscript {
+  repositories {
+    jcenter()
+    maven { url "https://repo.grails.org/grails/core" }
+  }
+  dependencies {
+    classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+    classpath "org.grails.plugins:views-gradle:2.0.1"
+    classpath "gradle.plugin.com.github.erdi.webdriver-binaries:webdriver-binaries-gradle-plugin:2.0"
+    classpath "org.grails.plugins:hibernate5:${gormHibernate-".RELEASE"}"
+    classpath 'org.grails.plugins:database-migration:3.1.0'
+    classpath 'com.bmuschko:gradle-docker-plugin:6.6.1'
+  }
+}
+
+
+final String version_regex = /^(((\d+)\.\d+)\.\d+)(-([a-zA-Z]+\.\d+))?$/
+version "${appVersion}"
+group "org.olf"
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.grails.grails-web'
+apply plugin: 'org.grails.plugins.views-json'
+apply plugin: 'com.github.erdi.webdriver-binaries'
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+eclipse {
+  classpath {
+    file {
+      whenMerged {
+        def confEntries = (entries.findAll { it.path == 'grails-app/conf' }) as List
+        
+        if (confEntries) {
+          def singleEnty = confEntries[0]
+          
+          // Remove all the entries.
+          entries.removeAll ( confEntries )
+          
+          // Set the output directory, and re-add.
+          singleEnty.output = "bin/main"
+          entries << singleEnty
+        }
+      }
+    }
+  }
+}
+
+repositories {
+  maven { url 'http://maven.k-int.com/content/repositories/public' }
+  jcenter()
+  mavenLocal()
+  maven { url 'https://repo.grails.org/grails/core' }
+  maven { url 'http://maven.indexdata.com/' }
+}
+
+sourceSets {
+  main {
+    resources {
+      srcDir 'grails-app/migrations'
+      srcDir 'src/main/okapi/tenant'
+    }
+  }
+}
+
+dependencies {
+
+ /**** Grails 4 *****/
+  compile "org.springframework.boot:spring-boot-starter-logging"
+  compile "org.springframework.boot:spring-boot-autoconfigure"
+  compile "org.grails:grails-core"
+  compile "org.springframework.boot:spring-boot-starter-actuator"
+  compile "org.grails:grails-plugin-url-mappings"
+  compile "org.grails:grails-plugin-rest"
+  compile "org.grails:grails-plugin-codecs"
+  compile "org.grails:grails-plugin-interceptors"
+  compile "org.grails:grails-plugin-services"
+  compile "org.grails:grails-plugin-datasource"
+  compile "org.grails:grails-plugin-databinding"
+  compile "org.grails:grails-web-boot"
+  compile "org.grails:grails-logging"
+  compile "org.grails.plugins:async"
+  compile "org.grails.plugins:views-json"
+  compile "org.grails.plugins:views-json-templates"
+  compile "org.grails.plugins:events"
+  compile "org.grails.plugins:hibernate5"
+  compileOnly "io.micronaut:micronaut-inject-groovy"
+
+  console ("org.grails:grails-console") {
+    // The gpars transient depends on an older version of groovy-all.
+    exclude group: 'org.codehaus.groovy', module: 'groovy'
+  }
+
+  profile "org.grails.profiles:rest-api"
+  // runtime "com.h2database:h2"
+  runtime "javax.xml.bind:jaxb-api:2.3.1"
+
+  profile "org.grails.profiles:rest-api"
+  runtime "com.zaxxer:HikariCP:3.2.0"
+  
+
+  /************** Testing ************/
+  testCompile "org.grails:grails-gorm-testing-support"
+
+  testCompile "org.mockito:mockito-core"
+  testCompile "org.grails:grails-web-testing-support"
+  testCompile "org.grails.plugins:geb"
+  //  testCompile "io.micronaut:micronaut-http-client"
+  testCompile "org.seleniumhq.selenium:selenium-remote-driver:3.14.0"
+  testCompile "org.seleniumhq.selenium:selenium-api:3.14.0"
+  testCompile "org.seleniumhq.selenium:selenium-support:3.14.0"
+  testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.14.0"
+  testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.14.0"
+  compile 'org.z3950.zing:cql-java:1.13'
+
+
+  compile "org.springframework.boot:spring-boot-starter-undertow" // Replaces spring-boot-starter-tomcat
+  compile "org.hibernate:hibernate-core:5.4.19.Final"             // Update to latest 5.4
+  compile "org.hibernate:hibernate-java8:5.4.19.Final"
+  runtime "com.zaxxer:HikariCP:3.4.5"                             // Replaces Tomcat JDBC pool
+  runtime "org.postgresql:postgresql:42.2.14"
+
+  compile ('org.grails.plugins:database-migration:3.1.0') {       // Required by Grails Okapi
+    exclude group: 'org.liquibase', module: 'liquibase-core'
+  }
+  compile 'org.liquibase:liquibase-core:3.9.0'
+
+  compile 'com.opencsv:opencsv:4.6'
+  compile 'commons-io:commons-io:2.6'
+
+  compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'     // TODO: Migrate away from this resource.
+  compile 'com.k_int.grails:web-toolkit-ce:5.0.0-rc.5'
+  compile 'com.k_int.okapi:grails-okapi:4.0.0-rc.1'
+
+  // Custom non profile deps.
+  compile 'org.apache.kafka:kafka-clients:2.3.0'
+  runtime "org.grails.plugins:async"
+  runtime "org.grails.plugins:events"
+  compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+  
+  // Better test reports.
+  testCompile( 'com.athaydes:spock-reports:1.6.1' ) {
+    transitive = false // this avoids affecting your version of Groovy/Spock
+  }
+}
+
+bootRun {
+  ignoreExitValue true
+  jvmArgs(
+      '-Dspring.output.ansi.enabled=always',
+      '-server',
+      '-noverify',
+      '-XX:TieredStopAtLevel=1',
+      '-Xmx1024m')
+  sourceResources sourceSets.main
+  String springProfilesActive = 'spring.profiles.active'
+  systemProperty springProfilesActive, System.getProperty(springProfilesActive)
+}
+
+tasks.withType(Test) {
+    systemProperty "geb.env", System.getProperty('geb.env')
+    systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
+    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
+    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
+}
+
+task generateDescriptors(type: Copy) {
+
+  dependsOn buildProperties
+
+  File grailsBuildInfoFile = buildProperties.outputs.files.files.find { it.name == 'grails.build.info' }
+
+  final def props = [:]
+
+  if(!(grailsBuildInfoFile)) return // No need to continue if the file is not there
+
+  doFirst {
+
+    // Place the loading within a do first as the info file from the buildProperties
+    // task will not be present until it is executed. This owuld cause a file not found
+    // during task configureation otherwise.
+    Properties properties = new Properties()
+
+    // Read properties from the file
+    grailsBuildInfoFile.withInputStream {
+      properties.load(it)
+    }
+
+    // Need to parse multi-dimensional keys.
+    ConfigSlurper cs = new ConfigSlurper()
+    props.putAll(cs.parse(properties))
+  }
+
+  from ('./src/main/okapi') {
+    include '*-template.json'
+  }
+  into './build/resources/main/okapi'
+  filteringCharset = 'UTF-8'
+  expand(props)
+  rename { String fileName ->
+    fileName.replace('-template', '')
+  }
+}
+
+jar {
+  version "${version.replaceAll(version_regex, '$2')}"
+}
+
+buildProperties.doLast {
+
+  // Find the right file
+  File grailsBuildInfoFile = it.outputs.files.files.find { it.name == 'grails.build.info' }
+
+  if(!grailsBuildInfoFile) {
+    System.err.println("Unable to locate grails.build.info");
+    return // No need to continue if the file is not there
+  }
+
+  Properties properties = new Properties()
+
+  // Read properties from the file
+  grailsBuildInfoFile.withInputStream {
+    properties.load(it)
+  }
+
+  // Load the app version
+  String version = properties.getProperty('info.app.version')
+  def versionParts
+  if (version && (versionParts = version =~ version_regex)) {
+    println("Version parts : ${versionParts[0]}");
+    versionParts[0].with {
+      properties.setProperty('info.app.majorVersion', it[3])
+      properties.setProperty('info.app.minorVersion', it[2])
+      properties.setProperty('info.app.patchVersion', it[1])
+
+      if (it[5]) {
+        properties.setProperty('info.app.testVersion', it[5])
+      }
+
+      println("version properties: ${properties}");
+    }
+
+    version.replaceAll(/^(((\d+)\.\d+)\.\d+)(-([\w]+))?$/ , '$1')
+  }
+
+  Map<String, String> env = System.getenv()
+
+  if(env.BUILD_NUMBER)
+    properties.setProperty('build.number', env.BUILD_NUMBER)
+
+  if ( env.GIT_REVISION )
+    properties.setProperty('build.git.revision', env.GIT_REVISION)
+
+  if ( env.GIT_BRANCH )
+    properties.setProperty('build.git.branch', env.GIT_BRANCH)
+
+  if (env.GIT_COMMIT)
+    properties.setProperty('build.git.commit', env.GIT_COMMIT)
+
+  // Add new properties from various sources
+  properties.setProperty('build.time', new Date().format("yyyy-MM-dd HH:mm:ss"))
+
+  properties.setProperty('build.host', InetAddress.localHost.hostName)
+
+  // Get a System property
+  properties.setProperty('build.java.version', System.getProperty('java.version'))
+
+  // Write the properties back to the file
+  grailsBuildInfoFile.withOutputStream {
+    properties.store(it,null)
+  }
+}
+
+processResources.dependsOn generateDescriptors
+
+/**
+ * Docker build config.
+ */
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+ext {
+  dockerTag = "${project.dockerRepo}/${project.name}:${project.version}${dockerTagSuffix}"
+  dockerBuildDir = mkdir("${buildDir}/docker")
+}
+
+task prepareDocker(type: Copy, dependsOn: assemble) {
+  description = 'Copy files to build directory'
+  group = 'Docker'
+
+  from project.jar
+
+  // from otherfileLoc
+
+  into dockerBuildDir
+}
+
+task createDockerfile(type: Dockerfile, dependsOn: prepareDocker) {
+  description = 'Create a Dockerfile file'
+  group = 'Docker'
+
+  destFile = project.file("${dockerBuildDir}/Dockerfile")
+
+  from 'folioci/alpine-jre-openjdk8:latest'
+  instruction 'LABEL maintainer="Knowledge Integration"'
+
+  exposePort 8079
+
+  // Copying straight into the default directory should be enough
+  copyFile jar.archiveName, '/usr/verticles/application.jar'
+}
+
+task buildImage(type: DockerBuildImage, dependsOn: createDockerfile) {
+  description = 'Create Docker image to run the Grails application'
+  group = 'Docker'
+
+  inputDir = file(dockerBuildDir)
+}
+
+
+tasks.withType(GroovyCompile) {
+  configure(groovyOptions) {
+    forkOptions.jvmArgs = ['-Xmx1024m']
+  }
+}
+
+webdriverBinaries {
+  chromedriver '2.45.0'
+  geckodriver '0.24.0'
+}
+
+tasks.withType(Test) {
+  systemProperty "geb.env", System.getProperty('geb.env')
+  systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
+  systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
+  systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
+}
+

@@ -1,0 +1,5 @@
+import groovy.transform.*
+import com.k_int.web.toolkit.tags.Tag
+
+@Field Tag tag
+json g.render(tag) 

@@ -1,0 +1,102 @@
+{
+  "id": "${info.app.name}-${info.app.version}",
+  "name": "${info.app.name}",
+  "provides": [
+    {
+      "id": "remote-sync",
+      "version": "${info.app.minorVersion}",
+      "handlers" : [
+        {
+          "methods": [ "GET" ],
+          "pathPattern": "/remote-sync/settings*",
+          "permissionsRequired": [ "remote-sync.settings.get" ]
+        },
+        {
+          "methods": [ "POST" ],
+          "pathPattern": "/remote-sync/settings*",
+          "permissionsRequired": [ "remote-sync.settings.post" ]
+        },
+        {
+          "methods": [ "PUT" ],
+          "pathPattern": "/remote-sync/settings*",
+          "permissionsRequired": [ "remote-sync.settings.put" ]
+        },
+        {
+          "methods": [ "DELETE" ],
+          "pathPattern": "/remote-sync/settings*",
+          "permissionsRequired": [ "remote-sync.settings.delete" ]
+        }
+      ]
+    },
+    {
+      "id": "_tenant",
+      "version": "1.2",
+      "interfaceType" : "system",
+      "handlers": [
+        {
+          "permissionsRequired" : [],
+          "methods": ["POST", "DELETE"],
+          "pathPattern": "/_/tenant"
+        }, {
+         "permissionsRequired" : [],
+         "methods" : [ "POST" ],
+         "pathPattern" : "/_/tenant/disable"
+        }
+
+      ]
+    }
+  ],
+  "permissionSets": [
+    {
+      "permissionName": "remote-sync.settings.get",
+      "displayName": "settings get",
+      "description": "get settings",
+      "visible": false
+    }, 
+    {
+      "permissionName": "remote-sync.settings.post",
+      "displayName": "settings post",
+      "description": "post settings",
+      "visible": false
+    }, 
+    {
+      "permissionName": "remote-sync.settings.put",
+      "displayName": "settings put",
+      "description": "put settings",
+      "visible": false
+    }, {
+      "permissionName": "remote-sync.settings.delete",
+      "displayName": "settings delete",
+      "description": "delete settings",
+      "visible": false
+    },
+    {
+      "permissionName": "remote-sync.settings.read",
+      "displayName": "settings read",
+      "description": "read settings",
+      "visible": false,
+      "subPermissions": [
+          "remote-sync.settings.get"
+      ]
+    },
+    {
+      "permissionName": "remote-sync.settings.write",
+      "displayName": "settings write",
+      "description": "write settings",
+      "visible": false,
+      "subPermissions": [
+          "remote-sync.settings.read",
+          "remote-sync.settings.post",
+          "remote-sync.settings.put",
+          "remote-sync.settings.delete"
+      ]
+    }
+  ],
+  "launchDescriptor": {
+    "dockerImage": "${info.app.name}:${info.app.version}",
+    "dockerArgs": {
+      "HostConfig": { "PortBindings": { "8079/tcp":  [{ "HostPort": "%p" }] } }
+    },
+    "dockerPull" : false
+  }
+}
