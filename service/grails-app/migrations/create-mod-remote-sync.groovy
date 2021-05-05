@@ -62,7 +62,7 @@ databaseChangeLog = {
       column(name: "mos_base_url", type: "VARCHAR(256)") {
         constraints(nullable: "false")
       }
-
+    }
   }
 
 }
