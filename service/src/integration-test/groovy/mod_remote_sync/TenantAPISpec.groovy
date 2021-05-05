@@ -52,7 +52,7 @@ class TenantAPISpec extends HttpSpec {
       List list
       // Wait for the refdata to be loaded.
       conditions.eventually {
-        (list = doGet('/erm/refdata')).size() > 0
+        (list = doGet('/remotesync/refdata')).size() > 0
       }
   }
 
@@ -82,7 +82,7 @@ class TenantAPISpec extends HttpSpec {
       List list
       // Wait for the refdata to be loaded.
       conditions.eventually {
-        (list = doGet('/erm/refdata')).size() > 0
+        (list = doGet('/remotesync/refdata')).size() > 0
       }
   }
 
@@ -112,7 +112,7 @@ class TenantAPISpec extends HttpSpec {
       List list
       // Wait for the refdata to be loaded.
       conditions.eventually {
-        (list = doGet('/erm/refdata')).size() > 0
+        (list = doGet('/remotesync/refdata')).size() > 0
       }
   }
 
