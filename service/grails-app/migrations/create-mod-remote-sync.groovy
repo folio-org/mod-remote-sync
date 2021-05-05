@@ -47,6 +47,10 @@ databaseChangeLog = {
       column(name: "src_authority_fk", type: "VARCHAR(36)") {
         constraints(nullable: "false")
       }
+
+      column(name: "src_name", type: "VARCHAR(128)") {
+        constraints(nullable: "false")
+      }
     }
 
     createTable(tableName: "mrs_oai_source") {

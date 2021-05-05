@@ -11,6 +11,7 @@ public abstract class Source implements MultiTenant<Source> {
 
   String id
   Authority auth
+  String name
   Date dateCreated
   Date lastUpdated
 
@@ -25,6 +26,7 @@ public abstract class Source implements MultiTenant<Source> {
     version                column : 'src_version'
     dateCreated            column : 'src_date_created'
     lastUpdated            column : 'src_last_updated'
+    name                   column : 'src_name'
     auth                   column : 'src_authority_fk'
   }
 
