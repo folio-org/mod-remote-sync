@@ -81,6 +81,7 @@ databaseChangeLog = {
 
     }
 
+    addPrimaryKey(columnNames: "rdc_id", constraintName: "refdata_categoryPK", tableName: "refdata_category")
     addNotNullConstraint (tableName: "refdata_category", columnName: "internal", defaultNullValue: false)
 
     createTable(tableName: "refdata_value") {
@@ -105,9 +106,23 @@ databaseChangeLog = {
       }
     }
 
-    addPrimaryKey(columnNames: "rdc_id", constraintName: "refdata_categoryPK", tableName: "refdata_category")
 
     addPrimaryKey(columnNames: "rdv_id", constraintName: "refdata_valuePK", tableName: "refdata_value")
+
+    createTable(tableName: "mrs_resource_stream") {
+      column(name: "rs_id",             type: "VARCHAR(36)")       { constraints(nullable: "false") }
+      column(name: "rs_version",        type: "BIGINT")            { constraints(nullable: "false") }
+      column(name: "rs_date_created",   type: "TIMESTAMP")         { constraints(nullable: "true") }
+      column(name: "rs_date_updated",   type: "TIMESTAMP")         { constraints(nullable: "true") }
+      column(name: 'rs_name',           type: 'VARCHAR(128)')      { constraints(nullable: "true") }
+      column(name: 'rs_source_fk',      type: 'VARCHAR(128)')      { constraints(nullable: "true") }
+      column(name: 'rs_cusrsor',        type: 'TEXT')              { constraints(nullable: "true") }
+      column(name: 'rs_stream_id',      type: 'VARCHAR(128)')      { constraints(nullable: "true") }
+      column(name: 'rs_stream_status',  type: 'VARCHAR(128)')      { constraints(nullable: "true") }
+    }
+
+    addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")
+
   }
 
 
