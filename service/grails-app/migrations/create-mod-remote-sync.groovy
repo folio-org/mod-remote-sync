@@ -123,6 +123,20 @@ databaseChangeLog = {
 
     addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")
 
+    createTable(tableName: "mrs_oai_source") {
+      column(name: "mos_id",             type: "VARCHAR(36)")       { constraints(nullable: "false") }
+      column(name: "mos_base_url",       type: "VARCHAR(255)")      { constraints(nullable: "false") }
+    }
+
+    addPrimaryKey(columnNames: "mos_id", constraintName: "mrs_oai_sourcePK", tableName: "mrs_oai_source")
+
+    createTable(tableName: "mrs_bespoke_source") {
+      column(name: "mbs_id",             type: "VARCHAR(36)")       { constraints(nullable: "false") }
+      column(name: "mbs_script",         type: "TEXT")              { constraints(nullable: "false") }
+    }
+
+    addPrimaryKey(columnNames: "mbs_id", constraintName: "mrs_bespoke_sourcePK", tableName: "mrs_bespoke_source")
+
   }
 
 
