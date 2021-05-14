@@ -5,11 +5,14 @@ class UrlMappings {
   static mappings = {
     "/"(controller: 'application', action:'index');
 
-    '/remotesync/refdata'(resources: 'refdata') {
+    '/remote-sync/refdata'(resources: 'refdata') {
       collection {
         "/$domain/$property" (controller: 'refdata', action: 'lookup', method: 'GET')
       }
     }
+
+    "/remote-sync/settings/worker" (controller: 'reshareSettings', action: 'worker');
+    "/remote-sync/settings/appSettings" (resources: 'setting');
 
   }
 }

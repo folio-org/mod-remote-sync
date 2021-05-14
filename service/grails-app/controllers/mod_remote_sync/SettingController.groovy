@@ -18,4 +18,13 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     super(AppSetting)
   }
 
+
+  def worker() {
+    def result = [result:'OK']
+    String tenant_header = request.getHeader('X-OKAPI-TENANT')
+    log.debug("Worker thread invoked....${tenant_header}");
+    // backgroundTaskService.performReshareTasks(tenant_header+'_mod_rs');
+    render result as JSON
+  }
+
 }

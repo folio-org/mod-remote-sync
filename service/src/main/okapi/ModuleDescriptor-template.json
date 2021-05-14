@@ -44,7 +44,24 @@
         }
 
       ]
+    }, {
+      "id": "_timer",
+      "version": "1.0",
+      "interfaceType": "system",
+      "handlers": [
+        {
+          "methods": [ "POST" ],
+          "pathPattern": "/remote-sync/settings/worker",
+          "unit": "minute",
+          "delay": "60",
+          "modulePermissions": [
+            "configuration.entries.item.get",
+            "configuration.entries.collection.get"
+          ]
+        }
+      ]
     }
+
   ],
   "permissionSets": [
     {
