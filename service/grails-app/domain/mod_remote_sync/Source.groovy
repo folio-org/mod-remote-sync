@@ -1,6 +1,7 @@
 package mod_remote_sync
 
 import grails.gorm.MultiTenant;
+import mod_remote_sync.source.RemoteSyncActivity;
 
 /**
  *  A "Source" is a remote system that can generate a stream of Resource records. This is the 
@@ -30,4 +31,5 @@ public abstract class Source implements MultiTenant<Source> {
     auth                   column : 'src_authority_fk'
   }
 
+  public abstract RemoteSyncActivity getActivity();
 }

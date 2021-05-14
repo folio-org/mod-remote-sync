@@ -1,6 +1,6 @@
 package mod_remote_sync.source
 
-public interface RemoteSyncSource {
+public interface RemoteSyncActivity {
 
   /**
    * get the next batch of records given the map of state information.

@@ -1,11 +1,14 @@
 package mod_remote_sync
 
 import grails.gorm.MultiTenant;
+import mod_remote_sync.source.RemoteSyncActivity;
 
 public class BespokeSource extends Source implements MultiTenant<OAISource> {
 
   String id
   String script
+
+  static transients = [ 'activity']
 
   static constraints = {
     baseUrl  (nullable : false)
@@ -16,6 +19,10 @@ public class BespokeSource extends Source implements MultiTenant<OAISource> {
     tablePerHierarchy false
     id column: 'mbs_id'
     baseUrl column : 'mbs_script'
+  }
+
+  public RemoteSyncActivity getActivity() {
+    return null;
   }
 
 }
