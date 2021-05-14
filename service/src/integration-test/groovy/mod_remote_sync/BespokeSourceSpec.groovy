@@ -7,7 +7,9 @@ import grails.testing.mixin.integration.Integration
 import groovyx.net.http.FromServer
 import spock.lang.*
 import spock.util.concurrent.PollingConditions
+import groovy.util.logging.Slf4j
 
+@Slf4j
 @Integration
 @Stepwise
 class BespokeSourceSpec extends HttpSpec {
@@ -57,10 +59,23 @@ class BespokeSourceSpec extends HttpSpec {
       }
   }
 
+  void 'Check no bespoke sources installed'() {
+    when:'we list bespoke sources'
+      def resp = doGet('/remote-sync/sources/bespoke', [
+        stats: true
+      ])
+
+    then:'get the result'
+      println("Result of calling /remote-sync/sources/bespoke: ${resp}");
+      resp != null
+  }
+
   // No setup
   void "Call worker timer task"() {
     when:'we call the worker task'
-      def resp = doGet('/remote-sync/settings/worker')
+      def resp = doGet('/remote-sync/settings/worker', [
+        stats: true
+      ])
 
     then:'get the result'
       println("Result of calling /remote-sync/settings/worker: ${resp}");

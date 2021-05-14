@@ -26,7 +26,7 @@ public abstract class Source implements MultiTenant<Source> {
     id                     column : 'src_id', generator: 'uuid2', length:36
     version                column : 'src_version'
     dateCreated            column : 'src_date_created'
-    lastUpdated            column : 'src_last_updated'
+    lastUpdated            column : 'src_date_updated'
     name                   column : 'src_name'
     auth                   column : 'src_authority_fk'
   }

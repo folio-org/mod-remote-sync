@@ -18,7 +18,7 @@ public class BespokeSource extends Source implements MultiTenant<OAISource> {
     table 'mrs_bespoke_source'
     tablePerHierarchy false
     id column: 'mbs_id'
-    baseUrl column : 'mbs_script'
+    script column : 'mbs_script'
   }
 
   public RemoteSyncActivity getActivity() {

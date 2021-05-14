@@ -39,8 +39,8 @@ logger ('com.k_int.web.toolkit', TRACE)
 logger ('org.grails.gorm.graphql', WARN)
 logger ('mod.directory', INFO)
 logger ('com.k_int.okapi', WARN)
-
 logger ('com.k_int.okapi.OkapiClient', DEBUG)
+logger ('mod_remote_sync', DEBUG)
 // logger ('org.olf.okapi.modules.directory.CustomBinders', WARN)
 
 // LOG SQL - VERBOSE!!!!!!
