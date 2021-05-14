@@ -11,7 +11,7 @@ public class BespokeSource extends Source implements MultiTenant<OAISource> {
   static transients = [ 'activity']
 
   static constraints = {
-    baseUrl  (nullable : false)
+    script  (nullable : false)
   }
 
   static mapping = {

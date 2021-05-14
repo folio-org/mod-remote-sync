@@ -15,6 +15,12 @@ import groovy.util.logging.Slf4j
 class BespokeSourceSpec extends HttpSpec {
 
   static final String tenantName = 'bespoke_source_tests'
+  static final String S1='''
+println("This is a script ${1+4}");
+['1','2','3','4'].each {
+  println(it)
+}
+'''
 
   static final Closure booleanResponder = {
     response.success { FromServer fs, Object body ->
@@ -37,6 +43,16 @@ class BespokeSourceSpec extends HttpSpec {
   def setup() {
     setHeaders((OkapiHeaders.TENANT): tenantName)
   }
+
+  void "Purge Tenant" () {
+
+    when: 'Purge the tenant'
+      boolean resp = doDelete('/_/tenant', null, booleanResponder)
+
+    then: 'Response obtained'
+      resp == true
+  }
+
 
   void "Create Tenant" () {
     // Max time to wait is 10 seconds
@@ -73,9 +89,7 @@ class BespokeSourceSpec extends HttpSpec {
   // No setup
   void "Call worker timer task"() {
     when:'we call the worker task'
-      def resp = doGet('/remote-sync/settings/worker', [
-        stats: true
-      ])
+      def resp = doGet('/remote-sync/settings/worker')
 
     then:'get the result'
       println("Result of calling /remote-sync/settings/worker: ${resp}");
@@ -83,6 +97,27 @@ class BespokeSourceSpec extends HttpSpec {
   }
 
   // Create the first source
+  void "Create bespoke source"() {
+    when:'We create a new source'
+      def auth_record = doPost('/remote-sync/authorities',
+             [
+               name:'LASER'
+             ]);
+
+      println("Got auth response: ${auth_record}");
+
+      doPost('/remote-sync/sources/bespoke',
+             [
+               auth:[id:auth_record.id],
+               name:'Test Source 1',
+               script:S1
+             ]);
+    then:'that source is listed'
+      def resp = doGet('/remote-sync/sources/bespoke', [
+        stats: true
+      ])
+
+  }
 
 }
 

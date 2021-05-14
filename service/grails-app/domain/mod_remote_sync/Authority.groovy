@@ -18,7 +18,7 @@ public class Authority implements MultiTenant<Authority> {
     id                     column : 'aut_id', generator: 'uuid2', length:36
     version                column : 'aut_version'
     dateCreated            column : 'aut_date_created'
-    lastUpdated            column : 'aut_last_updated'
+    lastUpdated            column : 'aut_date_updated'
     name                   column : 'aut_name'
   }
 

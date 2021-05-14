@@ -18,6 +18,7 @@ class UrlMappings {
         "/bespoke" (resources: 'bespokeSources')
       }
     }
+    "/remote-sync/authorities" (resources: 'authorities');
 
   }
 }
