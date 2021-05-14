@@ -11,7 +11,7 @@ class UrlMappings {
       }
     }
 
-    "/remote-sync/settings/worker" (controller: 'reshareSettings', action: 'worker');
+    "/remote-sync/settings/worker" (controller: 'Setting', action: 'worker');
     "/remote-sync/settings/appSettings" (resources: 'setting');
 
   }
