@@ -13,6 +13,7 @@ import org.olf.rs.workflow.*;
 class SettingController extends OkapiTenantAwareController<AppSetting> {
   
   static responseFormats = ['json', 'xml']
+  def sourceRegisterService
   
   SettingController() {
     super(AppSetting)
@@ -27,4 +28,15 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     render result as JSON
   }
 
+  def configureFromRegister() {
+    def result = [result:'OK']
+    String tenant_header = request.getHeader('X-OKAPI-TENANT')
+    log.debug("configureFromRegister");
+    log.debug("${request.JSON}");
+    if ( ( request.JSON != null ) &&
+         ( request.JSON.url != null ) ) {
+      sourceRegisterService.load(request.JSON.url)
+    }
+    render result as JSON
+  }
 }

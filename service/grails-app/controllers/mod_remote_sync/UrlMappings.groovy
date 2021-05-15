@@ -12,6 +12,7 @@ class UrlMappings {
     }
 
     "/remote-sync/settings/worker" (controller: 'Setting', action: 'worker');
+    "/remote-sync/settings/configureFromRegister" (controller: 'Setting', action: 'configureFromRegister');
     "/remote-sync/settings/appSettings" (resources: 'setting');
     "/remote-sync/sources" (resources: 'sources') {
       collection {

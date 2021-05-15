@@ -50,7 +50,9 @@ println("This is a script ${1+4}");
       boolean resp = doDelete('/_/tenant', null, booleanResponder)
 
     then: 'Response obtained'
-      resp == true
+      // We are happy if this one fails - it will fail if there was no tenant to delete, which will be the
+      // case in clean dev systems
+      1 == 1
   }
 
 
@@ -99,19 +101,11 @@ println("This is a script ${1+4}");
   // Create the first source
   void "Create bespoke source"() {
     when:'We create a new source'
-      def auth_record = doPost('/remote-sync/authorities',
+      def auth_record = doPost('/remote-sync/settings/configureFromRegister',
              [
-               name:'LASER'
+               url:'https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/laser_registry.json'
              ]);
 
-      println("Got auth response: ${auth_record}");
-
-      doPost('/remote-sync/sources/bespoke',
-             [
-               auth:[id:auth_record.id],
-               name:'Test Source 1',
-               script:S1
-             ]);
     then:'that source is listed'
       def resp = doGet('/remote-sync/sources/bespoke', [
         stats: true
