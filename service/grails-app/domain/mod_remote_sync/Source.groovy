@@ -16,6 +16,10 @@ public abstract class Source implements MultiTenant<Source> {
   Date dateCreated
   Date lastUpdated
 
+  // String SourceVerifiedBy
+  // String SourceSignature
+  // Refdata status
+
   static constraints = {
     auth  (nullable : false)
   }

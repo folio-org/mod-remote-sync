@@ -4,7 +4,7 @@ import grails.gorm.transactions.Transactional
 import mod_remote_sync.source.RecordSourceController
 
 @Transactional
-class SourceProcessingService implements RecordSourceController {
+class ExtractService implements RecordSourceController {
 
   public void processSources() {
     log.debug("SourceProcessingService::processSources()");
