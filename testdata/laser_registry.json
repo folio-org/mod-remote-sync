@@ -1,0 +1,19 @@
+[
+  { 
+    "sourceName":"LaserLicenses",
+    "sourceUrl":"",
+    "sourceSignedBy":"",
+    "sourceSignature":"",
+    "parameters":{
+      "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
+    }
+  },
+    "sourceName":"LaserSubscriptions",
+    "sourceUrl":"",
+    "sourceSignedBy":"",
+    "sourceSignature":"",
+    "parameters":{
+      "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
+    }
+  }
+]
