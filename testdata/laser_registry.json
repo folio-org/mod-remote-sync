@@ -8,6 +8,7 @@
       "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
     }
   },
+  {
     "sourceName":"LaserSubscriptions",
     "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test1.groovy",
     "sourceSignedBy":null,
