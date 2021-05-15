@@ -8,6 +8,7 @@
       "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
     }
   },
+  {
     "sourceName":"LaserSubscriptions",
     "sourceUrl":"",
     "sourceSignedBy":"",
