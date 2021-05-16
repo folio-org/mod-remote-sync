@@ -20,6 +20,9 @@ public class BespokeSource extends Source implements MultiTenant<OAISource> {
   String checksum
   Date lastPull
 
+  String signedBy
+  String signature
+
   static transients = [ 'activity']
 
   static constraints = {
@@ -36,6 +39,8 @@ public class BespokeSource extends Source implements MultiTenant<OAISource> {
             checksum column:'mbs_checksum'
             lastPull column:'mbs_last_pull'
               script column:'mbs_script'
+            signedBy column:'mbs_signed_by'
+           signature column:'mbs_signature'
   }
 
   public RemoteSyncActivity getActivity() {

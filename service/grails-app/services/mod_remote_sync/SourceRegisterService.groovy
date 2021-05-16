@@ -6,6 +6,7 @@ import groovyx.net.http.FromServer
 import groovyx.net.http.ChainedHttpConfig
 import groovyx.net.http.HttpBuilder
 import grails.converters.JSON
+import mod_remote_sync.source.DynamicClassLoader
 
 @Transactional
 class SourceRegisterService {
@@ -47,9 +48,9 @@ class SourceRegisterService {
 
   private void processScript(Map agent_descriptor) {
     log.debug("processScript ${agent_descriptor.sourceName} ${agent_descriptor.sourceUrl} ${agent_descriptor.parameters}");
-    if ( entry.sourceUrl ) {
+    if ( agent_descriptor.sourceUrl ) {
       HttpBuilder plugin_fetch_agent = HttpBuilder.configure {
-        request.uri = entry.sourceUrl
+        request.uri = agent_descriptor.sourceUrl
       }
       Object plugin_content = plugin_fetch_agent.get()
 
@@ -64,7 +65,12 @@ class SourceRegisterService {
     }
   }
 
-  private void processGroovyScript(Map agent_descriptor, String plugin_content) {
+  private void processGroovyScript(Map agent_descriptor, String code) {
     println("process groovy script")
+
+    // Parse the class
+    Class clazz = new DynamicClassLoader().parseClass(code)
+    println("Got class ${clazz}");
+    clazz
   }
 }

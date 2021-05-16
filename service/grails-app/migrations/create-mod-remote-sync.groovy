@@ -148,4 +148,11 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (manual)", id: "i202105161130-001") {
+    addColumn(tableName: "mrs_bespoke_source") {
+      column(name: "mbs_signed_by",            type: "VARCHAR(128)")  { constraints(nullable: "false") }
+      column(name: "mbs_signature",            type: "VARCHAR(256)")  { constraints(nullable: "false") }
+    }
+  }
+
 }
