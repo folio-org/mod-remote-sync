@@ -136,9 +136,16 @@ databaseChangeLog = {
     }
 
     addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")
-
-
   }
 
+  changeSet(author: "ianibbo (manual)", id: "i202105161027-001") {
+    addColumn(tableName: "mrs_bespoke_source") {
+      column(name: "mbs_lang",            type: "VARCHAR(36)")  { constraints(nullable: "false") }
+      column(name: "mbs_packaging",       type: "VARCHAR(36)")  { constraints(nullable: "false") }
+      column(name: "mbs_source_location", type: "VARCHAR(128)") { constraints(nullable: "false") }
+      column(name: "mbs_checksum",        type: "VARCHAR(32)")  { constraints(nullable: "false") }
+      column(name: "mbs_last_pull",       type: "TIMESTAMP")    { constraints(nullable: "false") }
+    }
+  }
 
 }

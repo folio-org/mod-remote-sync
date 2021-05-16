@@ -27,10 +27,44 @@ class SourceRegisterService {
       def parsed_register = JSON.parse(response_content)
       if ( parsed_register ) {
         parsed_register.each { entry ->
-          log.debug("Load ${entry.sourceName} ${entry.sourceUrl} ${entry.parameters}");
+          process(entry)
         }
       }
     }
+  }
 
+  private void process(Map agent_descriptor) {
+    println("Got agent descriptor: ${agent_descriptor}");
+    switch ( agent_descriptor.packaging ) {
+      case 'script':
+        processScript(agent_descriptor);
+        break;
+      default:
+        log.warn("unhandled packaging: ${agent_descriptor.packaging}");
+        break;
+    }
+  }
+
+  private void processScript(Map agent_descriptor) {
+    log.debug("processScript ${agent_descriptor.sourceName} ${agent_descriptor.sourceUrl} ${agent_descriptor.parameters}");
+    if ( entry.sourceUrl ) {
+      HttpBuilder plugin_fetch_agent = HttpBuilder.configure {
+        request.uri = entry.sourceUrl
+      }
+      Object plugin_content = plugin_fetch_agent.get()
+
+      switch ( agent_descriptor.language ) {
+        case 'groovy':
+          processGroovyScript(agent_descriptor, plugin_content)
+          break;
+        default:
+          log.warn("unhandled language: ${agent_descriptor.language}");
+          break;
+      }
+    }
+  }
+
+  private void processGroovyScript(Map agent_descriptor, String plugin_content) {
+    println("process groovy script")
   }
 }
