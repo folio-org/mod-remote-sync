@@ -7,9 +7,13 @@ import groovyx.net.http.ChainedHttpConfig
 import groovyx.net.http.HttpBuilder
 import grails.converters.JSON
 import mod_remote_sync.source.DynamicClassLoader
+import grails.databinding.SimpleMapDataBindingSource 
+import java.security.MessageDigest
 
 @Transactional
 class SourceRegisterService {
+
+  def grailsWebDataBinder
 
   def load(String url) {
     log.debug("Load: ${url}");
@@ -48,29 +52,69 @@ class SourceRegisterService {
 
   private void processScript(Map agent_descriptor) {
     log.debug("processScript ${agent_descriptor.sourceName} ${agent_descriptor.sourceUrl} ${agent_descriptor.parameters}");
-    if ( agent_descriptor.sourceUrl ) {
+    if ( ( agent_descriptor.sourceUrl ) &&
+         ( agent_descriptor.authority ) && 
+         ( agent_descriptor.name ) ) {
       HttpBuilder plugin_fetch_agent = HttpBuilder.configure {
         request.uri = agent_descriptor.sourceUrl
       }
       Object plugin_content = plugin_fetch_agent.get()
 
+      boolean is_valid = false;
+
+     
+      // Step 1 - calculate a checksum for plugin_content and 
+      // if the installation is set to secure verify the signature
+      MessageDigest md5_digest = MessageDigest.getInstance("MD5");
+      md5_digest.update(plugin_content.toString().getBytes())
+      byte[] md5sum = md5_digest.digest();
+      String hash = new BigInteger(1, md5sum).toString(16);
+
+      // Step 2 - Validate the script
       switch ( agent_descriptor.language ) {
         case 'groovy':
-          processGroovyScript(agent_descriptor, plugin_content)
+          is_valid = validateGroovyScript(agent_descriptor, plugin_content)
           break;
         default:
           log.warn("unhandled language: ${agent_descriptor.language}");
           break;
       }
+
+      // Step 3 - Script is valid, and signature checks out, create (Or update) record
+      if ( is_valid ) {
+        // create record
+        BespokeSource bs = BespokeSource.findByName(agent_descriptor.sourceName) ?: new BespokeSource()
+        bs.name = agent_descriptor.sourceName
+        bs.auth = Authority.findByName(agent_descriptor.authority) ?: new Authority(name: agent_descriptor.authority).save(flush:true, failOnError:true);
+        bs.source = plugin_content;
+        bs.sourceLocation = agent_descriptor.sourceUrl;
+        bs.checksum = hash;
+        bs.lastPull = new Date()
+        bs.language = null; // RefdataValue.lookupOrCreate('BespokeSource.language');
+        bs.packaging = null; // RefdataValue.lookupOrCreate('BespokeSource.packaging');
+        bs.save(flush:true, failOnError:true);
+      }
+    }
+    else {
+      log.error("malformed agent_descriptor");
     }
   }
 
-  private void processGroovyScript(Map agent_descriptor, String code) {
-    println("process groovy script")
+  private boolean validateGroovyScript(Map agent_descriptor, String code) {
 
-    // Parse the class
-    Class clazz = new DynamicClassLoader().parseClass(code)
-    println("Got class ${clazz}");
-    clazz
+    boolean result = false;
+
+    try {
+      // Parse the class
+      Class clazz = new DynamicClassLoader().parseClass(code)
+      println("Got class ${clazz}");
+      result = true;
+      clazz
+    }
+    catch ( Exception e ) {
+      log.error("Error",e);
+    }
+
+    return result;
   }
 }
