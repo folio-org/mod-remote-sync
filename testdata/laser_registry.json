@@ -1,6 +1,6 @@
 [
   { 
-    "authority":":"LASER",
+    "authority":"LASER",
     "sourceName":"LaserLicenses",
     "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test1.groovy",
     "language":"groovy",
@@ -12,7 +12,7 @@
     }
   },
   {
-    "authority":":"LASER",
+    "authority":"LASER",
     "sourceName":"LaserSubscriptions",
     "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test1.groovy",
     "language":"groovy",
