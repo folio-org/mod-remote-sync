@@ -32,13 +32,19 @@ class SourceRegisterService {
       def parsed_register = JSON.parse(response_content)
       if ( parsed_register ) {
         parsed_register.each { entry ->
-          process(entry)
+          switch ( entry.recordType ) {
+            case 'source':
+              processSourceEntry(entry)
+              break;
+            default:
+              log.warn("Unhandled record type: ${entry}");
+          }
         }
       }
     }
   }
 
-  private void process(Map agent_descriptor) {
+  private void processSourceEntry(Map agent_descriptor) {
     println("Got agent descriptor: ${agent_descriptor}");
     switch ( agent_descriptor.packaging ) {
       case 'script':
@@ -54,7 +60,7 @@ class SourceRegisterService {
     log.debug("processScript ${agent_descriptor.sourceName} ${agent_descriptor.sourceUrl} ${agent_descriptor.parameters}");
     if ( ( agent_descriptor.sourceUrl ) &&
          ( agent_descriptor.authority ) && 
-         ( agent_descriptor.name ) ) {
+         ( agent_descriptor.sourceName ) ) {
       HttpBuilder plugin_fetch_agent = HttpBuilder.configure {
         request.uri = agent_descriptor.sourceUrl
       }
@@ -86,17 +92,18 @@ class SourceRegisterService {
         BespokeSource bs = BespokeSource.findByName(agent_descriptor.sourceName) ?: new BespokeSource()
         bs.name = agent_descriptor.sourceName
         bs.auth = Authority.findByName(agent_descriptor.authority) ?: new Authority(name: agent_descriptor.authority).save(flush:true, failOnError:true);
-        bs.source = plugin_content;
+        bs.script = plugin_content;
         bs.sourceLocation = agent_descriptor.sourceUrl;
         bs.checksum = hash;
         bs.lastPull = new Date()
-        bs.language = null; // RefdataValue.lookupOrCreate('BespokeSource.language');
-        bs.packaging = null; // RefdataValue.lookupOrCreate('BespokeSource.packaging');
+        bs.language = RefdataValue.lookupOrCreate('BespokeSource.Language',agent_descriptor.language);
+        bs.packaging = RefdataValue.lookupOrCreate('BespokeSource.Packaging',agent_descriptor.packaging);
         bs.save(flush:true, failOnError:true);
+        log.debug("Saved new bespoke source ${bs}");
       }
     }
     else {
-      log.error("malformed agent_descriptor");
+      log.error("malformed agent_descriptor (${agent_descriptor.sourceUrl}/${agent_descriptor.authority}/${agent_descriptor.sourceName})");
     }
   }
 

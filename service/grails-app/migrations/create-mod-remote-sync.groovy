@@ -155,4 +155,8 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (manual)", id: "i202105160836-001") {
+    dropNotNullConstraint(columnDataType: "TEXT", columnName: "mbs_script", tableName: "mrs_bespoke_source")
+  }
+
 }

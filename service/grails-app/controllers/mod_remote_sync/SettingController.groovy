@@ -9,6 +9,7 @@ import com.k_int.okapi.OkapiTenantAwareController
 import grails.gorm.multitenancy.CurrentTenant
 import groovy.util.logging.Slf4j
 import org.olf.rs.workflow.*;
+import mod_remote_sync.Source
 
 class SettingController extends OkapiTenantAwareController<AppSetting> {
   
@@ -35,7 +36,9 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     log.debug("${request.JSON}");
     if ( ( request.JSON != null ) &&
          ( request.JSON.url != null ) ) {
-      sourceRegisterService.load(request.JSON.url)
+      Source.withTransaction {
+        sourceRegisterService.load(request.JSON.url)
+      }
     }
     render result as JSON
   }
