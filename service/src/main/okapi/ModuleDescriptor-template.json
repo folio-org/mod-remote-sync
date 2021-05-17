@@ -8,6 +8,11 @@
       "handlers" : [
         {
           "methods": [ "GET" ],
+          "pathPattern": "/statusReport",
+          "permissionsRequired": [ "remote-sync.statusReport.get" ]
+        },
+        {
+          "methods": [ "GET" ],
           "pathPattern": "/remote-sync/settings*",
           "permissionsRequired": [ "remote-sync.settings.get" ]
         },
