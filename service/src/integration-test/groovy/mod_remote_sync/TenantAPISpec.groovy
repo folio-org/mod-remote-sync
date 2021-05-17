@@ -35,6 +35,17 @@ class TenantAPISpec extends HttpSpec {
     setHeaders((OkapiHeaders.TENANT): tenantName)
   }
 
+  void "Purge Tenant" () {
+
+    when: 'Purge the tenant'
+      boolean resp = doDelete('/_/tenant', null, booleanResponder)
+
+    then: 'Response obtained'
+      // We are happy if this one fails - it will fail if there was no tenant to delete, which will be the
+      // case in clean dev systems
+      1 == 1
+  }
+
   void "Create Tenant" () {
     // Max time to wait is 10 seconds
     def conditions = new PollingConditions(timeout: 10)

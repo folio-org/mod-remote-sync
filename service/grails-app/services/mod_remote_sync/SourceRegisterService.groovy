@@ -9,6 +9,7 @@ import grails.converters.JSON
 import mod_remote_sync.source.DynamicClassLoader
 import grails.databinding.SimpleMapDataBindingSource 
 import java.security.MessageDigest
+import com.k_int.web.toolkit.refdata.RefdataValue
 
 @Transactional
 class SourceRegisterService {

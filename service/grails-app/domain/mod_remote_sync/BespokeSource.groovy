@@ -26,13 +26,16 @@ public class BespokeSource extends Source implements MultiTenant<OAISource> {
   static transients = [ 'activity']
 
   static constraints = {
-    script  (nullable : false)
+          script (nullable : true)
+        checksum (nullable : true)
+        signedBy (nullable : true)
+       signature (nullable : true)
   }
 
   static mapping = {
-    table 'mrs_bespoke_source'
+    table 'mrs_bespoke_src'
     tablePerHierarchy false
-                  id column: 'mbs_id'
+                  id column:'mbs_id'
             language column:'mbs_lang'
            packaging column:'mbs_packaging'
       sourceLocation column:'mbs_source_location'

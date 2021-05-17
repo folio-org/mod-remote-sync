@@ -70,12 +70,19 @@ databaseChangeLog = {
 
     addPrimaryKey(columnNames: "mos_id", constraintName: "mrs_oai_sourcePK", tableName: "mrs_oai_source")
 
-    createTable(tableName: "mrs_bespoke_source") {
-      column(name: "mbs_id",             type: "VARCHAR(36)")       { constraints(nullable: "false") }
-      column(name: "mbs_script",         type: "TEXT")              { constraints(nullable: "false") }
+    createTable(tableName: "mrs_bespoke_src") {
+      column(name: "mbs_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mbs_script",          type: "TEXT")          { constraints(nullable: "true") }
+      column(name: "mbs_lang",            type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mbs_packaging",       type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mbs_source_location", type: "VARCHAR(128)")  { constraints(nullable: "false") }
+      column(name: "mbs_checksum",        type: "VARCHAR(32)")   { constraints(nullable: "true") }
+      column(name: "mbs_last_pull",       type: "TIMESTAMP")     { constraints(nullable: "false") }
+      column(name: "mbs_signed_by",       type: "VARCHAR(128)")  { constraints(nullable: "true") }
+      column(name: "mbs_signature",       type: "VARCHAR(256)")  { constraints(nullable: "true") }
     }
 
-    addPrimaryKey(columnNames: "mbs_id", constraintName: "mrs_bespoke_sourcePK", tableName: "mrs_bespoke_source")
+    addPrimaryKey(columnNames: "mbs_id", constraintName: "mrs_bespoke_srcPK", tableName: "mrs_bespoke_src")
 
     createTable(tableName: "refdata_category") {
       column(name: "rdc_id", type: "VARCHAR(36)") {
@@ -136,27 +143,6 @@ databaseChangeLog = {
     }
 
     addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")
-  }
-
-  changeSet(author: "ianibbo (manual)", id: "i202105161027-001") {
-    addColumn(tableName: "mrs_bespoke_source") {
-      column(name: "mbs_lang",            type: "VARCHAR(36)")  { constraints(nullable: "false") }
-      column(name: "mbs_packaging",       type: "VARCHAR(36)")  { constraints(nullable: "false") }
-      column(name: "mbs_source_location", type: "VARCHAR(128)") { constraints(nullable: "false") }
-      column(name: "mbs_checksum",        type: "VARCHAR(32)")  { constraints(nullable: "false") }
-      column(name: "mbs_last_pull",       type: "TIMESTAMP")    { constraints(nullable: "false") }
-    }
-  }
-
-  changeSet(author: "ianibbo (manual)", id: "i202105161130-001") {
-    addColumn(tableName: "mrs_bespoke_source") {
-      column(name: "mbs_signed_by",            type: "VARCHAR(128)")  { constraints(nullable: "false") }
-      column(name: "mbs_signature",            type: "VARCHAR(256)")  { constraints(nullable: "false") }
-    }
-  }
-
-  changeSet(author: "ianibbo (manual)", id: "i202105160836-001") {
-    dropNotNullConstraint(columnDataType: "TEXT", columnName: "mbs_script", tableName: "mrs_bespoke_source")
   }
 
 }
