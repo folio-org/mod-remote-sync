@@ -1,5 +1,13 @@
-public class Test {
+import mod_remote_sync.source.RemoteSyncActivity;
+import mod_remote_sync.source.RecordSourceController;
+
+public class RemoteSyncOne implements RemoteSyncActivity {
+
   public void getLatestUpdates() {
     println("Test::getLatestUpdates");
+  }
+
+  public void getNextBatch(Map state, RecordSourceController rsc) {
+    println("RemoteSyncOne::getNextBatch");
   }
 }
