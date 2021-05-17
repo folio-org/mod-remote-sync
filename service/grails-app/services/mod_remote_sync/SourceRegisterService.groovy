@@ -10,6 +10,7 @@ import mod_remote_sync.source.DynamicClassLoader
 import grails.databinding.SimpleMapDataBindingSource 
 import java.security.MessageDigest
 import com.k_int.web.toolkit.refdata.RefdataValue
+import mod_remote_sync.source.RemoteSyncActivity
 
 @Transactional
 class SourceRegisterService {
@@ -115,9 +116,13 @@ class SourceRegisterService {
     try {
       // Parse the class
       Class clazz = new DynamicClassLoader().parseClass(code)
-      println("Got class ${clazz}");
-      result = true;
-      clazz
+      log.debug("Got class ${clazz}");
+
+      if ( RemoteSyncActivity.class.isAssignableFrom(clazz) ) {
+        log.debug("${clazz.getName()} implements RemoteSyncActivity interface");
+        result = true;
+      }
+      // clazz
     }
     catch ( Exception e ) {
       log.error("Error",e);
