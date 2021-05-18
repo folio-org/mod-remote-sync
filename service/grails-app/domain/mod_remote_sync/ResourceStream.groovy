@@ -18,6 +18,9 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
   String streamId
   String streamStatus  // IDLE | ACTIVE | PAUSED
 
+  // Date dateStarted
+  // String startedOnPod
+
   static constraints = {
     source  (nullable : false)
   }

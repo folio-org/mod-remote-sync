@@ -5,7 +5,7 @@ import mod_remote_sync.source.RemoteSyncActivity;
 import com.k_int.web.toolkit.refdata.Defaults
 import com.k_int.web.toolkit.refdata.RefdataValue
 
-public class BespokeSource extends Source implements MultiTenant<BespokeSource> {
+public class TransformationProcess implements MultiTenant<TransformationProcess> {
 
   String id
   String script
@@ -23,8 +23,6 @@ public class BespokeSource extends Source implements MultiTenant<BespokeSource> 
   String signedBy
   String signature
 
-  static transients = [ 'activity']
-
   static constraints = {
           script (nullable : true)
         checksum (nullable : true)
@@ -33,21 +31,17 @@ public class BespokeSource extends Source implements MultiTenant<BespokeSource> 
   }
 
   static mapping = {
-    table 'mrs_bespoke_src'
+    table 'mrs_trans_process'
     tablePerHierarchy false
-                  id column:'mbs_id'
-            language column:'mbs_lang'
-           packaging column:'mbs_packaging'
-      sourceLocation column:'mbs_source_location'
-            checksum column:'mbs_checksum'
-            lastPull column:'mbs_last_pull'
-              script column:'mbs_script'
-            signedBy column:'mbs_signed_by'
-           signature column:'mbs_signature'
-  }
-
-  public RemoteSyncActivity getActivity() {
-    return null;
+                  id column:'mtp_id'
+            language column:'mtp_lang'
+           packaging column:'mtp_packaging'
+      sourceLocation column:'mtp_source_location'
+            checksum column:'mtp_checksum'
+            lastPull column:'mtp_last_pull'
+              script column:'mtp_script'
+            signedBy column:'mtp_signed_by'
+           signature column:'mtp_signature'
   }
 
 }

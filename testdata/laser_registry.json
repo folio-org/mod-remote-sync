@@ -24,5 +24,23 @@
     "parameters":{
       "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
     }
+  },
+  {
+    "recordType":"process",
+    "processName":"LaserSubscriptionImport",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test2.groovy",
+    "language":"groovy",
+    "packaging":"script",
+    "sourceSignedBy":null,
+    "sourceSignature":null,
+  },
+  {
+    "recordType":"process",
+    "processName":"LaserLicenseImport",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test2.groovy",
+    "language":"groovy",
+    "packaging":"script",
+    "sourceSignedBy":null,
+    "sourceSignature":null,
   }
 ]
