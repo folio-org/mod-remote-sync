@@ -22,7 +22,11 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
   // String startedOnPod
 
   static constraints = {
-    source  (nullable : false)
+          source (nullable : false)
+            name (nullable : false)
+          cursor (nullable : true)
+        streamId (nullable : true)
+    streamStatus (nullable : true)
   }
 
   static mapping = {
@@ -30,7 +34,7 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
     id                     column : 'rs_id', generator: 'uuid2', length:36
     version                column : 'rs_version'
     dateCreated            column : 'rs_date_created'
-    lastUpdated            column : 'rs_last_updated'
+    lastUpdated            column : 'rs_date_updated'
     name                   column : 'rs_name'
     source                 column : 'rs_source_fk'
     cursor                 column : 'rs_cusrsor', type: 'text'
@@ -38,4 +42,7 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
     streamStatus           column : 'rs_stream_status'
   }
 
+  public String toString() {
+    return "${id}/${name}/${source?.name}/${streamId?.name}/${streamStatus}"
+  }
 }

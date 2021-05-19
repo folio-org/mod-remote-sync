@@ -53,21 +53,21 @@ class SourceRegisterService {
     }
   }
 
-  private void processExtract(Map descriptor) {
+  private void processExtractEntry(Map descriptor) {
     log.debug("SourceRegisterService::processExtract(${descriptor})");
     if ( descriptor.extractName &&
          descriptor.source && 
          descriptor.process ) {
       Source s = Source.findByName(descriptor.source)
       if ( s ) {
-        ResourceStream rs = ResourceStream.findByName(descriptor.extractName) ?: new ResourceStream(streamStatus:'IDLE');
+        ResourceStream rs = ResourceStream.findByName(descriptor.extractName) ?: new ResourceStream(streamStatus:'IDLE', cursor:'{}');
         TransformationProcess tp = TransformationProcess.findByName(descriptor.process)
         if ( ( rs != null ) &&
              ( tp != null ) ) {
           rs.name = descriptor.extractName;
           rs.source = s
           rs.streamId = tp
-          
+          rs.save(flush:true, failOnError:true);
         }
       }
       else {
