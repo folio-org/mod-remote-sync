@@ -4,15 +4,18 @@ import grails.gorm.MultiTenant;
 import mod_remote_sync.source.RemoteSyncActivity;
 import com.k_int.web.toolkit.refdata.Defaults
 import com.k_int.web.toolkit.refdata.RefdataValue
+import com.k_int.web.toolkit.refdata.CategoryId
 
 public class BespokeSource extends Source implements MultiTenant<BespokeSource> {
 
   String id
   String script
 
+  @CategoryId('ExtensionLanguage')
   @Defaults(['java', 'groovy', 'python', 'ts', 'js']) // Defaults to create for this property.
   RefdataValue language
 
+  @CategoryId('ExtensionPackaging')
   @Defaults(['script']) // Defaults to create for this property.
   RefdataValue packaging
 

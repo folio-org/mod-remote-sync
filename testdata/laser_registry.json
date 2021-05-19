@@ -10,7 +10,8 @@
     "sourceSignature":null,
     "parameters":{
       "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
-    }
+    },
+    "emits":"LASER::LICENSE"
   },
   {
     "recordType":"source",
@@ -23,24 +24,27 @@
     "sourceSignature":null,
     "parameters":{
       "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
-    }
+    },
+    "emits":"LASER::SUBSCRIPTION"
   },
   {
     "recordType":"process",
     "processName":"LaserSubscriptionImport",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test2.groovy",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/ProcessLaserSubscription.groovy",
     "language":"groovy",
     "packaging":"script",
     "sourceSignedBy":null,
     "sourceSignature":null,
+    "accepts":"LASER::SUBSCRIPTION"
   },
   {
     "recordType":"process",
     "processName":"LaserLicenseImport",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test2.groovy",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/ProcessLaserLicense.groovy",
     "language":"groovy",
     "packaging":"script",
     "sourceSignedBy":null,
     "sourceSignature":null,
+    "accepts":"LASER::LICENSE"
   }
 ]

@@ -150,6 +150,7 @@ databaseChangeLog = {
     createTable(tableName: "mrs_trans_process") {
       column(name: "mtp_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtp_version",         type: "BIGINT")        { constraints(nullable: "false") }
+      column(name: "mtp_name",            type: "VARCHAR(128)")  { constraints(nullable: "false") }
       column(name: "mtp_script",          type: "TEXT")          { constraints(nullable: "true") }
       column(name: "mtp_lang",            type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtp_packaging",       type: "VARCHAR(36)")   { constraints(nullable: "false") }
@@ -158,6 +159,7 @@ databaseChangeLog = {
       column(name: "mtp_last_pull",       type: "TIMESTAMP")     { constraints(nullable: "false") }
       column(name: "mtp_signed_by",       type: "VARCHAR(128)")  { constraints(nullable: "true") }
       column(name: "mtp_signature",       type: "VARCHAR(256)")  { constraints(nullable: "true") }
+      column(name: "mtp_accepts",         type: "VARCHAR(256)")  { constraints(nullable: "true") }
     }
 
     createTable(tableName: "mrs_tp_record") {
@@ -167,6 +169,12 @@ databaseChangeLog = {
       column(name: "mtr_process_control_status",  type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_source_record_id",        type: "VARCHAR(255)")  { constraints(nullable: "false") }
       column(name: "mtr_input_data",              type: "TEXT")          { constraints(nullable: "false") }
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "i202105191009-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name: "src_emits", type: "VARCHAR(128)")
     }
   }
 
