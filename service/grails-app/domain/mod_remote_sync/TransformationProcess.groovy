@@ -42,8 +42,9 @@ public class TransformationProcess implements MultiTenant<TransformationProcess>
 
   static mapping = {
     table 'mrs_trans_process'
-                  id column:'mtp_id'
+                  id column:'mtp_id', generator: 'uuid2', length:36
                 name column:'mtp_name'
+             version column:'mtp_version'
             language column:'mtp_lang'
            packaging column:'mtp_packaging'
       sourceLocation column:'mtp_source_location'

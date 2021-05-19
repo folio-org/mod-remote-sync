@@ -35,6 +35,7 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
   static mapping = {
     table 'mrs_tp_record'
                            id column:'mtr_id'
+                      version column:'mtr_version'
                         owner column:'mtr_owner_fk'
          transformationStatus column:'mtr_transform_status'
          processControlStatus column:'mtr_process_control_status'

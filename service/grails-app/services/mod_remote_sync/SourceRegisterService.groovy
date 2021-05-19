@@ -11,6 +11,7 @@ import grails.databinding.SimpleMapDataBindingSource
 import java.security.MessageDigest
 import com.k_int.web.toolkit.refdata.RefdataValue
 import mod_remote_sync.source.RemoteSyncActivity
+import mod_remote_sync.source.TransformProcess
 
 @Transactional
 class SourceRegisterService {
@@ -76,23 +77,24 @@ class SourceRegisterService {
   private void ingestProcessDescriptor(Map descriptor) {
     log.debug("ingestProcessDescriptor ${descriptor.processName}");
     if (  ( descriptor.processName ) &&
-          ( descriptor.sourceUrl ) &&
-          ( descriptor.authority ) ) {
-      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, descriptor.language);
+          ( descriptor.sourceUrl ) ) {
+      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, descriptor.language, TransformProcess.class);
       if ( code_info?.is_valid ) {
         TransformationProcess tp = TransformationProcess.findByName(descriptor.processName) ?: new TransformationProcess()
         tp.name = descriptor.processName
-        tp.auth = Authority.findByName(agent_descriptor.authority) ?: new Authority(name: agent_descriptor.authority).save(flush:true, failOnError:true);
         tp.script = code_info.plugin_content
-        tp.sourceLocation = agent_descriptor.sourceUrl;
+        tp.sourceLocation = descriptor.sourceUrl;
         tp.checksum = code_info.hash;
         tp.lastPull = new Date()
-        tp.language = RefdataValue.lookupOrCreate('BespokeSource.Language',agent_descriptor.language);
-        tp.packaging = RefdataValue.lookupOrCreate('BespokeSource.Packaging',agent_descriptor.packaging);
+        tp.language = RefdataValue.lookupOrCreate('BespokeSource.Language',descriptor.language);
+        tp.packaging = RefdataValue.lookupOrCreate('BespokeSource.Packaging',descriptor.packaging);
         tp.accepts = descriptor.accepts
         tp.save(flush:true, failOnError:true);
         log.debug("Saved new transformation process ${tp}");
       }
+    }
+    else {
+      log.error("Process descriptor missing required props (processName, sourceUrl) - ${descriptor}")
     }
   }
 
@@ -103,7 +105,7 @@ class SourceRegisterService {
          ( agent_descriptor.sourceName ) ) {
 
       // Fetch the code and validate it
-      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, agent_descriptor.language);
+      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, agent_descriptor.language, RemoteSyncActivity.class);
 
       // Step 3 - Script is valid, and signature checks out, create (Or update) record
       if ( code_info?.is_valid ) {
@@ -127,7 +129,7 @@ class SourceRegisterService {
     }
   }
 
-  private Map fetchAndValidateCode(String source_url, String language) {
+  private Map fetchAndValidateCode(String source_url, String language, Class required_interface) {
 
     log.debug("SourceRegisterService::fetchAndValidateCode(${source_url},${language})")
 
@@ -155,7 +157,7 @@ class SourceRegisterService {
         // Step 2 - Validate the script
         switch ( language ) {
           case 'groovy':
-            result.is_valid = validateGroovyScript(result.plugin_content)
+            result.is_valid = validateGroovyScript(result.plugin_content, required_interface)
             break;
           default:
             log.warn("unhandled language: ${descriptor.language}");
@@ -167,7 +169,7 @@ class SourceRegisterService {
     return result;
   }
 
-  private boolean validateGroovyScript(String code) {
+  private boolean validateGroovyScript(String code, Class required_interface) {
 
     boolean result = false;
 
@@ -176,9 +178,13 @@ class SourceRegisterService {
       Class clazz = new DynamicClassLoader().parseClass(code)
       log.debug("Got class ${clazz}");
 
-      if ( RemoteSyncActivity.class.isAssignableFrom(clazz) ) {
+      // if ( RemoteSyncActivity.class.isAssignableFrom(clazz) ) {
+      if ( required_interface.isAssignableFrom(clazz) ) {
         log.debug("${clazz.getName()} implements RemoteSyncActivity interface");
         result = true;
+      }
+      else {
+        log.warn("Acquired class ${clazz} does not implement ${required_interface}.. Skip");
       }
       // clazz
     }
