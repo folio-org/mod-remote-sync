@@ -15,13 +15,15 @@ public abstract class Source implements MultiTenant<Source> {
   String name
   Date dateCreated
   Date lastUpdated
+  String emits
 
   // String SourceVerifiedBy
   // String SourceSignature
   // Refdata status
 
   static constraints = {
-    auth  (nullable : false)
+      auth (nullable : false)
+     emits (nullable : true)
   }
 
   static mapping = {
@@ -33,6 +35,7 @@ public abstract class Source implements MultiTenant<Source> {
     lastUpdated            column : 'src_date_updated'
     name                   column : 'src_name'
     auth                   column : 'src_authority_fk'
+    emits                  column : 'src_emits'
   }
 
   public abstract RemoteSyncActivity getActivity();

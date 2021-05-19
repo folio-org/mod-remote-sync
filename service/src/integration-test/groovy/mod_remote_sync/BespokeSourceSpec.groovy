@@ -118,9 +118,9 @@ println("This is a script ${1+4}");
       def resp = doGet('/remote-sync/statusReport')
 
     then:'status report contains two sources'
-      println("Status report: ${resp}")
+      log.info("Status report: ${resp}")
       assert resp instanceof List
-      assert resp.size() == 1
+      assert resp.size() == 2
   }
 }
 

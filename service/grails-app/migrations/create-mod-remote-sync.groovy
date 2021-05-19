@@ -145,4 +145,37 @@ databaseChangeLog = {
     addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")
   }
 
+
+  changeSet(author: "ianibbo (generated)", id: "i202105181032-001") {
+    createTable(tableName: "mrs_trans_process") {
+      column(name: "mtp_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtp_version",         type: "BIGINT")        { constraints(nullable: "false") }
+      column(name: "mtp_name",            type: "VARCHAR(128)")  { constraints(nullable: "false") }
+      column(name: "mtp_script",          type: "TEXT")          { constraints(nullable: "true") }
+      column(name: "mtp_lang",            type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtp_packaging",       type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtp_source_location", type: "VARCHAR(128)")  { constraints(nullable: "false") }
+      column(name: "mtp_checksum",        type: "VARCHAR(32)")   { constraints(nullable: "true") }
+      column(name: "mtp_last_pull",       type: "TIMESTAMP")     { constraints(nullable: "false") }
+      column(name: "mtp_signed_by",       type: "VARCHAR(128)")  { constraints(nullable: "true") }
+      column(name: "mtp_signature",       type: "VARCHAR(256)")  { constraints(nullable: "true") }
+      column(name: "mtp_accepts",         type: "VARCHAR(256)")  { constraints(nullable: "true") }
+    }
+
+    createTable(tableName: "mrs_tp_record") {
+      column(name: "mtr_id",                      type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtr_version",                 type: "BIGINT")        { constraints(nullable: "false") }
+      column(name: "mtr_transform_status",        type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtr_process_control_status",  type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtr_source_record_id",        type: "VARCHAR(255)")  { constraints(nullable: "false") }
+      column(name: "mtr_input_data",              type: "TEXT")          { constraints(nullable: "false") }
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "i202105191009-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name: "src_emits", type: "VARCHAR(128)")
+    }
+  }
+
 }
