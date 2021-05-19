@@ -122,5 +122,16 @@ println("This is a script ${1+4}");
       assert resp instanceof List
       assert resp.size() == 2
   }
+
+  void "Re Call worker timer task"() {
+    when:'we call the worker task'
+      def resp = doGet('/remote-sync/settings/worker')
+
+    then:'get the result'
+      println("Result of calling /remote-sync/settings/worker: ${resp}");
+      resp != null
+  }
+
+
 }
 

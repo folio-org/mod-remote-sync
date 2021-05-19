@@ -178,4 +178,11 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "i202105191753-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name:'src_next_due', type: "BIGINT");
+      column(name:'src_interval', type: "BIGINT");
+    }
+  }
+
 }

@@ -3,7 +3,7 @@
     "recordType":"source",
     "authority":"LASER",
     "sourceName":"LaserLicenses",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test1.groovy",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/LaserLicensesAgent.groovy",
     "language":"groovy",
     "packaging":"script",
     "sourceSignedBy":null,

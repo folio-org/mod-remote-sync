@@ -1,23 +1,23 @@
 package mod_remote_sync
 
 import grails.gorm.transactions.Transactional
-import mod_remote_sync.source.RecordSourceController
+import groovyx.net.http.HttpBuilder
+import groovyx.net.http.FromServer
+import groovyx.net.http.ChainedHttpConfig
+import groovyx.net.http.HttpBuilder
+import grails.converters.JSON
+import mod_remote_sync.source.DynamicClassLoader
+import grails.databinding.SimpleMapDataBindingSource 
+import java.security.MessageDigest
+import com.k_int.web.toolkit.refdata.RefdataValue
+import mod_remote_sync.source.RemoteSyncActivity
+import mod_remote_sync.source.TransformProcess
 
 @Transactional
-class ExtractService implements RecordSourceController {
+class ExtractService {
 
-  public void processSources() {
-    log.debug("SourceProcessingService::processSources()");
-    Source.executeQuery('select s.id from Source as s').each { src ->
-      processSource(src);
-    }
-  }
-
-  public void processSource(String id) {
-    log.debug("SourceProcessingService::processSource(${id})");
-  }
-
-  public void update(String source, byte[] record, Map state) {
-    log.debug("SourceProcessingService::update(${source},...,${state})");
+  def start() {
+    log.debug("ExtractService::start()");
+    
   }
 }
