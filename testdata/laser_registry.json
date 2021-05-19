@@ -46,5 +46,17 @@
     "sourceSignedBy":null,
     "sourceSignature":null,
     "accepts":"LASER::LICENSE"
+  },
+  { 
+    "recordType":"extract",
+    "extractName":"LASERLicenseExtract",
+    "source":"LaserLicenses",
+    "process":"LaserLicenseImport"
+  },
+  {
+    "recordType":"extract",
+    "extractName":"LASERSubscriptionExtract",
+    "source":"LaserSubscriptions",
+    "process":"LaserSubscriptionImport"
   }
 ]

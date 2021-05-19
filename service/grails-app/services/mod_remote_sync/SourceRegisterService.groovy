@@ -42,10 +42,36 @@ class SourceRegisterService {
             case 'process':
               processProcessEntry(entry)
               break;
+            case 'extract':
+              processExtractEntry(entry)
+              break;
             default:
               log.warn("Unhandled record type: ${entry}");
           }
         }
+      }
+    }
+  }
+
+  private void processExtract(Map descriptor) {
+    log.debug("SourceRegisterService::processExtract(${descriptor})");
+    if ( descriptor.extractName &&
+         descriptor.source && 
+         descriptor.process ) {
+      Source s = Source.findByName(descriptor.source)
+      if ( s ) {
+        ResourceStream rs = ResourceStream.findByName(descriptor.extractName) ?: new ResourceStream(streamStatus:'IDLE');
+        TransformationProcess tp = TransformationProcess.findByName(descriptor.process)
+        if ( ( rs != null ) &&
+             ( tp != null ) ) {
+          rs.name = descriptor.extractName;
+          rs.source = s
+          rs.streamId = tp
+          
+        }
+      }
+      else {
+        log.warn("Unable to locate source with name ${descriptor.source}");
       }
     }
   }

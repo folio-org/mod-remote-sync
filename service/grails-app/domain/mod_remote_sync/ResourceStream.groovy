@@ -15,7 +15,7 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
   Date dateCreated
   Date lastUpdated
   String cursor
-  String streamId
+  TransformationProcess streamId
   String streamStatus  // IDLE | ACTIVE | PAUSED
 
   // Date dateStarted
