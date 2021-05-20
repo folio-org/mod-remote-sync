@@ -15,12 +15,9 @@ import groovy.util.logging.Slf4j
 class BespokeSourceSpec extends HttpSpec {
 
   static final String tenantName = 'bespoke_source_tests'
-  static final String S1='''
-println("This is a script ${1+4}");
-['1','2','3','4'].each {
-  println(it)
-}
-'''
+
+  @Shared
+  def grailsApplication
 
   static final Closure booleanResponder = {
     response.success { FromServer fs, Object body ->
@@ -42,6 +39,17 @@ println("This is a script ${1+4}");
 
   def setup() {
     setHeaders((OkapiHeaders.TENANT): tenantName)
+  }
+
+  void "Verify Test Config Data Present"() {
+    when: 'We access required test properties'
+      String url = grailsApplication.config.testdata.hbz.url;
+      log.debug("Gor config url : ${url}");
+
+    then: 'Test properties are present'
+      assert url instanceof String
+      assert url.startsWith('https://')
+      assert url.length() > 9;
   }
 
   void "Purge Tenant" () {
@@ -86,6 +94,27 @@ println("This is a script ${1+4}");
     then:'get the result'
       println("Result of calling /remote-sync/sources/bespoke: ${resp}");
       resp != null
+  }
+
+  void 'set up application settins'(String section, String setting, String type, String value) {
+    when:'we post the app settings'
+      def setting_resp = doPost('/remote-sync/settings/appSettings', [
+        'section':section,
+        'key': setting,
+        'settingType': type,
+        'value':value
+      ]);
+
+    then:
+      log.debug("Setting: ${setting_resp}");
+    
+    where:
+      section|setting|type|value
+      'LASER.Integration'|'url'|'String'|grailsApplication.config.testdata.hbz.url
+      'LASER.Integration'|'secret'|'String'|grailsApplication.config.testdata.hbz.secret
+      'LASER.Integration'|'token'|'String'|grailsApplication.config.testdata.hbz.token
+      'LASER.Integration'|'identifier'|'String'|grailsApplication.config.testdata.hbz.identifier
+      'LASER.Integration'|'identifierType'|'String'|grailsApplication.config.testdata.hbz.identifierType
   }
 
   // No setup

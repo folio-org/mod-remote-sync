@@ -19,7 +19,8 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
     return Hex.encodeHexString(sha256_HMAC.doFinal(string_to_hash.getBytes("UTF-8")));
   }
 
-  public void getNextBatch(Map state, RecordSourceController rsc) {
+  public void getNextBatch(Map state, 
+                           RecordSourceController rsc) {
 
     String identifierType='globalUID'
     String identifier='org:testvalue'
