@@ -16,8 +16,15 @@ import mod_remote_sync.source.TransformProcess
 @Transactional
 class ExtractService {
 
+  def grailsApplication
+
   def start() {
     log.debug("ExtractService::start()");
-    
+    Source.list(readOnly:true).each { src ->
+      log.debug("Process source ${src} - service to use is ${src.getHandlerServiceName()}");
+      def runner_service = grailsApplication.mainContext.getBean(src.getHandlerServiceName())
+      log.debug("Got runner service: ${runner_service}");
+      runner_service.start(src);
+    }
   }
 }

@@ -9,6 +9,12 @@ import spock.lang.*
 import spock.util.concurrent.PollingConditions
 import groovy.util.logging.Slf4j
 
+/**
+ * This class requires special properties to be configured in grails-app/config/application-test.yml - this file
+ * is in the .gitignore file to ensure we do not leak API keys via git. See the .gitignore file for details about the
+ * properties that need to be set
+ */ 
+
 @Slf4j
 @Integration
 @Stepwise

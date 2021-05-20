@@ -19,6 +19,9 @@ public abstract class Source implements MultiTenant<Source> {
   Long nextDue
   String emits
 
+  Boolean enabled
+  String status
+
   // String SourceVerifiedBy
   // String SourceSignature
   // Refdata status
@@ -28,6 +31,8 @@ public abstract class Source implements MultiTenant<Source> {
         emits (nullable : true)
       nextDue (nullable : true)
      interval (nullable : true)
+      enabled (nullable : true)
+       status (nullable : true)
   }
 
   static mapping = {
@@ -41,8 +46,11 @@ public abstract class Source implements MultiTenant<Source> {
     auth                   column : 'src_authority_fk'
     emits                  column : 'src_emits'
     nextDue                column : 'src_next_due'
-    interval                column : 'src_interval'
+    interval               column : 'src_interval'
+    enabled                column : 'src_enabled'
+    status                 column : 'src_status'
   }
 
   public abstract RemoteSyncActivity getActivity();
+  public abstract String getHandlerServiceName();
 }

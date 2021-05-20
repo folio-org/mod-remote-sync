@@ -14,14 +14,16 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
   String checksum
   Date dateCreated
   Date lastUpdated
+  String recType
 
   static constraints = {
             auth (nullable : false)
-     resourceUri (nullable : true)
-          record (nullable : true)
-        checksum (nullable : true)
-     dateCreated (nullable : true)
-     lastUpdated (nullable : true)
+     resourceUri (nullable : false)
+          record (nullable : false)
+        checksum (nullable : false)
+     dateCreated (nullable : false)
+     lastUpdated (nullable : false)
+         recType (nullable : false)
   }
 
   static mapping = {
@@ -34,5 +36,6 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
     resourceUri column : 'sr_resource_uri'
          record column : 'sr_record'
        checksum column : 'sr_checksum'
+        recType column : 'sr_rectype'
   }
 }

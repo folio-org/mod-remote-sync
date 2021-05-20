@@ -195,6 +195,7 @@ databaseChangeLog = {
       column(name: "sr_resource_uri",    type: "VARCHAR(128)")  { constraints(nullable: "false") }
       column(name: "sr_checksum",        type: "VARCHAR(32)")   { constraints(nullable: "false") }
       column(name: "sr_record",          type: "TIMESTAMP")     { constraints(nullable: "false") }
+      column(name: "sr_rectype",         type: "VARCHAR(128)")  { constraints(nullable: "false") }
     }
   }
 
@@ -215,4 +216,10 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (manual)", id: "i202105201516-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name:'src_enabled', type: "BOOLEAN");
+      column(name:'src_status',  type: "VARCHAR(32)");
+    }
+  }
 }
