@@ -222,4 +222,11 @@ databaseChangeLog = {
       column(name:'src_status',  type: "VARCHAR(32)");
     }
   }
+
+  changeSet(author: "ianibbo (manual)", id: "i202105211706-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name:'src_state_info', type: "TEXT");
+    }
+  }
+
 }

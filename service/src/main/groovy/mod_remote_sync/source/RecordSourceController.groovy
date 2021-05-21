@@ -12,5 +12,8 @@ public interface RecordSourceController {
   public void upsertSourceRecord(String source_id,
                                  String resource_id, 
                                  String resource_type, 
+                                 String hash,
                                  byte[] record)
+
+  public String getAppSetting(String key);
 }

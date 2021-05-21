@@ -9,11 +9,11 @@
     "sourceSignedBy":null,
     "sourceSignature":null,
     "parameters":{
-                 "url":{ "section":"LASER.Integration", "setting":"url",            "type": "String", "required":true, "label":"Laser URL" },
-              "secret":{ "section":"LASER.Integration", "setting":"secret",         "type": "String", "required":true, "label":"Laser Secret" },
-               "token":{ "section":"LASER.Integration", "setting":"token",          "type": "String", "required":true, "label":"Laser Token" },
-          "identifier":{ "section":"LASER.Integration", "setting":"identifier",     "type": "String", "required":true, "label":"Laser Identifier" },
-      "identifierType":{ "section":"LASER.Integration", "setting":"identifierType", "type": "String", "required":true, "label":"Laser Identifier Type" }
+                 "url":{ "section":"LASER.Integration", "key":"laser.url",            "type": "String", "required":true, "label":"Laser URL" },
+              "secret":{ "section":"LASER.Integration", "key":"laser.secret",         "type": "String", "required":true, "label":"Laser Secret" },
+               "token":{ "section":"LASER.Integration", "key":"laser.token",          "type": "String", "required":true, "label":"Laser Token" },
+          "identifier":{ "section":"LASER.Integration", "key":"laser.identifier",     "type": "String", "required":true, "label":"Laser Identifier" },
+      "identifierType":{ "section":"LASER.Integration", "key":"laser.identifierType", "type": "String", "required":true, "label":"Laser Identifier Type" }
     },
     "emits":"LASER::LICENSE"
   },
@@ -27,7 +27,11 @@
     "sourceSignedBy":null,
     "sourceSignature":null,
     "parameters":{
-      "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
+                 "url":{ "section":"LASER.Integration", "key":"laser.url",            "type": "String", "required":true, "label":"Laser URL" },
+              "secret":{ "section":"LASER.Integration", "key":"laser.secret",         "type": "String", "required":true, "label":"Laser Secret" },
+               "token":{ "section":"LASER.Integration", "key":"laser.token",          "type": "String", "required":true, "label":"Laser Token" },
+          "identifier":{ "section":"LASER.Integration", "key":"laser.identifier",     "type": "String", "required":true, "label":"Laser Identifier" },
+      "identifierType":{ "section":"LASER.Integration", "key":"laser.identifierType", "type": "String", "required":true, "label":"Laser Identifier Type" }
     },
     "emits":"LASER::SUBSCRIPTION"
   },

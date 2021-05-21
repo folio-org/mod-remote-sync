@@ -18,6 +18,7 @@ public abstract class Source implements MultiTenant<Source> {
   Long interval
   Long nextDue
   String emits
+  String stateInfo
 
   Boolean enabled
   String status
@@ -33,6 +34,7 @@ public abstract class Source implements MultiTenant<Source> {
      interval (nullable : true)
       enabled (nullable : true)
        status (nullable : true)
+    stateInfo (nullable : true)
   }
 
   static mapping = {
@@ -49,6 +51,7 @@ public abstract class Source implements MultiTenant<Source> {
     interval               column : 'src_interval'
     enabled                column : 'src_enabled'
     status                 column : 'src_status'
+    stateInfo              column : 'src_state_info'
   }
 
   public abstract RemoteSyncActivity getActivity();

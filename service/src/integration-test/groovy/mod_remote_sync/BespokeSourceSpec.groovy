@@ -116,11 +116,11 @@ class BespokeSourceSpec extends HttpSpec {
     
     where:
       section|setting|type|value
-      'LASER.Integration'|'url'|'String'|grailsApplication.config.testdata.hbz.url
-      'LASER.Integration'|'secret'|'String'|grailsApplication.config.testdata.hbz.secret
-      'LASER.Integration'|'token'|'String'|grailsApplication.config.testdata.hbz.token
-      'LASER.Integration'|'identifier'|'String'|grailsApplication.config.testdata.hbz.identifier
-      'LASER.Integration'|'identifierType'|'String'|grailsApplication.config.testdata.hbz.identifierType
+      'LASER.Integration'|'laser.url'|'String'|grailsApplication.config.testdata.hbz.url
+      'LASER.Integration'|'laser.secret'|'String'|grailsApplication.config.testdata.hbz.secret
+      'LASER.Integration'|'laser.token'|'String'|grailsApplication.config.testdata.hbz.token
+      'LASER.Integration'|'laser.identifier'|'String'|grailsApplication.config.testdata.hbz.identifier
+      'LASER.Integration'|'laser.identifierType'|'String'|grailsApplication.config.testdata.hbz.identifierType
   }
 
   // No setup

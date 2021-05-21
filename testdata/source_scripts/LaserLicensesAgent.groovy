@@ -22,11 +22,13 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
   public void getNextBatch(Map state, 
                            RecordSourceController rsc) {
 
-    String identifierType='globalUID'
-    String identifier='org:testvalue'
-    String url='https://laser-qa.hbz-nrw.de'
+    String identifierType=rsc.getAppSetting('laser.identifierType')
+    String identifier=rsc.getAppSetting('laser.identifier')
+    String url=rsc.getAppSetting('laser.url')
+    String secret=rsc.getAppSetting('laser.secret')
+    String token=rsc.getAppSetting('laser.token')
 
-    String auth = makeAuth('/api/v0/licenseList', '', '', 'q='+identifierType+'&v='+identifier,'secret');
+    String auth = makeAuth('/api/v0/licenseList', '', '', 'q='+identifierType+'&v='+identifier,secret);
 
     println("gotAuth: ${auth} - request licenses of type ${identifierType}/id ${identifier} request URL is ${url}");
 
@@ -44,13 +46,8 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
       ]
       response.when(200) { FromServer fs, Object body ->
         println("OK");
-        body.each { license ->
+        body.each { license_info ->
           println("License ${JsonOutput.prettyPrint(JsonOutput.toJson(license))}")
-          try {
-            c.call(license)
-          } catch (Exception e) {
-            println("FATAL ERROR with license, skipping: ${e.message}")
-          }
         }
       }
       response.when(400) { FromServer fs, Object body ->
