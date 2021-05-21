@@ -147,7 +147,7 @@ class SourceRegisterService {
         bs.nextDue = 0;
         bs.language = RefdataValue.lookupOrCreate('BespokeSource.Language',agent_descriptor.language);
         bs.packaging = RefdataValue.lookupOrCreate('BespokeSource.Packaging',agent_descriptor.packaging);
-        bs.enabled = false
+        bs.enabled = true
         bs.status = 'IDLE'
         bs.emits = agent_descriptor.emits;
         bs.save(flush:true, failOnError:true);
