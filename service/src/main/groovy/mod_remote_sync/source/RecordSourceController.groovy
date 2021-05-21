@@ -7,5 +7,10 @@ public interface RecordSourceController {
    * update state
    */
    
-  public void update(String source, byte[] record, Map state)
+  public void updateState(String source_id, Map state)
+
+  public void upsertSourceRecord(String source_id,
+                                 String resource_id, 
+                                 String resource_type, 
+                                 byte[] record)
 }
