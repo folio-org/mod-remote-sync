@@ -21,7 +21,7 @@
     "recordType":"source",
     "authority":"LASER",
     "sourceName":"LaserSubscriptions",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test2.groovy",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/LaserSubscriptionsAgent.groovy",
     "language":"groovy",
     "packaging":"script",
     "sourceSignedBy":null,
