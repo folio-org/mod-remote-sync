@@ -178,4 +178,55 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "i202105191753-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name:'src_next_due', type: "BIGINT");
+      column(name:'src_interval', type: "BIGINT");
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "i202105201300-001") {
+    createTable(tableName: "mrs_source_resource") {
+      column(name: "sr_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "sr_version",         type: "BIGINT")        { constraints(nullable: "false") }
+      column(name: "sr_date_created",    type: "TIMESTAMP")     { constraints(nullable: "false") }
+      column(name: "sr_date_updated",    type: "TIMESTAMP")     { constraints(nullable: "true") }
+      column(name: "sr_auth_fk",         type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "sr_resource_uri",    type: "VARCHAR(128)")  { constraints(nullable: "false") }
+      column(name: "sr_checksum",        type: "VARCHAR(32)")   { constraints(nullable: "false") }
+      column(name: "sr_record",          type: "TIMESTAMP")     { constraints(nullable: "false") }
+      column(name: "sr_rectype",         type: "VARCHAR(128)")  { constraints(nullable: "false") }
+    }
+  }
+
+  changeSet(author: "ianibbo (manual)", id: "i202105201347-001") {
+    createTable(tableName: "app_setting") {
+      column(name: "st_id", type: "VARCHAR(36)") {
+        constraints(nullable: "false")
+      }
+      column(name: "st_version", type: "BIGINT") {
+        constraints(nullable: "false")
+      }
+      column(name: 'st_section', type: "VARCHAR(255)")
+      column(name: 'st_key', type: "VARCHAR(255)")
+      column(name: 'st_setting_type', type: "VARCHAR(255)")
+      column(name: 'st_vocab', type: "VARCHAR(255)")
+      column(name: 'st_default_value', type: "VARCHAR(255)")
+      column(name: 'st_value', type: "VARCHAR(255)")
+    }
+  }
+
+  changeSet(author: "ianibbo (manual)", id: "i202105201516-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name:'src_enabled', type: "BOOLEAN");
+      column(name:'src_status',  type: "VARCHAR(32)");
+    }
+  }
+
+  changeSet(author: "ianibbo (manual)", id: "i202105211706-001") {
+    addColumn(tableName: "mrs_source") {
+      column(name:'src_state_info', type: "TEXT");
+    }
+  }
+
 }

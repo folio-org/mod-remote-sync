@@ -53,21 +53,21 @@ class SourceRegisterService {
     }
   }
 
-  private void processExtract(Map descriptor) {
+  private void processExtractEntry(Map descriptor) {
     log.debug("SourceRegisterService::processExtract(${descriptor})");
     if ( descriptor.extractName &&
          descriptor.source && 
          descriptor.process ) {
       Source s = Source.findByName(descriptor.source)
       if ( s ) {
-        ResourceStream rs = ResourceStream.findByName(descriptor.extractName) ?: new ResourceStream(streamStatus:'IDLE');
+        ResourceStream rs = ResourceStream.findByName(descriptor.extractName) ?: new ResourceStream(streamStatus:'IDLE', cursor:'{}');
         TransformationProcess tp = TransformationProcess.findByName(descriptor.process)
         if ( ( rs != null ) &&
              ( tp != null ) ) {
           rs.name = descriptor.extractName;
           rs.source = s
           rs.streamId = tp
-          
+          rs.save(flush:true, failOnError:true);
         }
       }
       else {
@@ -143,8 +143,12 @@ class SourceRegisterService {
         bs.sourceLocation = agent_descriptor.sourceUrl;
         bs.checksum = code_info.hash;
         bs.lastPull = new Date()
+        bs.interval = 1000*60*60*12
+        bs.nextDue = 0;
         bs.language = RefdataValue.lookupOrCreate('BespokeSource.Language',agent_descriptor.language);
         bs.packaging = RefdataValue.lookupOrCreate('BespokeSource.Packaging',agent_descriptor.packaging);
+        bs.enabled = true
+        bs.status = 'IDLE'
         bs.emits = agent_descriptor.emits;
         bs.save(flush:true, failOnError:true);
         log.debug("Saved bespoke source ${bs}");

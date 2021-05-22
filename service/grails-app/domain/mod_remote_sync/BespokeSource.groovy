@@ -26,7 +26,7 @@ public class BespokeSource extends Source implements MultiTenant<BespokeSource> 
   String signedBy
   String signature
 
-  static transients = [ 'activity']
+  static transients = [ 'activity', 'handlerServiceName' ]
 
   static constraints = {
           script (nullable : true)
@@ -51,6 +51,11 @@ public class BespokeSource extends Source implements MultiTenant<BespokeSource> 
 
   public RemoteSyncActivity getActivity() {
     return null;
+  }
+
+  
+  public String getHandlerServiceName() {
+    return 'bespokeSourceRunnerService'
   }
 
 }

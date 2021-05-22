@@ -3,13 +3,17 @@
     "recordType":"source",
     "authority":"LASER",
     "sourceName":"LaserLicenses",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test1.groovy",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/LaserLicensesAgent.groovy",
     "language":"groovy",
     "packaging":"script",
     "sourceSignedBy":null,
     "sourceSignature":null,
     "parameters":{
-      "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
+                 "url":{ "section":"LASER.Integration", "key":"laser.url",            "type": "String", "required":true, "label":"Laser URL" },
+              "secret":{ "section":"LASER.Integration", "key":"laser.secret",         "type": "String", "required":true, "label":"Laser Secret" },
+               "token":{ "section":"LASER.Integration", "key":"laser.token",          "type": "String", "required":true, "label":"Laser Token" },
+          "identifier":{ "section":"LASER.Integration", "key":"laser.identifier",     "type": "String", "required":true, "label":"Laser Identifier" },
+      "identifierType":{ "section":"LASER.Integration", "key":"laser.identifierType", "type": "String", "required":true, "label":"Laser Identifier Type" }
     },
     "emits":"LASER::LICENSE"
   },
@@ -17,13 +21,17 @@
     "recordType":"source",
     "authority":"LASER",
     "sourceName":"LaserSubscriptions",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/test2.groovy",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/LaserSubscriptionsAgent.groovy",
     "language":"groovy",
     "packaging":"script",
     "sourceSignedBy":null,
     "sourceSignature":null,
     "parameters":{
-      "laserUser":{ "type": "String", "required":true, "label":"Laser Username" }
+                 "url":{ "section":"LASER.Integration", "key":"laser.url",            "type": "String", "required":true, "label":"Laser URL" },
+              "secret":{ "section":"LASER.Integration", "key":"laser.secret",         "type": "String", "required":true, "label":"Laser Secret" },
+               "token":{ "section":"LASER.Integration", "key":"laser.token",          "type": "String", "required":true, "label":"Laser Token" },
+          "identifier":{ "section":"LASER.Integration", "key":"laser.identifier",     "type": "String", "required":true, "label":"Laser Identifier" },
+      "identifierType":{ "section":"LASER.Integration", "key":"laser.identifierType", "type": "String", "required":true, "label":"Laser Identifier Type" }
     },
     "emits":"LASER::SUBSCRIPTION"
   },

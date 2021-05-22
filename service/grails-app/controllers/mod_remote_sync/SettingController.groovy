@@ -15,6 +15,7 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
   
   static responseFormats = ['json', 'xml']
   def sourceRegisterService
+  def extractService
   
   SettingController() {
     super(AppSetting)
@@ -26,6 +27,9 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     String tenant_header = request.getHeader('X-OKAPI-TENANT')
     log.debug("Worker thread invoked....${tenant_header}");
     // backgroundTaskService.performReshareTasks(tenant_header+'_mod_rs');
+    Source.withTransaction {
+      extractService.start()
+    }
     render result as JSON
   }
 

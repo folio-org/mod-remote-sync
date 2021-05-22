@@ -21,7 +21,5 @@ class UrlMappings {
       }
     }
     "/remote-sync/authorities" (resources: 'authorities');
-
-
   }
 }

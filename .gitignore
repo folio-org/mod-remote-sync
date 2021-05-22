@@ -31,3 +31,17 @@
 
 # "temporary" build files
 /target
+
+# This config file contains security credentials to execute some integration tests.
+# It should never be checked in to git, it has the following structure
+#
+# testdata:
+#   hbz:
+#     url: "https://..."
+#     secret: "..."
+#     token: "..."
+#     laserIdentifier: "org:..."
+#     identifierType: "globalUID"
+#     refprefix: "LAS:eR#"
+
+/service/grails-app/conf/application-test.yml
