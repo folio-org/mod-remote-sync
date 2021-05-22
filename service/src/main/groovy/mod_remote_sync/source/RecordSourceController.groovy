@@ -10,6 +10,7 @@ public interface RecordSourceController {
   public void updateState(String source_id, Map state)
 
   public void upsertSourceRecord(String source_id,
+                                 String authority,
                                  String resource_id, 
                                  String resource_type, 
                                  String hash,

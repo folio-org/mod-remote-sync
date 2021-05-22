@@ -11,7 +11,7 @@ import static groovyx.net.http.HttpBuilder.configure
 
 public class LaserLicensesAgent implements RemoteSyncActivity {
 
-  private String makeAuth(String path, String timestamp, String nonce, String q, String secret) {
+  private String makeAuth(String path, String timestamp, String nonce, String q, String token, String secret) {
     String string_to_hash = "GET${path}${timestamp}${nonce}${q}".toString()
 
     Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
@@ -19,6 +19,38 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
     sha256_HMAC.init(secret_key);
     return Hex.encodeHexString(sha256_HMAC.doFinal(string_to_hash.getBytes("UTF-8")));
   }
+
+  private Map getLicense(String globalUID, String url, String secret, String token) {
+
+    println("getLicense(${globalUID})");
+
+    Map result = null;
+
+    String auth = makeAuth('/api/v0/license', '', '', 'q=globalUID&v='+globalUID, secret);
+    println("gotAuth: ${auth}");
+
+    def http = configure {
+      request.uri = url
+    }
+
+    http.get {
+      request.uri.path = '/api/v0/license'
+      request.headers['x-authorization'] = "hmac $token:::$auth,hmac-sha256"
+      request.headers['accept'] = 'application/json'
+      request.uri.query = [
+        q:'globalUID',
+        v:globalUID
+      ]
+      response.when(200) { FromServer fs, Object body, Object header ->
+        result = body
+      }
+      response.when(400) { FromServer fs, Object body ->
+        println("Problem getting license ${body}");
+      }
+    }
+    return result;
+  }
+
 
   public void getNextBatch(Map state, 
                            RecordSourceController rsc) {
@@ -48,7 +80,9 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
       response.when(200) { FromServer fs, Object body ->
         println("OK");
         body.each { license_info ->
-          println("License ${JsonOutput.prettyPrint(JsonOutput.toJson(license))}")
+          println("Retrieve license ${license_info.globalUID}");
+          println("License ${JsonOutput.prettyPrint(JsonOutput.toJson(license_info))}")
+          getLicense(license_info.globalUID, url, secret, token)
         }
       }
       response.when(400) { FromServer fs, Object body ->
