@@ -62,13 +62,31 @@ class BespokeSourceRunnerService implements RecordSourceController {
 
 
   public void updateState(String source_id, Map state) {
+    log.debug("BespokeSourceRunnerService::updateState");
   }
 
   public void upsertSourceRecord(String source_id,
+                                 String authority,
                                  String resource_id,
                                  String resource_type,
                                  String hash,
                                  byte[] record) {
+    log.debug("BespokeSourceRunnerService::updateState(${source_id},${resource_id},${resource_type},${hash},...)");
+    Authority a = Authority.findByName(authority) ?: new Authority(name:authority).save(flush:true, failOnError:true)
+    SourceRecord existing_record = SourceRecord.findByResourceUriAndAuth(resource_id,authority)
+    if ( existing_record == null ) {
+      existing_record = new SourceRecord(auth:a,
+                                         resourceUri: resource_id,
+                                         record: record,
+                                         checksum: hash).save(flush:true, failOnError:true);
+    }
+    else {
+      if ( existing_record.checksum != hash ) {
+        existing_record.record = record;
+        existing_record.checksum = hash;
+        existing_record.save(flush:true, failOnError:true);
+      }
+    }
   }
 
 }
