@@ -21,13 +21,13 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
      resourceUri (nullable : false)
           record (nullable : false)
         checksum (nullable : false)
-     dateCreated (nullable : false)
-     lastUpdated (nullable : false)
+     dateCreated (nullable : true)
+     lastUpdated (nullable : true)
          recType (nullable : false)
   }
 
   static mapping = {
-    table 'mrs_source_resource'
+    table 'mrs_source_resource_2'
              id column : 'sr_id', generator: 'uuid2', length:36
         version column : 'sr_version'
     dateCreated column : 'sr_date_created'

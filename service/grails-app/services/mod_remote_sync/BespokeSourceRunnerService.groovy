@@ -73,12 +73,17 @@ class BespokeSourceRunnerService implements RecordSourceController {
                                  byte[] record) {
     log.debug("BespokeSourceRunnerService::updateState(${source_id},${resource_id},${resource_type},${hash},...)");
     Authority a = Authority.findByName(authority) ?: new Authority(name:authority).save(flush:true, failOnError:true)
-    SourceRecord existing_record = SourceRecord.findByResourceUriAndAuth(resource_id,authority)
+    SourceRecord existing_record = SourceRecord.findByResourceUriAndAuth(resource_id,a)
     if ( existing_record == null ) {
       existing_record = new SourceRecord(auth:a,
                                          resourceUri: resource_id,
+                                         dateCreated: new Date(),
+                                         lastUpdated: new Date(),
+                                         recType: resource_type,
                                          record: record,
-                                         checksum: hash).save(flush:true, failOnError:true);
+                                         checksum: hash)
+      log.debug("Made new source record: ${existing_record}");
+      existing_record.save(flush:true, failOnError:true);
     }
     else {
       if ( existing_record.checksum != hash ) {

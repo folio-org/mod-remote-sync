@@ -42,6 +42,7 @@ public class LaserSubscriptionsAgent implements RemoteSyncActivity {
         v:globalUID
       ]
       response.when(200) { FromServer fs, Object body, Object header ->
+        println("Got result...${body != null}");
         result = body
       }
       response.when(400) { FromServer fs, Object body ->
@@ -97,6 +98,9 @@ public class LaserSubscriptionsAgent implements RemoteSyncActivity {
                                    sub_hash,
                                    sub_json_bytes);
 
+          }
+          else {
+            println("getSubscription(${subscription_info.globalUID}...) returned null");
           }
 
         }

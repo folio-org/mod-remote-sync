@@ -161,6 +161,8 @@ class BespokeSourceSpec extends HttpSpec {
   void "Re Call worker timer task"() {
     when:'we call the worker task'
       def resp = doGet('/remote-sync/settings/worker')
+      println("Sleeping....");
+      Thread.sleep(64000);
 
     then:'get the result'
       println("Result of calling /remote-sync/settings/worker: ${resp}");
