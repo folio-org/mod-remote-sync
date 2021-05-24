@@ -11,7 +11,7 @@ import java.security.MessageDigest
 
 public class LaserLicensesAgent implements RemoteSyncActivity {
 
-  private String makeAuth(String path, String timestamp, String nonce, String q, String token, String secret) {
+  private String makeAuth(String path, String timestamp, String nonce, String q, String secret) {
     String string_to_hash = "GET${path}${timestamp}${nonce}${q}".toString()
 
     Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
