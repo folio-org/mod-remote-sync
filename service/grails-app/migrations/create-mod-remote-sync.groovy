@@ -185,8 +185,8 @@ databaseChangeLog = {
     }
   }
 
-  changeSet(author: "ianibbo (generated)", id: "i202105201300-001") {
-    createTable(tableName: "mrs_source_resource") {
+  changeSet(author: "ianibbo (generated)", id: "i202105201300-002") {
+    createTable(tableName: "mrs_source_resource_2") {
       column(name: "sr_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "sr_version",         type: "BIGINT")        { constraints(nullable: "false") }
       column(name: "sr_date_created",    type: "TIMESTAMP")     { constraints(nullable: "false") }
@@ -194,7 +194,7 @@ databaseChangeLog = {
       column(name: "sr_auth_fk",         type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "sr_resource_uri",    type: "VARCHAR(128)")  { constraints(nullable: "false") }
       column(name: "sr_checksum",        type: "VARCHAR(32)")   { constraints(nullable: "false") }
-      column(name: "sr_record",          type: "TIMESTAMP")     { constraints(nullable: "false") }
+      column(name: "sr_record",          type: "BYTEA")         { constraints(nullable: "false") }
       column(name: "sr_rectype",         type: "VARCHAR(128)")  { constraints(nullable: "false") }
     }
   }
