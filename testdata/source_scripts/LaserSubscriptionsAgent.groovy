@@ -20,6 +20,38 @@ public class LaserSubscriptionsAgent implements RemoteSyncActivity {
     return Hex.encodeHexString(sha256_HMAC.doFinal(string_to_hash.getBytes("UTF-8")));
   }
 
+  private Map getSubscription(String globalUID, String url, String secret, String token) {
+
+    println("getSubscription(${globalUID})");
+
+    Map result = null;
+
+    String auth = makeAuth('/api/v0/subscription', '', '', 'q=globalUID&v='+globalUID, secret);
+    println("gotAuth: ${auth}");
+
+    def http = configure {
+      request.uri = url
+    }
+
+    http.get {
+      request.uri.path = '/api/v0/subscription'
+      request.headers['x-authorization'] = "hmac $token:::$auth,hmac-sha256"
+      request.headers['accept'] = 'application/json'
+      request.uri.query = [
+        q:'globalUID',
+        v:globalUID
+      ]
+      response.when(200) { FromServer fs, Object body, Object header ->
+        result = body
+      }
+      response.when(400) { FromServer fs, Object body ->
+        println("Problem getting subscription ${body}");
+      }
+    }
+    return result;
+  }
+
+
   public void getNextBatch(String source_id,
                            Map state, 
                            RecordSourceController rsc) {
@@ -50,6 +82,23 @@ public class LaserSubscriptionsAgent implements RemoteSyncActivity {
         println("OK");
         body.each { subscription_info ->
           println("Subscription ${JsonOutput.prettyPrint(JsonOutput.toJson(subscription_info))}")
+          def sub = getSubscription(subscription_info.globalUID, url, secret, token)
+          if ( sub ) {
+            def sub_json = JsonOutput.toJson(sub);
+            MessageDigest md5_digest = MessageDigest.getInstance("MD5");
+            byte[] sub_json_bytes = sub_json.toString().getBytes()
+            md5_digest.update(sub_json_bytes);
+            byte[] md5sum = md5_digest.digest();
+            sub_hash = new BigInteger(1, md5sum).toString(16);
+            rsc.upsertSourceRecord(source_id,
+                                   'LASER',
+                                   'LASER:SUB:'+sub_info.globalUID,
+                                   'LASER:SUB',
+                                   sub_hash,
+                                   sub_json_bytes);
+
+          }
+
         }
       }
       response.when(400) { FromServer fs, Object body ->
