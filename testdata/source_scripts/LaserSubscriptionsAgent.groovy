@@ -92,7 +92,7 @@ public class LaserSubscriptionsAgent implements RemoteSyncActivity {
             String sub_hash = new BigInteger(1, md5sum).toString(16);
             rsc.upsertSourceRecord(source_id,
                                    'LASER',
-                                   'LASER:SUB:'+sub_info.globalUID,
+                                   'LASER:SUB:'+sub.globalUID,
                                    'LASER:SUB',
                                    sub_hash,
                                    sub_json_bytes);

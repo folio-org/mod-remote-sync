@@ -89,7 +89,7 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
             byte[] license_json_bytes = license_json.toString().getBytes()
             md5_digest.update(license_json_bytes);
             byte[] md5sum = md5_digest.digest();
-            license_hash = new BigInteger(1, md5sum).toString(16);
+            String license_hash = new BigInteger(1, md5sum).toString(16);
             rsc.upsertSourceRecord(source_id,
                                    'LASER',
                                    'LASER:LICENSE:'+license_info.globalUID,
