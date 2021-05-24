@@ -7,7 +7,7 @@ import groovyx.net.http.HttpBuilder
 import groovyx.net.http.FromServer
 import groovy.json.JsonOutput
 import static groovyx.net.http.HttpBuilder.configure
-
+import java.security.MessageDigest
 
 public class LaserSubscriptionsAgent implements RemoteSyncActivity {
 
