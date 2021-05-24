@@ -7,7 +7,7 @@ import groovyx.net.http.HttpBuilder
 import groovyx.net.http.FromServer
 import groovy.json.JsonOutput
 import static groovyx.net.http.HttpBuilder.configure
-
+import java.security.MessageDigest
 
 public class LaserLicensesAgent implements RemoteSyncActivity {
 
@@ -52,7 +52,8 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
   }
 
 
-  public void getNextBatch(Map state, 
+  public void getNextBatch(String source_id,
+                           Map state, 
                            RecordSourceController rsc) {
 
     String identifierType=rsc.getAppSetting('laser.identifierType')
@@ -81,8 +82,22 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
         println("OK");
         body.each { license_info ->
           println("Retrieve license ${license_info.globalUID}");
-          println("License ${JsonOutput.prettyPrint(JsonOutput.toJson(license_info))}")
-          getLicense(license_info.globalUID, url, secret, token)
+          def license = getLicense(license_info.globalUID, url, secret, token)
+          if ( license ) {
+            def license_json = JsonOutput.toJson(license);
+            MessageDigest md5_digest = MessageDigest.getInstance("MD5");
+            byte[] license_json_bytes = license_json.toString().getBytes()
+            md5_digest.update(license_json_bytes);
+            byte[] md5sum = md5_digest.digest();
+            license_hash = new BigInteger(1, md5sum).toString(16);
+            rsc.upsertSourceRecord(source_id,
+                                   'LASER',
+                                   'LASER:'+license_info.globalUID,
+                                   'LASER:LICENSE',
+                                   license_hash,
+                                   license_json_bytes);
+
+          }
         }
       }
       response.when(400) { FromServer fs, Object body ->

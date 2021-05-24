@@ -20,7 +20,8 @@ public class LaserSubscriptionsAgent implements RemoteSyncActivity {
     return Hex.encodeHexString(sha256_HMAC.doFinal(string_to_hash.getBytes("UTF-8")));
   }
 
-  public void getNextBatch(Map state, 
+  public void getNextBatch(String source_id,
+                           Map state, 
                            RecordSourceController rsc) {
 
     String identifierType=rsc.getAppSetting('laser.identifierType')

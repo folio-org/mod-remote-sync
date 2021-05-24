@@ -29,7 +29,7 @@ class BespokeSourceRunnerService implements RecordSourceController {
       state_info = jsonSlurper.parseText(src.stateInfo);
     }
 
-    rsa.getNextBatch(state_info, this)
+    rsa.getNextBatch(src.id, state_info, this)
 
     log.debug("BespokeSourceRunnerService::start complete for ${src}");
   }
