@@ -19,17 +19,25 @@ class BespokeSourceRunnerService implements RecordSourceController {
     log.debug("BespokeSourceRunnerService::start(${src})");
     log.debug("url setting: ${getAppSetting('laser.url')}");
 
-    RemoteSyncActivity rsa = getGroovyScript(src.script,RemoteSyncActivity.class).getDeclaredConstructor().newInstance()
+    try {
+      RemoteSyncActivity rsa = getGroovyScript(src.script,RemoteSyncActivity.class).getDeclaredConstructor().newInstance()
 
-    Map state_info = null;
+      Map state_info = null;
 
-    // If the state info has been serialised into a JSON object, parse it here
-    if ( src.stateInfo != null ) {
-      def jsonSlurper = new JsonSlurper()
-      state_info = jsonSlurper.parseText(src.stateInfo);
+      // If the state info has been serialised into a JSON object, parse it here
+      if ( src.stateInfo != null ) {
+        def jsonSlurper = new JsonSlurper()
+        state_info = jsonSlurper.parseText(src.stateInfo);
+      }
+
+      rsa.getNextBatch(src.id, state_info, this)
     }
-
-    rsa.getNextBatch(src.id, state_info, this)
+    catch ( Throwable t ) {
+      log.error("Exception processing remote sync activity",t);
+    }
+    finally {
+      log.info("BespokeSourceRunnerService::start complete");
+    }
 
     log.debug("BespokeSourceRunnerService::start complete for ${src}");
   }
@@ -82,8 +90,9 @@ class BespokeSourceRunnerService implements RecordSourceController {
                                          recType: resource_type,
                                          record: record,
                                          checksum: hash)
-      log.debug("Made new source record: ${existing_record}");
+      log.debug("Saving new source record: ${resource_id}");
       existing_record.save(flush:true, failOnError:true);
+      log.debug("Made new source record: ${existing_record}");
     }
     else {
       if ( existing_record.checksum != hash ) {
