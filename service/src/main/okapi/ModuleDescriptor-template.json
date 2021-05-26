@@ -100,6 +100,21 @@
       "subPermissions": [
           "remote-sync.settings.get"
       ]
+    }, 
+    {
+      "permissionName": "remote-sync.statusReport.get",
+      "displayName": "Status Report Get",
+      "description": "get statusReport",
+      "visible": false
+    },
+    {
+      "permissionName": "remote-sync.statusReport.read",
+      "displayName": "Status Report Read",
+      "description": "read statusReport",
+      "visible": false,
+      "subPermissions": [
+          "remote-sync.statusReport.get"
+      ]
     },
     {
       "permissionName": "remote-sync.settings.write",
