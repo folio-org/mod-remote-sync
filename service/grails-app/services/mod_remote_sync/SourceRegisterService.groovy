@@ -12,6 +12,7 @@ import java.security.MessageDigest
 import com.k_int.web.toolkit.refdata.RefdataValue
 import mod_remote_sync.source.RemoteSyncActivity
 import mod_remote_sync.source.TransformProcess
+import com.k_int.web.toolkit.settings.AppSetting
 
 @Transactional
 class SourceRegisterService {
@@ -34,7 +35,16 @@ class SourceRegisterService {
     if ( response_content != null ) {
       def parsed_register = JSON.parse(response_content)
       if ( parsed_register ) {
+
         parsed_register.each { entry ->
+          log.debug("Process entry: ${entry.recordType}")
+
+          if ( ( entry?.parameters != null ) && 
+               ( entry?.parameters instanceof Map ) ) {
+            log.debug("Definition states parameters - checking....");
+            ensureSettings(entry.parameters)
+          }
+
           switch ( entry.recordType ) {
             case 'source':
               processSourceEntry(entry)
@@ -49,6 +59,18 @@ class SourceRegisterService {
               log.warn("Unhandled record type: ${entry}");
           }
         }
+      }
+    }
+  }
+
+  private void ensureSettings(Map definitions) {
+    definitions.each { key, defn ->
+      log.debug("Ensure definition: ${defn}");
+      def st = AppSetting.findBySectionAndKey(defn.section, defn.key)
+      if ( st == null ) {
+        st = new AppSetting(section: defn.section,
+                         key: defn.key,
+                         settingType: defn.type).save(flush:true, failOnError:true);
       }
     }
   }
