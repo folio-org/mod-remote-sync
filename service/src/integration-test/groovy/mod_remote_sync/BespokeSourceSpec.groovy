@@ -102,7 +102,13 @@ class BespokeSourceSpec extends HttpSpec {
       resp != null
   }
 
+  /**
+   * Get our settings in ahead of the load
+   */
   void 'set up application settins'(String section, String setting, String type, String value) {
+
+    log.debug("Install app settting ${section} ${setting} ${type} ${value}");
+
     when:'we post the app settings'
       def setting_resp = doPost('/remote-sync/settings/appSettings', [
         'section':section,
@@ -125,6 +131,9 @@ class BespokeSourceSpec extends HttpSpec {
 
   // No setup
   void "Call worker timer task"() {
+
+    log.debug("Call worker task (Should be no activity)");
+
     when:'we call the worker task'
       def resp = doGet('/remote-sync/settings/worker')
 
@@ -135,6 +144,9 @@ class BespokeSourceSpec extends HttpSpec {
 
   // Create the first source
   void "Create bespoke source"() {
+
+    log.debug("Install test defintions");
+
     when:'We create a new source'
       def auth_record = doPost('/remote-sync/settings/configureFromRegister',
              [
@@ -145,6 +157,7 @@ class BespokeSourceSpec extends HttpSpec {
       def resp = doGet('/remote-sync/sources/bespoke', [
         stats: true
       ])
+      log.debug("get bespoke sources responds ${resp}");
 
   }
 

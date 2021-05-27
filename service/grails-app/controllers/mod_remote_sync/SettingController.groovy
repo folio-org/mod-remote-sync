@@ -67,6 +67,9 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
       }
     }
     catch ( Exception e ) {
+
+      log.error("Problem loading register",e);
+
       result.result='ERROR'
       result.message=e.getMessage()
     }
