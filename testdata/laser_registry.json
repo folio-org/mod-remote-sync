@@ -65,7 +65,7 @@
     "recordType":"extract",
     "extractName":"LASERSubscriptionExtract",
     "source":"LaserSubscriptions",
-    "process":"LaserSubscriptionImport"
+    "process":"LaserSubscriptionImport",
     "parameters":{
           "widget":{ "section":"Testing", "key":"widget.number",            "type": "String", "required":true, "label":"Test Param For Extract Task" }
     }
