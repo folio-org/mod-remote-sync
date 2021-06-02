@@ -51,6 +51,7 @@ where sr.auth = :auth and sr.recType=:recType
             id:extract.id,
             name:extract.name,
             status:extract.streamStatus,
+            target:extract.streamId
           ]
 
           source_row.extractors.add(extractor)
@@ -59,7 +60,11 @@ where sr.auth = :auth and sr.recType=:recType
           if ( extract.streamId != null ) {
             source_row.processes.add( [ 
               id: extract.streamId.id,
-              name: extract.streamId.name
+              name: extract.streamId.name,
+              accepts: extract.streamId.accepts,
+              language: extract.streamId.language?.value,
+              packaging: extract.streamId.packaging?.value,
+              sourceLoc: extract.streamId.sourceLocation
             ] )
           }
 
