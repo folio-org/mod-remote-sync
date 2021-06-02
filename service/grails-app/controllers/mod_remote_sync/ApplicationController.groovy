@@ -9,6 +9,12 @@ class ApplicationController implements PluginManagerAware {
   GrailsApplication grailsApplication
   GrailsPluginManager pluginManager
 
+  private static String RESOURCE_COUNT_QRY = '''
+select count(sr.id)
+from SourceRecord as sr
+where sr.auth = :auth and sr.recType=:recType
+'''
+
   def index() {
     println("ApplicationController::index()");
     [grailsApplication: grailsApplication, pluginManager: pluginManager]
@@ -27,6 +33,13 @@ class ApplicationController implements PluginManagerAware {
 
         source_row.id = src.id
         source_row.sourceName = src.name
+        source_row.enabled = src.enabled
+        source_row.authorityName = src.auth?.name
+        source_row.interval = src.interval
+        source_row.nextDueTS = src.nextDue
+        source_row.emits = src.emits
+        source_row.status = src.status
+        source_row.reccount = SourceRecord.executeQuery(RESOURCE_COUNT_QRY,[auth:src.auth, recType:src.emits])[0]
         // Now iterate extractors attached to this source
 
         source_row.extractors = []
@@ -37,17 +50,20 @@ class ApplicationController implements PluginManagerAware {
           def extractor = [
             id:extract.id,
             name:extract.name,
-            status:extract.streamStatus
+            status:extract.streamStatus,
           ]
 
           source_row.extractors.add(extractor)
 
+          // extract.streamId is really transformation process
           if ( extract.streamId != null ) {
             source_row.processes.add( [ 
               id: extract.streamId.id,
               name: extract.streamId.name
             ] )
           }
+
+          // TransformationProcess.findAllBy
         }
         
 

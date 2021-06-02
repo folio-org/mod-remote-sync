@@ -30,7 +30,34 @@
           "methods": [ "DELETE" ],
           "pathPattern": "/remote-sync/settings*",
           "permissionsRequired": [ "remote-sync.settings.delete" ]
+        },
+
+        {
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/refdata",
+          "permissionsRequired": [ "remote-sync.refdata.collection.get" ]
+        },{
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/refdata/{domain}/{property}",
+          "permissionsRequired": [ "remote-sync.refdata.collection.get" ]
+        },{
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/refdata/{id}",
+          "permissionsRequired": [ "remote-sync.refdata.item.get" ]
+        },{
+          "methods": ["POST"],
+          "pathPattern": "/remote-sync/refdata",
+          "permissionsRequired": [ "remote-sync.refdata.item.post" ]
+        },{
+          "methods": ["PUT"],
+          "pathPattern": "/remote-sync/refdata/{id}",
+          "permissionsRequired": [ "remote-sync.refdata.item.put" ]
+        },{
+          "methods": ["DELETE"],
+          "pathPattern": "/remote-sync/refdata/{id}",
+          "permissionsRequired": [ "remote-sync.refdata.item.delete" ]
         }
+
       ]
     },
     {
@@ -127,7 +154,55 @@
           "remote-sync.settings.put",
           "remote-sync.settings.delete"
       ]
+    },
+    {
+      "permissionName": "remote-sync.refdata.collection.get",
+      "displayName": "Refdata collection get",
+      "description": "Get a collection of refdata records"
+    },
+    {
+      "permissionName": "remote-sync.refdata.item.get",
+      "displayName": "Refdata item get",
+      "description": "Get refdata record"
+    },
+    {
+      "permissionName": "remote-sync.refdata.view",
+      "subPermissions": [
+        "remote-sync.refdata.collection.get",
+        "remote-sync.refdata.item.get"
+      ]
+    },
+    {
+      "permissionName": "remote-sync.refdata.item.post",
+      "displayName": "Refdata item post",
+      "description": "Post refdata record"
+    },
+    {
+      "permissionName": "remote-sync.refdata.item.put",
+      "displayName": "Refdata item put",
+      "description": "Put refdata record"
+    },
+    {
+      "permissionName": "remote-sync.refdata.edit",
+      "subPermissions": [
+        "remote-sync.refdata.view",
+        "remote-sync.refdata.item.post",
+        "remote-sync.refdata.item.put"
+      ]
+    },
+    {
+      "permissionName": "remote-sync.refdata.item.delete",
+      "displayName": "Refdata item delete",
+      "description": "Delete refdata record"
+    },
+    {
+      "permissionName": "remote-sync.refdata.manage",
+      "subPermissions": [
+        "remote-sync.refdata.edit",
+        "remote-sync.refdata.item.delete"
+      ]
     }
+
   ],
   "launchDescriptor": {
     "dockerImage": "${info.app.name}:${info.app.version}",
