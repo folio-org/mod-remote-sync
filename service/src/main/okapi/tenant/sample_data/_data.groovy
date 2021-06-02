@@ -14,7 +14,4 @@ import mod_remote_sync.*
 
 log.info 'Importing sample data'
 
-Authority laser = Authority.findByName('laser') ?: new Authority(name:'laser').save(flush:true, failOnError:true);
-OAISource licenses = OAISource.findByName('laser:licenses') ?: new OAISource(name:'laser:licenses',auth:laser,baseUrl:'http://some.url/other').save(flush:true, failOnError:true)
-
 println("\n\n***Completed tenant setup***");
