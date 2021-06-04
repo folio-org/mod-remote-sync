@@ -6,66 +6,35 @@ databaseChangeLog = {
   changeSet(author: "ianibbo (generated)", id: "i202105051311-001") {
 
     createTable(tableName: "mrs_authority") {
-      column(name: "aut_id", type: "VARCHAR(36)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "aut_version", type: "BIGINT") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "aut_date_created", type: "TIMESTAMP") {
-        constraints(nullable: "true")
-      }
-
-      column(name: "aut_date_updated", type: "TIMESTAMP") {
-        constraints(nullable: "true")
-      }
-
-      column(name: "aut_name", type: "VARCHAR(128)") {
-        constraints(nullable: "false")
-      }
+      column(name: "aut_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "aut_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "aut_date_created", type: "TIMESTAMP") { constraints(nullable: "true") }
+      column(name: "aut_date_updated", type: "TIMESTAMP") { constraints(nullable: "true") }
+      column(name: "aut_name", type: "VARCHAR(128)") { constraints(nullable: "false") }
     }
 
     addPrimaryKey(columnNames: "aut_id", constraintName: "mrs_authorityPK", tableName: "mrs_authority")
 
     createTable(tableName: "mrs_source") {
-      column(name: "src_id", type: "VARCHAR(36)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "src_version", type: "BIGINT") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "src_date_created", type: "TIMESTAMP") {
-        constraints(nullable: "true")
-      }
-
-      column(name: "src_date_updated", type: "TIMESTAMP") {
-        constraints(nullable: "true")
-      }
-
-      column(name: "src_authority_fk", type: "VARCHAR(36)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "src_name", type: "VARCHAR(128)") {
-        constraints(nullable: "false")
-      }
+      column(name: "src_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "src_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "src_date_created", type: "TIMESTAMP") { constraints(nullable: "true") }
+      column(name: "src_date_updated", type: "TIMESTAMP") { constraints(nullable: "true") }
+      column(name: "src_authority_fk", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "src_name", type: "VARCHAR(128)") { constraints(nullable: "false") }
+      column(name: 'src_enabled', type: "BOOLEAN");
+      column(name: 'src_status',  type: "VARCHAR(32)");
+      column(name: 'src_state_info', type: "TEXT");
+      column(name: "src_emits", type: "VARCHAR(128)")
+      column(name: 'src_next_due', type: "BIGINT");
+      column(name: 'src_interval', type: "BIGINT");
     }
 
     addPrimaryKey(columnNames: "src_id", constraintName: "mrs_sourcePK", tableName: "mrs_source")
 
     createTable(tableName: "mrs_oai_source") {
-
-      column(name: "mos_id", type: "VARCHAR(36)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "mos_base_url", type: "VARCHAR(256)") {
-        constraints(nullable: "false")
-      }
+      column(name: "mos_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "mos_base_url", type: "VARCHAR(256)") { constraints(nullable: "false") }
     }
 
     addPrimaryKey(columnNames: "mos_id", constraintName: "mrs_oai_sourcePK", tableName: "mrs_oai_source")
@@ -85,20 +54,10 @@ databaseChangeLog = {
     addPrimaryKey(columnNames: "mbs_id", constraintName: "mrs_bespoke_srcPK", tableName: "mrs_bespoke_src")
 
     createTable(tableName: "refdata_category") {
-      column(name: "rdc_id", type: "VARCHAR(36)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "rdc_version", type: "BIGINT") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "rdc_description", type: "VARCHAR(255)") {
-        constraints(nullable: "false")
-      }
-
+      column(name: "rdc_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "rdc_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "rdc_description", type: "VARCHAR(255)") { constraints(nullable: "false") }
       column(name: "internal", type: "boolean")
-
     }
 
     addPrimaryKey(columnNames: "rdc_id", constraintName: "refdata_categoryPK", tableName: "refdata_category")
@@ -106,25 +65,11 @@ databaseChangeLog = {
 
 
     createTable(tableName: "refdata_value") {
-      column(name: "rdv_id", type: "VARCHAR(36)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "rdv_version", type: "BIGINT") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "rdv_value", type: "VARCHAR(255)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "rdv_owner", type: "VARCHAR(36)") {
-        constraints(nullable: "false")
-      }
-
-      column(name: "rdv_label", type: "VARCHAR(255)") {
-        constraints(nullable: "false")
-      }
+      column(name: "rdv_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "rdv_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "rdv_value", type: "VARCHAR(255)") { constraints(nullable: "false") }
+      column(name: "rdv_owner", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "rdv_label", type: "VARCHAR(255)") { constraints(nullable: "false") }
     }
 
 
@@ -143,10 +88,7 @@ databaseChangeLog = {
     }
 
     addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")
-  }
 
-
-  changeSet(author: "ianibbo (generated)", id: "i202105181032-001") {
     createTable(tableName: "mrs_trans_process") {
       column(name: "mtp_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtp_version",         type: "BIGINT")        { constraints(nullable: "false") }
@@ -170,22 +112,7 @@ databaseChangeLog = {
       column(name: "mtr_source_record_id",        type: "VARCHAR(255)")  { constraints(nullable: "false") }
       column(name: "mtr_input_data",              type: "TEXT")          { constraints(nullable: "false") }
     }
-  }
 
-  changeSet(author: "ianibbo (generated)", id: "i202105191009-001") {
-    addColumn(tableName: "mrs_source") {
-      column(name: "src_emits", type: "VARCHAR(128)")
-    }
-  }
-
-  changeSet(author: "ianibbo (generated)", id: "i202105191753-001") {
-    addColumn(tableName: "mrs_source") {
-      column(name:'src_next_due', type: "BIGINT");
-      column(name:'src_interval', type: "BIGINT");
-    }
-  }
-
-  changeSet(author: "ianibbo (generated)", id: "i202105201300-002") {
     createTable(tableName: "mrs_source_resource_2") {
       column(name: "sr_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "sr_version",         type: "BIGINT")        { constraints(nullable: "false") }
@@ -198,9 +125,13 @@ databaseChangeLog = {
       column(name: "sr_rectype",         type: "VARCHAR(128)")  { constraints(nullable: "false") }
       column(name: "sr_owner_source_fk", type: "VARCHAR(36)")   { constraints(nullable: "false") }
     }
-  }
 
-  changeSet(author: "ianibbo (manual)", id: "i202105201347-001") {
+    createIndex(indexName: "source_resource_owner", tableName: "mrs_source_resource_2") {
+      column(name: "sr_owner_source_fk")
+      column(name: "sr_rectype")
+      column(name: "sr_date_updated")
+    }
+
     createTable(tableName: "app_setting") {
       column(name: "st_id", type: "VARCHAR(36)") {
         constraints(nullable: "false")
@@ -215,19 +146,7 @@ databaseChangeLog = {
       column(name: 'st_default_value', type: "VARCHAR(255)")
       column(name: 'st_value', type: "VARCHAR(255)")
     }
-  }
 
-  changeSet(author: "ianibbo (manual)", id: "i202105201516-001") {
-    addColumn(tableName: "mrs_source") {
-      column(name:'src_enabled', type: "BOOLEAN");
-      column(name:'src_status',  type: "VARCHAR(32)");
-    }
-  }
-
-  changeSet(author: "ianibbo (manual)", id: "i202105211706-001") {
-    addColumn(tableName: "mrs_source") {
-      column(name:'src_state_info', type: "TEXT");
-    }
   }
 
 }
