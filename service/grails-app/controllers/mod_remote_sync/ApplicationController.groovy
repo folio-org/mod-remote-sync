@@ -39,7 +39,7 @@ where sr.auth = :auth and sr.recType=:recType
         source_row.nextDueTS = src.nextDue
         source_row.emits = src.emits
         source_row.status = src.status
-        source_row.reccount = SourceRecord.executeQuery(RESOURCE_COUNT_QRY,[auth:src.auth, recType:src.emits])[0]
+        source_row.recordCount = src.recordCount
         // Now iterate extractors attached to this source
 
         source_row.extractors = []

@@ -196,6 +196,7 @@ databaseChangeLog = {
       column(name: "sr_checksum",        type: "VARCHAR(32)")   { constraints(nullable: "false") }
       column(name: "sr_record",          type: "BYTEA")         { constraints(nullable: "false") }
       column(name: "sr_rectype",         type: "VARCHAR(128)")  { constraints(nullable: "false") }
+      column(name: "sr_owner_source_fk", type: "VARCHAR(36)")   { constraints(nullable: "false") }
     }
   }
 

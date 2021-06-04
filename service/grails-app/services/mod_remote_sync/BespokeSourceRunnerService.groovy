@@ -70,7 +70,7 @@ class BespokeSourceRunnerService implements RecordSourceController {
 
 
   public void updateState(String source_id, Map state) {
-    log.debug("BespokeSourceRunnerService::updateState");
+    log.debug("BespokeSourceRunnerService::updateState(${source_id},${state})");
   }
 
   public void upsertSourceRecord(String source_id,
@@ -89,7 +89,8 @@ class BespokeSourceRunnerService implements RecordSourceController {
                                          lastUpdated: new Date(),
                                          recType: resource_type,
                                          record: record,
-                                         checksum: hash)
+                                         checksum: hash,
+                                         owner:Source.get(source_id))
       log.debug("Saving new source record: ${resource_id}");
       existing_record.save(flush:true, failOnError:true);
       log.debug("Made new source record: ${existing_record}");
