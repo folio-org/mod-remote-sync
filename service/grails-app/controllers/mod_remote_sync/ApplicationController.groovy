@@ -51,7 +51,7 @@ where sr.auth = :auth and sr.recType=:recType
             id:extract.id,
             name:extract.name,
             status:extract.streamStatus,
-            target:extract.streamId
+            target:extract.streamId?.id
           ]
 
           source_row.extractors.add(extractor)
