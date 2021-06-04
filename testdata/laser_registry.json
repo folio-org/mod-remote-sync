@@ -6,6 +6,7 @@
     "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/LaserLicensesAgent.groovy",
     "language":"groovy",
     "packaging":"script",
+    "sourceMD5":"f025ab3d0156e77a432fec7efe6bdec3",
     "sourceSignedBy":null,
     "sourceSignature":null,
     "parameters":{
@@ -24,6 +25,7 @@
     "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/LaserSubscriptionsAgent.groovy",
     "language":"groovy",
     "packaging":"script",
+    "sourceMD5":"fc6005bbd4ca203ed6bb5885b7d75afe",
     "sourceSignedBy":null,
     "sourceSignature":null,
     "parameters":{
@@ -41,6 +43,7 @@
     "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/ProcessLaserSubscription.groovy",
     "language":"groovy",
     "packaging":"script",
+    "sourceMD5":"77437c44621743b152f8026848b00a98",
     "sourceSignedBy":null,
     "sourceSignature":null,
     "accepts":"LASER::SUBSCRIPTION"
@@ -51,6 +54,7 @@
     "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/ProcessLaserLicense.groovy",
     "language":"groovy",
     "packaging":"script",
+    "sourceMD5":"a009143d18dbe8ca41d769afefdbedc8",
     "sourceSignedBy":null,
     "sourceSignature":null,
     "accepts":"LASER::LICENSE"

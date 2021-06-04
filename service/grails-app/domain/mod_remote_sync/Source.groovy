@@ -54,6 +54,9 @@ public abstract class Source implements MultiTenant<Source> {
     stateInfo              column : 'src_state_info'
   }
 
+  static transients = [ 'activity', 'handlerServiceName', 'recordCount' ]
+
   public abstract RemoteSyncActivity getActivity();
   public abstract String getHandlerServiceName();
+  public abstract Long getRecordCount();
 }

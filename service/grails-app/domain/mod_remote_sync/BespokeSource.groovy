@@ -26,7 +26,7 @@ public class BespokeSource extends Source implements MultiTenant<BespokeSource> 
   String signedBy
   String signature
 
-  static transients = [ 'activity', 'handlerServiceName' ]
+  static transients = [ 'activity', 'handlerServiceName', 'recordCount' ]
 
   static constraints = {
           script (nullable : true)
@@ -58,4 +58,8 @@ public class BespokeSource extends Source implements MultiTenant<BespokeSource> 
     return 'bespokeSourceRunnerService'
   }
 
+  public Long getRecordCount() {
+    Long result = SourceRecord.executeQuery('select count(sr.id) from SourceRecord as sr where sr.owner=:o',[o:this])[0]
+    return result;
+  }
 }
