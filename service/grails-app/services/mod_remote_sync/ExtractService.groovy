@@ -16,7 +16,7 @@ import mod_remote_sync.source.TransformProcess
 @Transactional
 class ExtractService {
 
-  private static String PENDING_JOBS='''
+  private static String PENDING_SOURCE_JOBS='''
 select s.id
 from Source as s
 where s.nextDue is null OR s.nextDue < :systime
@@ -24,11 +24,25 @@ and s.enabled = :enabled or s.enabled is null
 and s.status = :idle or s.status is null
 '''
 
+  private static String PENDING_EXTRACT_JOBS='''
+select rs.id
+from ResourceStream as rs
+where rs.nextDue is null OR rs.nextDue < :systime
+and rs.enabled = :enabled or rs.enabled is null
+and rs.streamStatus = :idle or rs.streamStatus is null
+'''
+
+
   def grailsApplication
 
   def start() {
-    log.debug("ExtractService::start()");
-    Source.executeQuery(PENDING_JOBS,
+    runSourceTasks()
+    runExtractTasks()
+  }
+
+  def runSourceTasks() {
+    log.debug("ExtractService::runSourceTasks()");
+    Source.executeQuery(PENDING_SOURCE_JOBS,
                         [ 'systime': System.currentTimeMillis(), 'enabled': true, 'idle':'IDLE'],
                         [readOnly:true, lock:false]).each { source_id ->
 
@@ -69,5 +83,55 @@ and s.status = :idle or s.status is null
 
       }
     }
+  }
+
+  /**
+   * Essentially review all the sources, and move any new records to corresponding transform task queues
+   */
+  def runExtractTasks() {
+    log.debug("ExtractService::runExtractTasks()");
+    Source.executeQuery(PENDING_EXTRACT_JOBS,
+                        [ 'systime': System.currentTimeMillis(), 'enabled': true, 'idle':'IDLE'],
+                        [readOnly:true, lock:false]).each { ext_id ->
+
+      boolean continue_processing = false;
+
+      log.debug("Consider extract job ${ext_id}");
+
+      // In an isolated transaction, see if we can lock the source and set it's status to in-process
+      ResourceStream.withNewTransaction {
+        ResourceStream rs = ResourceStream.get(ext_id)
+        rs.lock()
+        if ( rs.status == 'IDLE' ) {
+          log.debug("Selected resource stream ${rs}, lock and mark in-process")
+          rs.status = 'IN-PROCESS'
+          continue_processing = true;
+          rs.save(flush:true, failOnError:true);
+        }
+      }
+
+      if ( continue_processing ) {
+        ResourceStream.withNewTransaction {
+          try{
+            ResourceStream rs = ResourceStream.get(ext_id)
+            log.debug("Process source ${rs}");
+
+            // use rs.cursor to get any new resources
+
+            rs.status = 'IDLE';
+            rs.cursor = ''; // updated value
+            rs.nextDue = System.currentTimeMillis() + rs.interval
+            log.debug("Completed processing on resourceStream ${rs} return status to IDLE and set next due to ${rs.nextDue}");
+            rs.save(flush:true, failOnError:true)
+          }
+          catch ( Exception e ) {
+            log.error("Problem processing source",e);
+          }
+        }
+
+      }
+
+    }
+
   }
 }

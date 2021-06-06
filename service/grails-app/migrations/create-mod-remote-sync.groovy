@@ -85,6 +85,8 @@ databaseChangeLog = {
       column(name: 'rs_cusrsor',        type: 'TEXT')              { constraints(nullable: "true") }
       column(name: 'rs_stream_id',      type: 'VARCHAR(128)')      { constraints(nullable: "true") }
       column(name: 'rs_stream_status',  type: 'VARCHAR(128)')      { constraints(nullable: "true") }
+      column(name: 'rs_next_due',       type: "BIGINT");
+      column(name: 'rs_interval',       type: "BIGINT");
     }
 
     addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")

@@ -17,6 +17,8 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
   String cursor
   TransformationProcess streamId
   String streamStatus  // IDLE | ACTIVE | PAUSED
+  Long interval
+  Long nextDue
 
   // Date dateStarted
   // String startedOnPod
@@ -27,6 +29,8 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
           cursor (nullable : true)
         streamId (nullable : true)
     streamStatus (nullable : true)
+        interval (nullable : true)
+         nextDue (nullable : true)
   }
 
   static mapping = {
@@ -40,6 +44,9 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
     cursor                 column : 'rs_cusrsor', type: 'text'
     streamId               column : 'rs_stream_id'
     streamStatus           column : 'rs_stream_status'
+    nextDue                column : 'rs_next_due'
+    interval               column : 'rs_interval'
+
   }
 
   public String toString() {
