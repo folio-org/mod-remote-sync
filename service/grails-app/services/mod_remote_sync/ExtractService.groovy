@@ -28,9 +28,17 @@ and s.status = :idle or s.status is null
 select rs.id
 from ResourceStream as rs
 where rs.nextDue is null OR rs.nextDue < :systime
-and rs.enabled = :enabled or rs.enabled is null
 and rs.streamStatus = :idle or rs.streamStatus is null
 '''
+
+  private static String SOURCE_RECORD_QUERY='''
+select sr
+from SourceRecord as sr
+where sr.owner = :owner
+and sr.seqts > :cursor
+'''
+
+  private static Long DEFAULT_INTERVAL = 1000 * 60 * 60 * 24;
 
 
   def grailsApplication
@@ -91,7 +99,7 @@ and rs.streamStatus = :idle or rs.streamStatus is null
   def runExtractTasks() {
     log.debug("ExtractService::runExtractTasks()");
     Source.executeQuery(PENDING_EXTRACT_JOBS,
-                        [ 'systime': System.currentTimeMillis(), 'enabled': true, 'idle':'IDLE'],
+                        [ 'systime': System.currentTimeMillis(), 'idle':'IDLE'],
                         [readOnly:true, lock:false]).each { ext_id ->
 
       boolean continue_processing = false;
@@ -102,9 +110,9 @@ and rs.streamStatus = :idle or rs.streamStatus is null
       ResourceStream.withNewTransaction {
         ResourceStream rs = ResourceStream.get(ext_id)
         rs.lock()
-        if ( rs.status == 'IDLE' ) {
+        if ( rs.streamStatus == 'IDLE' ) {
           log.debug("Selected resource stream ${rs}, lock and mark in-process")
-          rs.status = 'IN-PROCESS'
+          rs.streamStatus = 'IN-PROCESS'
           continue_processing = true;
           rs.save(flush:true, failOnError:true);
         }
@@ -116,12 +124,30 @@ and rs.streamStatus = :idle or rs.streamStatus is null
             ResourceStream rs = ResourceStream.get(ext_id)
             log.debug("Process source ${rs}");
 
-            // use rs.cursor to get any new resources
+            Map parsed_cursor = JSON.parse(rs.cursor)
 
-            rs.status = 'IDLE';
-            rs.cursor = ''; // updated value
-            rs.nextDue = System.currentTimeMillis() + rs.interval
-            log.debug("Completed processing on resourceStream ${rs} return status to IDLE and set next due to ${rs.nextDue}");
+            // use rs.cursor to get any new resources
+            // Create or update TransformationProcessRecord for that record in the target context
+            long cursor_value = parsed_cursor.maxts ?: 0
+            long highest_seqts = cursor_value;
+
+            Long num_source_records = SourceRecord.executeQuery('select count(sr.id) from SourceRecord as sr where sr.owner = :owner',[owner: rs.source])[0]
+
+            log.debug("  -> Resource stream current has ${num_source_records} records");
+
+            SourceRecord.executeQuery(SOURCE_RECORD_QUERY,[owner:rs.source,cursor:cursor_value]).each { sr ->
+
+              log.debug("    -> Process record ${sr}");
+
+              if ( sr.seqts > highest_seqts ) {
+                highest_seqts = sr.seqts
+              }
+            }
+
+            rs.streamStatus = 'IDLE';
+            rs.cursor = "{ \"maxts\":\"${highest_seqts}\" } ".toString()
+            rs.nextDue = new Long ( System.currentTimeMillis() + ( rs.interval?:DEFAULT_INTERVAL ) )
+            log.debug("  -> Completed processing on resourceStream ${rs} return status to IDLE and set next due to ${rs.nextDue} cursor is ${rs.cursor}");
             rs.save(flush:true, failOnError:true)
           }
           catch ( Exception e ) {

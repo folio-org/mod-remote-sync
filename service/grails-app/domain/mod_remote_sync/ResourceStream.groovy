@@ -50,6 +50,6 @@ public class ResourceStream implements MultiTenant<ResourceStream> {
   }
 
   public String toString() {
-    return "${id}/${name}/${source?.name}/${streamId?.name}/${streamStatus}"
+    return "${id}/${name}/source:${source?.name}/process:${streamId?.name}/streamStatus:${streamStatus}/cursor:${cursor}/nextDue:${nextDue}"
   }
 }

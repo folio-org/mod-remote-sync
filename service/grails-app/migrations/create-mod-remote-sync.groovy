@@ -126,6 +126,7 @@ databaseChangeLog = {
       column(name: "sr_record",          type: "BYTEA")         { constraints(nullable: "false") }
       column(name: "sr_rectype",         type: "VARCHAR(128)")  { constraints(nullable: "false") }
       column(name: "sr_owner_source_fk", type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "sr_seqts",           type: "BIGINT")        { constraints(nullable: "false") }
     }
 
     createIndex(indexName: "source_resource_owner", tableName: "mrs_source_resource_2") {
