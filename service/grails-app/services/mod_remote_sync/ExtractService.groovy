@@ -38,6 +38,13 @@ where sr.owner = :owner
 and sr.seqts > :cursor
 '''
 
+  private static String FIND_TPR_QUERY='''
+select tpr 
+from TransformationProcessRecord as tpr
+where tpr.owner = :owner
+and tpr.sourceRecordId = :srid
+'''
+
   private static Long DEFAULT_INTERVAL = 1000 * 60 * 60 * 24;
 
 
@@ -137,7 +144,35 @@ and sr.seqts > :cursor
 
             SourceRecord.executeQuery(SOURCE_RECORD_QUERY,[owner:rs.source,cursor:cursor_value]).each { sr ->
 
-              log.debug("    -> Process record ${sr}");
+              log.debug("    -> Process record ${sr} (owner: ${rs.streamId})");
+              List<TransformationProcessRecord> tprqr = TransformationProcessRecord.executeQuery(FIND_TPR_QUERY,[owner:rs.streamId, srid:sr.resourceUri])
+
+              if ( tprqr.size() == 0 ) {
+                log.debug("Create new tpr");
+                TransformationProcessRecord tpr = new TransformationProcessRecord( 
+                                                       owner: rs.streamId,
+                                                       transformationStatus:'PENDING',
+                                                       processControlStatus:'OPEN',
+                                                       sourceRecordId:sr.resourceUri,
+                                                       inputData:new String(sr.record) )
+                if ( tpr.owner != null ) {
+                  log.debug("Saving new tpr, owner is ${tpr.owner}");
+                  tpr.save(flush:true, failOnError:true);
+                }
+                else {
+                  log.error("Cant save TransformationProcessRecord without owning transformation process");
+                }
+              }
+              else {
+                TransformationProcessRecord tpr = tprqr[0]
+                // ToDo this section should lock the tpr before updating it
+                log.debug("Updating existing tpr: ${tpr}");
+
+                tpr.inputData = new String(sr.record)
+		tpr.transformationStatus='PENDING'
+                tpr.processControlStatus='OPEN'
+                tpr.save(flush:true, failOnError:true);
+              }
 
               if ( sr.seqts > highest_seqts ) {
                 highest_seqts = sr.seqts

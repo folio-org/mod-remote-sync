@@ -110,6 +110,7 @@ databaseChangeLog = {
       column(name: "mtr_id",                      type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_version",                 type: "BIGINT")        { constraints(nullable: "false") }
       column(name: "mtr_transform_status",        type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtr_owner_fk",                type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_process_control_status",  type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_source_record_id",        type: "VARCHAR(255)")  { constraints(nullable: "false") }
       column(name: "mtr_input_data",              type: "TEXT")          { constraints(nullable: "false") }
