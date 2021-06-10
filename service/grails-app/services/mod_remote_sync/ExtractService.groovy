@@ -12,6 +12,7 @@ import java.security.MessageDigest
 import com.k_int.web.toolkit.refdata.RefdataValue
 import mod_remote_sync.source.RemoteSyncActivity
 import mod_remote_sync.source.TransformProcess
+import mod_remote_sync.TransformationProcessRecord
 
 @Transactional
 class ExtractService {
@@ -45,6 +46,12 @@ where tpr.owner = :owner
 and tpr.sourceRecordId = :srid
 '''
 
+  private static String PENDING_RECORD_TRANSFORMS='''
+select tpr.id
+from TransformationProcessRecord as tpr
+where tpr.transformationStatus=:pending
+'''
+
   private static Long DEFAULT_INTERVAL = 1000 * 60 * 60 * 24;
 
 
@@ -53,6 +60,7 @@ and tpr.sourceRecordId = :srid
   def start() {
     runSourceTasks()
     runExtractTasks()
+    runTransformationTasks()
   }
 
   def runSourceTasks() {
@@ -191,8 +199,15 @@ and tpr.sourceRecordId = :srid
         }
 
       }
-
     }
+  }
 
+
+  def runTransformationTasks() {
+    TransformationProcessRecord.withNewTransaction {
+      TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING'],[readonly:true]).each { tr ->
+        log.debug("Attempt transformation ${tr}");
+      }
+    }
   }
 }
