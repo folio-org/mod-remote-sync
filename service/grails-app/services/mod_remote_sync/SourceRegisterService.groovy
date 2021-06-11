@@ -75,7 +75,7 @@ class SourceRegisterService {
                                 settingType: 'String').save(flush:true, failOnError:true);
             break;
           default:
-            log.warn("Unhandled setting type: ${st.type}");
+            log.warn("Unhandled setting type: ${defn.type}");
             break;
         }
       }
