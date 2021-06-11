@@ -211,6 +211,9 @@
     "dockerArgs": {
       "HostConfig": { "PortBindings": { "8079/tcp":  [{ "HostPort": "%p" }] } }
     },
+    "env": [
+      { "name": "JAVA_OPTIONS", "value": "-server -XX:+UseContainerSupport -XX:MaxRAMPercentage=55.0 -XX:+PrintFlagsFinal" }
+    ],
     "dockerPull" : false
   }
 }

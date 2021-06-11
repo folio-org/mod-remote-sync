@@ -85,6 +85,8 @@ databaseChangeLog = {
       column(name: 'rs_cusrsor',        type: 'TEXT')              { constraints(nullable: "true") }
       column(name: 'rs_stream_id',      type: 'VARCHAR(128)')      { constraints(nullable: "true") }
       column(name: 'rs_stream_status',  type: 'VARCHAR(128)')      { constraints(nullable: "true") }
+      column(name: 'rs_next_due',       type: "BIGINT");
+      column(name: 'rs_interval',       type: "BIGINT");
     }
 
     addPrimaryKey(columnNames: "rs_id", constraintName: "mrs_resource_streamPK", tableName: "mrs_resource_stream")
@@ -108,6 +110,7 @@ databaseChangeLog = {
       column(name: "mtr_id",                      type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_version",                 type: "BIGINT")        { constraints(nullable: "false") }
       column(name: "mtr_transform_status",        type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "mtr_owner_fk",                type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_process_control_status",  type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_source_record_id",        type: "VARCHAR(255)")  { constraints(nullable: "false") }
       column(name: "mtr_input_data",              type: "TEXT")          { constraints(nullable: "false") }
@@ -124,6 +127,7 @@ databaseChangeLog = {
       column(name: "sr_record",          type: "BYTEA")         { constraints(nullable: "false") }
       column(name: "sr_rectype",         type: "VARCHAR(128)")  { constraints(nullable: "false") }
       column(name: "sr_owner_source_fk", type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "sr_seqts",           type: "BIGINT")        { constraints(nullable: "false") }
     }
 
     createIndex(indexName: "source_resource_owner", tableName: "mrs_source_resource_2") {

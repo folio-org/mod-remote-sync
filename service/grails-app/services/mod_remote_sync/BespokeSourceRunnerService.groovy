@@ -90,6 +90,7 @@ class BespokeSourceRunnerService implements RecordSourceController {
                                          recType: resource_type,
                                          record: record,
                                          checksum: hash,
+                                         seqts: System.currentTimeMillis(),
                                          owner:Source.get(source_id))
       log.debug("Saving new source record: ${resource_id}");
       existing_record.save(flush:true, failOnError:true);
@@ -99,6 +100,7 @@ class BespokeSourceRunnerService implements RecordSourceController {
       if ( existing_record.checksum != hash ) {
         existing_record.record = record;
         existing_record.checksum = hash;
+        existing_record.seqts = System.currentTimeMillis();
         existing_record.save(flush:true, failOnError:true);
       }
     }

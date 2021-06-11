@@ -182,6 +182,16 @@ class BespokeSourceSpec extends HttpSpec {
       resp != null
   }
 
+  void "Test Status Report After Task"() {
+    when:'we request a status report after the sync task has run'
+      def resp = doGet('/remote-sync/statusReport')
+
+    then:'status report contains two sources'
+      log.info("Status report: ${resp}")
+      assert resp instanceof List
+      assert resp.size() == 2
+  }
+
 
 }
 
