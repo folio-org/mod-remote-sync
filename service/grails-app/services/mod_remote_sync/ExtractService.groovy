@@ -56,6 +56,7 @@ where tpr.transformationStatus=:pending
 
 
   def grailsApplication
+  def transformationRunnerService
 
   public Map start() {
     runSourceTasks()
@@ -206,10 +207,11 @@ where tpr.transformationStatus=:pending
 
 
   def runTransformationTasks() {
-    TransformationProcessRecord.withNewTransaction {
-      TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING'],[readonly:true]).each { tr ->
-        log.debug("Attempt transformation ${tr}");
-      }
+    log.debug("ExtractService::runTransformationTasks()");
+    TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING'],[readonly:true]).each { tr ->
+      log.debug("attemptProcess(${tr})");
+      transformationRunnerService.attemptProcess(tr);
     }
+    log.debug("All done");
   }
 }
