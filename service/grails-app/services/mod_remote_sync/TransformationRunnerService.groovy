@@ -57,12 +57,13 @@ class TransformationRunnerService {
     TransformationProcess tp = tpr.getOwner()
     TransformProcess transform_process = (TransformProcess) this.getScriptFor(tp);
 
-    Map input_record = [:]
-    Map result = [:]
-    // Map result = transform_process.preflight(input_record, 
-    //                                          grailsApplication.mainContext, 
-    //                                          [:])
+    ApplicationContext ac = grailsApplication.mainContext
 
+    Map input_record = [:]
+    Map local_context = [:]
+    Map result = transform_process.preflightCheck(input_record, ac, local_context)
+
+    log.debug("Result: ${result}");
     return result;
   }
 
