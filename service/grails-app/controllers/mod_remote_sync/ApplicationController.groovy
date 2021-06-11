@@ -15,6 +15,13 @@ from SourceRecord as sr
 where sr.auth = :auth and sr.recType=:recType
 '''
 
+  private static String TPR_SUMMARY_QUERY='''
+select tpr.transformationStatus, count(*)
+from TransformationProcessRecord as tpr
+where tpr.owner = :tp
+group by tpr.transformationStatus
+'''
+
   def index() {
     println("ApplicationController::index()");
     [grailsApplication: grailsApplication, pluginManager: pluginManager]
@@ -58,17 +65,16 @@ where sr.auth = :auth and sr.recType=:recType
 
           // extract.streamId is really transformation process
           if ( extract.streamId != null ) {
-            source_row.processes.add( [ 
+            source_row.processes.add( [
               id: extract.streamId.id,
               name: extract.streamId.name,
               accepts: extract.streamId.accepts,
               language: extract.streamId.language?.value,
               packaging: extract.streamId.packaging?.value,
-              sourceLoc: extract.streamId.sourceLocation
+              sourceLoc: extract.streamId.sourceLocation,
+              recordCounts:TransformationProcessRecord.executeQuery(TPR_SUMMARY_QUERY,[tp:extract.streamId],[readOnly:true])
             ] )
           }
-
-          // TransformationProcess.findAllBy
         }
         
 

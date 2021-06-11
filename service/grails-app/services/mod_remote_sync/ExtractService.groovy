@@ -57,10 +57,12 @@ where tpr.transformationStatus=:pending
 
   def grailsApplication
 
-  def start() {
+  public Map start() {
     runSourceTasks()
     runExtractTasks()
     runTransformationTasks()
+
+    return [ status:'OK' ]
   }
 
   def runSourceTasks() {
