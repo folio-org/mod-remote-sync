@@ -151,6 +151,18 @@ databaseChangeLog = {
       column(name: 'st_value', type: "VARCHAR(255)")
     }
 
+    createTable(tableName: "mrs_resource_mapping") {
+      column(name: "rm_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "rm_version",         type: "BIGINT")        { constraints(nullable: "false") }
+      column(name: "rm_date_created",    type: "TIMESTAMP")     { constraints(nullable: "false") }
+      column(name: "rm_date_updated",    type: "TIMESTAMP")     { constraints(nullable: "true") }
+      column(name: 'rm_source_fk',       type: "VARCHAR(255)")  
+      column(name: 'rm_source_id',       type: "VARCHAR(255)")
+      column(name: 'rm_mapping_context', type: "VARCHAR(255)")
+      column(name: 'rm_folio_context',   type: "VARCHAR(255)")
+      column(name: 'rm_folio_id',        type: "VARCHAR(255)")
+    }
+
   }
 
 }
