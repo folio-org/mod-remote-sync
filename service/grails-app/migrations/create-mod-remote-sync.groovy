@@ -156,7 +156,7 @@ databaseChangeLog = {
       column(name: "rm_version",         type: "BIGINT")        { constraints(nullable: "false") }
       column(name: "rm_date_created",    type: "TIMESTAMP")     { constraints(nullable: "false") }
       column(name: "rm_date_updated",    type: "TIMESTAMP")     { constraints(nullable: "true") }
-      column(name: 'rm_source_fk',       type: "VARCHAR(255)")  
+      column(name: 'rm_source',          type: "VARCHAR(255)")  
       column(name: 'rm_source_id',       type: "VARCHAR(255)")
       column(name: 'rm_mapping_context', type: "VARCHAR(255)")
       column(name: 'rm_folio_context',   type: "VARCHAR(255)")

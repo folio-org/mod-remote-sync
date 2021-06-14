@@ -10,4 +10,10 @@ import com.k_int.okapi.OkapiTenantResolver
 @Transactional
 class ResourceMappingService {
 
+  public Map lookupMapping(String source
+                           String source_id,
+                           String mapping_context) {
+    return [:]
+  }
+
 }

@@ -8,7 +8,7 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
 
   String id
 
-  Source source
+  String source
   String sourceId
 
   String mappingContext
@@ -32,7 +32,7 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
     version                column : 'rm_version'
     dateCreated            column : 'rm_date_created'
     lastUpdated            column : 'rm_date_updated'
-    source                 column : 'rm_source_fk'
+    source                 column : 'rm_source'
     sourceId               column : 'rm_source_id'
     mappingContext         column : 'rm_mapping_context'
     folioContext           column : 'rm_folio_context'
