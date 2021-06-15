@@ -65,7 +65,9 @@ class TransformationRunnerService {
 
     if ( result.preflightStatus == 'PASS' ) {
       log.debug("record passed preflight, progress to process");
-      transform_process.process(input_record, ac, local_context)
+      transform_process.process(input_record, 
+                                ac, 
+                                local_context)
     }
     else {
       log.debug("Record did not pass preflight. process any feedback");

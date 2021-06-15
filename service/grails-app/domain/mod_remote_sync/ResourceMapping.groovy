@@ -35,6 +35,7 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
     source                 column : 'rm_source'
     sourceId               column : 'rm_source_id'
     mappingContext         column : 'rm_mapping_context'
+    mappingStatus          column : 'rm_mapping_status'
     folioContext           column : 'rm_folio_context'
     folioId                column : 'rm_folio_id'
   }

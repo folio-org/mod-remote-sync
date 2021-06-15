@@ -61,6 +61,7 @@ databaseChangeLog = {
     }
 
     addPrimaryKey(columnNames: "rdc_id", constraintName: "refdata_categoryPK", tableName: "refdata_category")
+
     addNotNullConstraint (tableName: "refdata_category", columnName: "internal", defaultNullValue: false)
 
 
@@ -71,7 +72,6 @@ databaseChangeLog = {
       column(name: "rdv_owner", type: "VARCHAR(36)") { constraints(nullable: "false") }
       column(name: "rdv_label", type: "VARCHAR(255)") { constraints(nullable: "false") }
     }
-
 
     addPrimaryKey(columnNames: "rdv_id", constraintName: "refdata_valuePK", tableName: "refdata_value")
 
@@ -106,6 +106,8 @@ databaseChangeLog = {
       column(name: "mtp_accepts",         type: "VARCHAR(256)")  { constraints(nullable: "true") }
     }
 
+    addPrimaryKey(columnNames: "mtp_id", constraintName: "mrs_trans_process_PK", tableName: "mrs_trans_process")
+
     createTable(tableName: "mrs_tp_record") {
       column(name: "mtr_id",                      type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_version",                 type: "BIGINT")        { constraints(nullable: "false") }
@@ -113,8 +115,11 @@ databaseChangeLog = {
       column(name: "mtr_owner_fk",                type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_process_control_status",  type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "mtr_source_record_id",        type: "VARCHAR(255)")  { constraints(nullable: "false") }
-      column(name: "mtr_input_data",              type: "TEXT")          { constraints(nullable: "false") }
+      column(name: "mtr_input_data",              type: "BYTEA")         
+      column(name: "mtr_status_report",           type: "TEXT")
     }
+
+    addPrimaryKey(columnNames: "mtr_id", constraintName: "mrs_tp_record_PK", tableName: "mrs_tp_record")
 
     createTable(tableName: "mrs_source_resource_2") {
       column(name: "sr_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
@@ -129,6 +134,8 @@ databaseChangeLog = {
       column(name: "sr_owner_source_fk", type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "sr_seqts",           type: "BIGINT")        { constraints(nullable: "false") }
     }
+
+    addPrimaryKey(columnNames: "sr_id", constraintName: "mrs_source_resource_2_PK", tableName: "mrs_source_resource_2")
 
     createIndex(indexName: "source_resource_owner", tableName: "mrs_source_resource_2") {
       column(name: "sr_owner_source_fk")
@@ -151,6 +158,8 @@ databaseChangeLog = {
       column(name: 'st_value', type: "VARCHAR(255)")
     }
 
+    addPrimaryKey(columnNames: "st_id", constraintName: "app_setting_PK", tableName: "app_setting")
+
     createTable(tableName: "mrs_resource_mapping") {
       column(name: "rm_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "rm_version",         type: "BIGINT")        { constraints(nullable: "false") }
@@ -159,8 +168,17 @@ databaseChangeLog = {
       column(name: 'rm_source',          type: "VARCHAR(255)")  
       column(name: 'rm_source_id',       type: "VARCHAR(255)")
       column(name: 'rm_mapping_context', type: "VARCHAR(255)")
+      column(name: 'rm_mapping_status',  type: "VARCHAR(255)")
       column(name: 'rm_folio_context',   type: "VARCHAR(255)")
       column(name: 'rm_folio_id',        type: "VARCHAR(255)")
+    }
+
+    addPrimaryKey(columnNames: "rm_id", constraintName: "mrs_resource_mapping_PK", tableName: "mrs_resource_mapping")
+
+    createIndex(indexName: "rm_source_id_idx", tableName: "mrs_resource_mapping") {
+      column(name: "rm_source")
+      column(name: "rm_source_id")
+      column(name: "rm_mapping_context")
     }
 
   }
