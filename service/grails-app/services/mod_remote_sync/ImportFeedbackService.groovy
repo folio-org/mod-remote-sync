@@ -15,13 +15,13 @@ import com.k_int.okapi.OkapiTenantResolver
 @Transactional
 class ImportFeedbackService {
 
-  public void feedback(String code,
-                       String source_resource_type,
-                       String mapping_context,
-                       String source_resource_id,
-                       String label,
-                       String target_resource_type) {
-    log.debug("ImportFeedbackService::feedback(${code},${source_resource_id})");
+  public void sendFeedback(String code,
+                           String source_resource_type,
+                           String mapping_context,
+                           String source_resource_id,
+                           String label,
+                           String target_resource_type) {
+    log.debug("ImportFeedbackService::sendFeedback(${code},${source_resource_id})");
   }
 
 

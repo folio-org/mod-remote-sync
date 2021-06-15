@@ -7,6 +7,7 @@ import groovy.util.logging.Slf4j
 import mod_remote_sync.PolicyHelperService
 import mod_remote_sync.ResourceMappingService
 import mod_remote_sync.ResourceMapping
+import mod_remote_sync.ImportFeedbackService
 
 @Slf4j
 public class TestLicenseProcess implements TransformProcess {
@@ -28,6 +29,7 @@ public class TestLicenseProcess implements TransformProcess {
   
       ResourceMappingService rms = ctx.getBean('resourceMappingService');
       PolicyHelperService policyHelper = ctx.getBean('policyHelperService');
+      ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
   
       boolean pass = true;
   
@@ -46,12 +48,12 @@ public class TestLicenseProcess implements TransformProcess {
 
         // Register a question so the human operator knows we need a decision about this, log the result for the next time we
         // process.
-        ImportFeedbackService.feedback('MANUAL-RESOURCE-MAPPING',  // Feedback case / code
-                                       'TEST-LICENSE',             // What kind of input resource
-                                       'TEST',                     // mapping context
-                                       resource_id,                // ID of input resource
-                                       parsed_record?.licenseName, // Human readable label
-                                       'FOLIO:LICENSE')            // Target FOLIO resource type
+        feedbackHelper.sendFeedback('MANUAL-RESOURCE-MAPPING',  // Feedback case / code
+                                    'TEST-LICENSE',             // What kind of input resource
+                                    'TEST',                     // mapping context
+                                    resource_id,                // ID of input resource
+                                    parsed_record?.licenseName, // Human readable label
+                                    'FOLIO:LICENSE')            // Target FOLIO resource type
       }
   
       result = [
