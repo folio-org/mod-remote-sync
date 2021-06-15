@@ -15,7 +15,7 @@ select rm
 from ResourceMapping as rm
 where rm.source = :source
 and rm.sourceId = :id
-and rm.mappingContext = ctx
+and rm.mappingContext = :ctx
 '''
 
   public ResourceMapping lookupMapping(String source,
