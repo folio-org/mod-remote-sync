@@ -55,7 +55,8 @@ public class TestLicenseProcess implements TransformProcess {
                                     'TEST',                     // mapping context
                                     resource_id,                // ID of input resource
                                     parsed_record?.licenseName, // Human readable label
-                                    'FOLIO:LICENSE')            // Target FOLIO resource type
+                                    'FOLIO:LICENSE',             // Target FOLIO resource type
+                                    [prompt:"Please indicate if the License \"${parsed_record?.licenseName}\" with ID ${resource_id} in the TEST system should bei (a) mapped to an existing FOLIO License, (b) a new FOLIO license created to track it, or (c) the resorce should be ignored"]);
       }
   
       result = [
