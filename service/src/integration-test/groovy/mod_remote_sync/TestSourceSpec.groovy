@@ -156,12 +156,11 @@ class TestSourceSpec extends HttpSpec {
       assert resp.size() == 1
   }
 
-  /*
   void "Re Call worker timer task"() {
     when:'we call the worker task'
       def resp = doGet('/remote-sync/settings/worker')
       println("Sleeping....");
-      Thread.sleep(96000);
+      Thread.sleep(5000);
 
     then:'get the result'
       println("Result of calling /remote-sync/settings/worker: ${resp}");
@@ -175,9 +174,8 @@ class TestSourceSpec extends HttpSpec {
     then:'status report contains two sources'
       log.info("Status report: ${resp}")
       assert resp instanceof List
-      assert resp.size() == 2
+      assert resp.size() == 1
   }
-  */
 
 }
 
