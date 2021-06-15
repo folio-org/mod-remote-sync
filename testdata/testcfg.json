@@ -1,0 +1,33 @@
+[
+  { 
+    "recordType":"source",
+    "authority":"TEST",
+    "sourceName":"TestLicenses",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/TestLicenseSource.groovy",
+    "language":"groovy",
+    "packaging":"script",
+    "sourceMD5":"",
+    "sourceSignedBy":null,
+    "sourceSignature":null,
+    "parameters":{
+    },
+    "emits":"TEST::LICENSE"
+  },
+  {
+    "recordType":"process",
+    "processName":"TestLicenseImport",
+    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/TestLicenseProcess.groovy",
+    "language":"groovy",
+    "packaging":"script",
+    "sourceMD5":"",
+    "sourceSignedBy":null,
+    "sourceSignature":null,
+    "accepts":"TEST::LICENSE"
+  },
+  { 
+    "recordType":"extract",
+    "extractName":"TestLicenseExtract",
+    "source":"TestLicenses",
+    "process":"TestLicenseImport"
+  }
+]
