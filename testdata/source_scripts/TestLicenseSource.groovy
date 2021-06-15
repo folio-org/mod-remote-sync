@@ -31,7 +31,7 @@ public class TestLicenseSource implements RemoteSyncActivity {
 
        rsc.upsertSourceRecord(source_id,
                               'TEST',
-                              'TEST:LICENSE:'+license_info.globalUID,
+                              'TEST:LICENSE:'+testrec.id,
                               'TEST:LICENSE',
                               license_hash,
                               license_json_bytes);
