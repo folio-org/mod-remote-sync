@@ -37,7 +37,7 @@ public class TestLicenseProcess implements TransformProcess {
   
       // We never automatically create licenses - the user must always choose an existing license to map to,
       // tell us to create a new licenses or tell us to ignore this resource going forwards.
-      if ( policyHelper.manualResourceMapping('TEST-LICENSE', resource_id, 'TEST' 'FOLIO::LICENSE', local_context)  == false ) {
+      if ( policyHelper.manualResourceMapping('TEST-LICENSE', resource_id, 'TEST', 'FOLIO::LICENSE', local_context)  == false ) {
         pass = false;
         preflight_log.append([
                               code:'FAIL-MANUAL-RESOURCE-MAPPING',
