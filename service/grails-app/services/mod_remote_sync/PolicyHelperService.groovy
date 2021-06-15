@@ -10,25 +10,41 @@ import com.k_int.okapi.OkapiTenantResolver
 @Transactional
 class PolicyHelperService {
 
-
+  ResourceMappingService resourceMappingService
 
   /**
-   *  
-   *  If an agent wants resource creation to be fully under the control of a human observer then
-   *  this policy will check to see if a resource is already mapped, if a correspondence exists and
-   *  the resource already has a corresponding internal ID then the rule passes. 
+   *  POLICY: Resource creation inside folio is fully controlled by a human observer.
    *
-   *  if an existing correspondence indicates that the resource should NOT be mapped then the rule passes (And processing should not ingest the record)
+   *    If we have seen this resource before, no further action needed by this policy
    *
-   *  If no correspondence exists then we need to ask the user what we should do in this case. Generate feedback and prevent processing
-   *  
+   *    On seeing a new resource in an upstream system, an operator needs to tell the system if
+   *           a) A new resource should be created inside the target system
+   *           b) The new resource should be mapped to (And used to update) an existing resource in the system
+   *           c) The new resource should never be mapped
    *
    */
-  public boolean manualCheckOnCreateResource(Map context,
-                                             String resource_type,
-                                             String authority,
-                                             String resource_id) {
-    println("manualCheckShouldCreateResource(...)");
-    return true
+  public boolean manualResourceMapping(String source,
+                                       String resource_id,
+                                       String mapping_context,
+                                       String target_context,
+                                       Map local_context) {
+
+    log.debug("PolicyHelperService::manualResourceMapping(${source},${resource_id},${mapping_context},${target_context},${local_context})");
+
+    boolean result = false;
+
+    ResourceMapping rm = resourceMappingService.lookupMapping(source, resource_id, mapping_context)
+
+    if ( rm != null ) {
+      // The resource is known to us - continue
+      result = true;
+    }
+    else {
+      // Unknown - fail - here we should check the "ImportKB" to see if we have already been told what to do
+      // in this circumstance
+      result = false; 
+    }
+
+    return result;
   }
 }
