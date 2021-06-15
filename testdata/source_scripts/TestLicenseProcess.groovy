@@ -14,7 +14,7 @@ public class TestLicenseProcess implements TransformProcess {
                             Map local_context) {
     log.debug("ProcessTestLicense::preflightCheck()");
 
-    ResourceMappingService rms = ctx.getBean('mappingService');
+    ResourceMappingService rms = ctx.getBean('resourceMappingService');
 
     if ( rms ) {
       log.debug("Got mapping service");
