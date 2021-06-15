@@ -41,12 +41,12 @@ public class TestLicenseProcess implements TransformProcess {
       // tell us to create a new licenses or tell us to ignore this resource going forwards.
       if ( policyHelper.manualResourceMapping('TEST-LICENSE', resource_id, 'TEST', 'FOLIO::LICENSE', local_context)  == false ) {
         pass = false;
-        preflight_log.append([
-                              code:'FAIL-MANUAL-RESOURCE-MAPPING',
-                              id: resource_id,
-                              description: 'License title',
-                              message:MANUAL_POLICY_MESSAGE
-                             ])
+        preflight_log.add([
+                           code:'FAIL-MANUAL-RESOURCE-MAPPING',
+                           id: resource_id,
+                           description: 'License title',
+                           message:MANUAL_POLICY_MESSAGE
+                         ])
 
         // Register a question so the human operator knows we need a decision about this, log the result for the next time we
         // process.
