@@ -2,14 +2,34 @@ import mod_remote_sync.source.TransformProcess;
 
 import org.springframework.context.ApplicationContext
 import groovy.util.logging.Slf4j
+import mod_remote_sync.ResourceMappingService
+import mod_remote_sync.ResourceMapping
 
 @Slf4j
 public class TestLicenseProcess implements TransformProcess {
 
-  public Map preflightCheck(Map input_record,
+  public Map preflightCheck(String resource_id,
+                            byte[] input_record,
                             ApplicationContext ctx,
                             Map local_context) {
     log.debug("ProcessTestLicense::preflightCheck()");
+
+    ResourceMappingService rms = ctx.getBean('mappingService');
+
+    if ( rms ) {
+      log.debug("Got mapping service");
+      ResourceMapping rm = rms.lookupMapping('TEST',resource_id,'TEST');
+      if ( rm ) {
+        log.info("Located mapping");
+      }
+      else {
+        log.info("No mapping");
+      }
+    }
+    else {
+      log.debug("Failed to obtain mapping service");
+    }
+
     Map result = [
       preflightStatus:'FAIL'
     ]
@@ -22,7 +42,8 @@ public class TestLicenseProcess implements TransformProcess {
     return [:]
   }
 
-  public Map process(Map input_record,
+  public Map process(String resource_id,
+                     byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context) {
     return [:]

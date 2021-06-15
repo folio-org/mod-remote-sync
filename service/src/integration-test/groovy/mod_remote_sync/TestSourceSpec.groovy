@@ -153,7 +153,7 @@ class TestSourceSpec extends HttpSpec {
     then:'status report contains two sources'
       log.info("Status report: ${resp}")
       assert resp instanceof List
-      assert resp.size() == 2
+      assert resp.size() == 1
   }
 
   /*
