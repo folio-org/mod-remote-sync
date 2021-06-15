@@ -9,7 +9,7 @@ public class TestLicenseSource implements RemoteSyncActivity {
                            Map state,
                            RecordSourceController rsc) {
 
-    String test_records = [
+    def test_records = [
       [ 
         id:'test-record-0001',
         licenseName:'Test Licenses 001'
@@ -20,7 +20,7 @@ public class TestLicenseSource implements RemoteSyncActivity {
       ]
     ]
 
-    test_records.each { testrec ->
+    test_records.each { Map testrec ->
 
        def license_json = JsonOutput.toJson(testrec);
        MessageDigest md5_digest = MessageDigest.getInstance("MD5");
