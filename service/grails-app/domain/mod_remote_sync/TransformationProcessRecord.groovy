@@ -27,10 +27,14 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
   String sourceRecordId 
 
   // The input data
-  String inputData
+  byte[] inputData
+
+  String statusReport
 
   static constraints = {
-          owner (nullable : false)
+           owner (nullable : false)
+       inputData (nullable : true)
+    statusReport (nullable : true)
   }
 
   static mapping = {
@@ -42,6 +46,7 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
          processControlStatus column:'mtr_process_control_status'
                sourceRecordId column:'mtr_source_record_id'
                     inputData column:'mtr_input_data'
+                 statusReport column:'mtr_status_report'
   }
 
 }

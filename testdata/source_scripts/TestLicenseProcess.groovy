@@ -4,12 +4,12 @@ import org.springframework.context.ApplicationContext
 import groovy.util.logging.Slf4j
 
 @Slf4j
-public class ProcessLaserLicense implements TransformProcess {
+public class TestLicenseProcess implements TransformProcess {
 
   public Map preflightCheck(Map input_record,
                             ApplicationContext ctx,
                             Map local_context) {
-    log.debug("ProcessLaserLicense::preflightCheck()");
+    log.debug("ProcessTestLicense::preflightCheck()");
     Map result = [
       preflightStatus:'FAIL'
     ]
@@ -29,3 +29,4 @@ public class ProcessLaserLicense implements TransformProcess {
   }
 
 }
+
