@@ -16,11 +16,13 @@ public interface TransformProcess {
    * }
    *
    */
-  public Map preflightCheck(Map input_record,
+  public Map preflightCheck(String resource_id,
+                            byte[] input_record,
                             ApplicationContext ctx,
                             Map local_context);
 
-  public Map process(Map input_record,
+  public Map process(String resource_id,
+                     byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context);
 

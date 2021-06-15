@@ -6,7 +6,8 @@ import groovy.util.logging.Slf4j
 @Slf4j
 public class ProcessLaserLicense implements TransformProcess {
 
-  public Map preflightCheck(Map input_record,
+  public Map preflightCheck(String resource_id,
+                            byte[] input_record,
                             ApplicationContext ctx,
                             Map local_context) {
     log.debug("ProcessLaserLicense::preflightCheck()");
@@ -22,7 +23,8 @@ public class ProcessLaserLicense implements TransformProcess {
     return [:]
   }
 
-  public Map process(Map input_record,
+  public Map process(String resource_id,
+                     byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context) {
     return [:]
