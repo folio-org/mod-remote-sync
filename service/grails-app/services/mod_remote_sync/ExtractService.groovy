@@ -165,7 +165,7 @@ where tpr.transformationStatus=:pending
                                                        transformationStatus:'PENDING',
                                                        processControlStatus:'OPEN',
                                                        sourceRecordId:sr.resourceUri,
-                                                       inputData:new String(sr.record) )
+                                                       inputData:sr.record )
                 if ( tpr.owner != null ) {
                   log.debug("Saving new tpr, owner is ${tpr.owner}");
                   tpr.save(flush:true, failOnError:true);
