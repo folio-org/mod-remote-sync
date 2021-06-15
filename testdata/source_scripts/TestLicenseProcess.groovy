@@ -8,6 +8,7 @@ import mod_remote_sync.PolicyHelperService
 import mod_remote_sync.ResourceMappingService
 import mod_remote_sync.ResourceMapping
 import mod_remote_sync.ImportFeedbackService
+import groovy.json.JsonSlurper
 
 @Slf4j
 public class TestLicenseProcess implements TransformProcess {
@@ -24,6 +25,7 @@ public class TestLicenseProcess implements TransformProcess {
 
     try {
   
+      // test source makes JSON records - so parse the byte array accordingly
       def jsonSlurper = new JsonSlurper()
       def parsed_record = jsonSlurper.parseText(new String(input_record))
   
