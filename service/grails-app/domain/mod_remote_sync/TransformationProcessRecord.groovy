@@ -14,6 +14,7 @@ import com.k_int.web.toolkit.refdata.RefdataValue
 public class TransformationProcessRecord implements MultiTenant<TransformationProcessRecord> {
 
   String id
+
   TransformationProcess owner
 
   // PENDING | BLOCKED | COMPLETED
@@ -34,7 +35,7 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
 
   static mapping = {
     table 'mrs_tp_record'
-                           id column:'mtr_id'
+                           id column:'mtr_id', generator: 'uuid2', length:36
                       version column:'mtr_version'
                         owner column:'mtr_owner_fk'
          transformationStatus column:'mtr_transform_status'

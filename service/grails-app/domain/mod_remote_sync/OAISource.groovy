@@ -30,4 +30,8 @@ public class OAISource extends Source implements MultiTenant<OAISource> {
     return 'oaiSourceRunnerService'
   }
 
+  public Long getRecordCount() {
+    return 0;
+  }
+
 }

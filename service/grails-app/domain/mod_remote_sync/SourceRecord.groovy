@@ -14,7 +14,9 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
   String checksum
   Date dateCreated
   Date lastUpdated
+  Long seqts
   String recType
+  Source owner
 
   static constraints = {
             auth (nullable : false)
@@ -24,6 +26,8 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
      dateCreated (nullable : true)
      lastUpdated (nullable : true)
          recType (nullable : false)
+           owner (nullable : false)
+           seqts (nullable : false)
   }
 
   static mapping = {
@@ -37,5 +41,7 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
          record column : 'sr_record'
        checksum column : 'sr_checksum'
         recType column : 'sr_rectype'
+          owner column : 'sr_owner_source_fk'
+          seqts column : 'sr_seqts'
   }
 }

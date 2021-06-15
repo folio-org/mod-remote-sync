@@ -155,6 +155,7 @@
           "remote-sync.settings.delete"
       ]
     },
+
     {
       "permissionName": "remote-sync.refdata.collection.get",
       "displayName": "Refdata collection get",
@@ -199,7 +200,8 @@
       "permissionName": "remote-sync.refdata.manage",
       "subPermissions": [
         "remote-sync.refdata.edit",
-        "remote-sync.refdata.item.delete"
+        "remote-sync.refdata.collection.get",
+        "remote-sync.refdata.item.view"
       ]
     }
 
@@ -209,6 +211,9 @@
     "dockerArgs": {
       "HostConfig": { "PortBindings": { "8079/tcp":  [{ "HostPort": "%p" }] } }
     },
+    "env": [
+      { "name": "JAVA_OPTIONS", "value": "-server -XX:+UseContainerSupport -XX:MaxRAMPercentage=55.0 -XX:+PrintFlagsFinal" }
+    ],
     "dockerPull" : false
   }
 }

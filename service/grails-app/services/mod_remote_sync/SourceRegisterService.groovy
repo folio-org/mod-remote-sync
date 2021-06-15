@@ -68,9 +68,16 @@ class SourceRegisterService {
       log.debug("Ensure definition: ${defn}");
       def st = AppSetting.findBySectionAndKey(defn.section, defn.key)
       if ( st == null ) {
-        st = new AppSetting(section: defn.section,
-                         key: defn.key,
-                         settingType: defn.type).save(flush:true, failOnError:true);
+        switch ( defn?.type ) {
+          case 'String':
+            st = new AppSetting(section: defn.section,
+                                key: defn.key,
+                                settingType: 'String').save(flush:true, failOnError:true);
+            break;
+          default:
+            log.warn("Unhandled setting type: ${defn.type}");
+            break;
+        }
       }
     }
   }
