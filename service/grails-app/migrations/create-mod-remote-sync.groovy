@@ -181,6 +181,20 @@ databaseChangeLog = {
       column(name: "rm_mapping_context")
     }
 
+    createTable(tableName: "feedback_item") {
+      column(name: "fb_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
+      column(name: "fb_version",         type: "BIGINT")
+      column(name: "fb_correlation_id",  type: "VARCHAR(255)")  { constraints(nullable: "false") }
+      column(name: "fb_question",        type: "TEXT")          { constraints(nullable: "false") }
+      column(name: "fb_response",        type: "TEXT")
+    }
+
+    addPrimaryKey(columnNames: "fb_id", constraintName: "feedback_item_PK", tableName: "feedback_item")
+
+    createIndex(indexName: "feedback_item_res_idx", tableName: "feedback_item") {
+      column(name: "fb_correlation_id")
+    }
+
   }
 
 }
