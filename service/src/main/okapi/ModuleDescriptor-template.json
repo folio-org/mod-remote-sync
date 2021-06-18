@@ -140,114 +140,49 @@
 
   ],
   "permissionSets": [
-    {
-      "permissionName": "remote-sync.settings.get",
-      "displayName": "settings get",
-      "description": "get settings",
-      "visible": false
-    }, 
-    {
-      "permissionName": "remote-sync.settings.post",
-      "displayName": "settings post",
-      "description": "post settings",
-      "visible": false
-    }, 
-    {
-      "permissionName": "remote-sync.settings.put",
-      "displayName": "settings put",
-      "description": "put settings",
-      "visible": false
-    }, {
-      "permissionName": "remote-sync.settings.delete",
-      "displayName": "settings delete",
-      "description": "delete settings",
-      "visible": false
-    },
-    {
-      "permissionName": "remote-sync.settings.read",
-      "displayName": "settings read",
-      "description": "read settings",
-      "visible": false,
-      "subPermissions": [
-          "remote-sync.settings.get"
-      ]
-    }, 
-    {
-      "permissionName": "remote-sync.statusReport.get",
-      "displayName": "Status Report Get",
-      "description": "get statusReport",
-      "visible": false
-    },
-    {
-      "permissionName": "remote-sync.statusReport.read",
-      "displayName": "Status Report Read",
-      "description": "read statusReport",
-      "visible": false,
-      "subPermissions": [
-          "remote-sync.statusReport.get"
-      ]
-    },
-    {
-      "permissionName": "remote-sync.settings.write",
-      "displayName": "settings write",
-      "description": "write settings",
-      "visible": false,
-      "subPermissions": [
-          "remote-sync.settings.read",
-          "remote-sync.settings.post",
-          "remote-sync.settings.put",
-          "remote-sync.settings.delete"
-      ]
-    },
+    { "permissionName": "remote-sync.settings.get", "displayName": "settings get", "description": "get settings", "visible": false }, 
+    { "permissionName": "remote-sync.settings.post", "displayName": "settings post", "description": "post settings", "visible": false }, 
+    { "permissionName": "remote-sync.settings.put", "displayName": "settings put", "description": "put settings", "visible": false }, 
+    { "permissionName": "remote-sync.settings.delete", "displayName": "settings delete", "description": "delete settings", "visible": false },
+    { "permissionName": "remote-sync.settings.read", "displayName": "settings read", "description": "read settings", "visible": false, 
+        "subPermissions": [ "remote-sync.settings.get" ] }, 
+    { "permissionName": "remote-sync.statusReport.get", "displayName": "Status Report Get", "description": "get statusReport", "visible": false },
+    { "permissionName": "remote-sync.statusReport.read", "displayName": "Status Report Read", "description": "read statusReport", "visible": false, 
+      "subPermissions": [ "remote-sync.statusReport.get" ] },
+    { "permissionName": "remote-sync.settings.write", "displayName": "settings write", "description": "write settings", "visible": false,
+        "subPermissions": [ "remote-sync.settings.read", "remote-sync.settings.post", "remote-sync.settings.put", "remote-sync.settings.delete" ] },
+    { "permissionName": "remote-sync.refdata.collection.get", "displayName": "Refdata collection get", "description": "Get a collection of refdata records" },
+    { "permissionName": "remote-sync.refdata.item.get", "displayName": "Refdata item get", "description": "Get refdata record" },
+    { "permissionName": "remote-sync.refdata.view", "subPermissions": [ "remote-sync.refdata.collection.get", "remote-sync.refdata.item.get" ] },
+    { "permissionName": "remote-sync.refdata.item.post", "displayName": "Refdata item post", "description": "Post refdata record" },
+    { "permissionName": "remote-sync.refdata.item.put", "displayName": "Refdata item put", "description": "Put refdata record" },
+    { "permissionName": "remote-sync.refdata.edit", "subPermissions": [ "remote-sync.refdata.view", "remote-sync.refdata.item.post", "remote-sync.refdata.item.put" ] },
+    { "permissionName": "remote-sync.refdata.item.delete", "displayName": "Refdata item delete", "description": "Delete refdata record" },
+    { "permissionName": "remote-sync.refdata.manage", "subPermissions": [ "remote-sync.refdata.edit", "remote-sync.refdata.collection.get", "remote-sync.refdata.item.view" ] },
 
-    {
-      "permissionName": "remote-sync.refdata.collection.get",
-      "displayName": "Refdata collection get",
-      "description": "Get a collection of refdata records"
-    },
-    {
-      "permissionName": "remote-sync.refdata.item.get",
-      "displayName": "Refdata item get",
-      "description": "Get refdata record"
-    },
-    {
-      "permissionName": "remote-sync.refdata.view",
-      "subPermissions": [
-        "remote-sync.refdata.collection.get",
-        "remote-sync.refdata.item.get"
-      ]
-    },
-    {
-      "permissionName": "remote-sync.refdata.item.post",
-      "displayName": "Refdata item post",
-      "description": "Post refdata record"
-    },
-    {
-      "permissionName": "remote-sync.refdata.item.put",
-      "displayName": "Refdata item put",
-      "description": "Put refdata record"
-    },
-    {
-      "permissionName": "remote-sync.refdata.edit",
-      "subPermissions": [
-        "remote-sync.refdata.view",
-        "remote-sync.refdata.item.post",
-        "remote-sync.refdata.item.put"
-      ]
-    },
-    {
-      "permissionName": "remote-sync.refdata.item.delete",
-      "displayName": "Refdata item delete",
-      "description": "Delete refdata record"
-    },
-    {
-      "permissionName": "remote-sync.refdata.manage",
-      "subPermissions": [
-        "remote-sync.refdata.edit",
-        "remote-sync.refdata.collection.get",
-        "remote-sync.refdata.item.view"
-      ]
-    }
+    { "permissionName": "remote-sync.feedback.collection.get", "displayName": "Feedback collection get", "description": "Get a collection of feedback records" },
+    { "permissionName": "remote-sync.feedback.item.get", "displayName": "Feedback item get", "description": "Get feedback record" },
+    { "permissionName": "remote-sync.feedback.view", 
+        "subPermissions": [ "remote-sync.feedback.collection.get", "remote-sync.feedback.item.get" ] },
+    { "permissionName": "remote-sync.feedback.item.post", "displayName": "Feedback item post", "description": "Post feedback record" },
+    { "permissionName": "remote-sync.feedback.item.put", "displayName": "Feedback item put", "description": "Put feedback record" },
+    { "permissionName": "remote-sync.feedback.edit", 
+      "subPermissions": [ "remote-sync.feedback.view", "remote-sync.feedback.item.post", "remote-sync.feedback.item.put" ] },
+    { "permissionName": "remote-sync.feedback.item.delete", "displayName": "Feedback item delete", "description": "Delete feedback record" },
+    { "permissionName": "remote-sync.feedback.manage", 
+        "subPermissions": [ "remote-sync.feedback.edit", "remote-sync.feedback.collection.get", "remote-sync.feedback.item.view" ] },
+
+    { "permissionName": "remote-sync.records.collection.get", "displayName": "Records collection get", "description": "Get a collection of import records" },
+    { "permissionName": "remote-sync.records.item.get", "displayName": "Records item get", "description": "Get import record" },
+    { "permissionName": "remote-sync.records.view", 
+        "subPermissions": [ "remote-sync.records.collection.get", "remote-sync.records.item.get" ] },
+    { "permissionName": "remote-sync.records.item.post", "displayName": "Records item post", "description": "Post import record" },
+    { "permissionName": "remote-sync.records.item.put", "displayName": "Records item put", "description": "Put import record" },
+    { "permissionName": "remote-sync.records.edit", 
+        "subPermissions": [ "remote-sync.records.view", "remote-sync.records.item.post", "remote-sync.records.item.put" ] },
+    { "permissionName": "remote-sync.records.item.delete", "displayName": "Records item delete", "description": "Delete import record" },
+    { "permissionName": "remote-sync.records.manage", 
+        "subPermissions": [ "remote-sync.records.edit", "remote-sync.records.collection.get", "remote-sync.records.item.view" ] }
 
   ],
   "launchDescriptor": {
