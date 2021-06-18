@@ -33,6 +33,9 @@ class ImportFeedbackService {
 
       fi = new FeedbackItem(
                     correlationId:correlation_id,
+                           status:0,
+                      description:label,
+                    caseIndicator:code,
                          question:json_question,
                          response:null).save(flush:true, failOnError:true);
 

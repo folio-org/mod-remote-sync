@@ -42,7 +42,7 @@ public class TestLicenseProcess implements TransformProcess {
       if ( policyHelper.manualResourceMapping('TEST-LICENSE', resource_id, 'TEST', 'FOLIO::LICENSE', local_context)  == false ) {
         pass = false;
         preflight_log.add([
-                           code:'FAIL-MANUAL-RESOURCE-MAPPING',
+                           code:'MANUAL-RESOURCE-MAPPING-NEEDED',
                            id: resource_id,
                            description: 'License title',
                            message:MANUAL_POLICY_MESSAGE
