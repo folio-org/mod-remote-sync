@@ -56,6 +56,50 @@
           "methods": ["DELETE"],
           "pathPattern": "/remote-sync/refdata/{id}",
           "permissionsRequired": [ "remote-sync.refdata.item.delete" ]
+        },
+
+        {
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/feedback",
+          "permissionsRequired": [ "remote-sync.feedback.collection.get" ]
+        },{
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/feedback/{id}",
+          "permissionsRequired": [ "remote-sync.feedback.item.get" ]
+        },{
+          "methods": ["POST"],
+          "pathPattern": "/remote-sync/feedback",
+          "permissionsRequired": [ "remote-sync.feedback.item.post" ]
+        },{
+          "methods": ["PUT"],
+          "pathPattern": "/remote-sync/feedback/{id}",
+          "permissionsRequired": [ "remote-sync.feedback.item.put" ]
+        },{
+          "methods": ["DELETE"],
+          "pathPattern": "/remote-sync/feedback/{id}",
+          "permissionsRequired": [ "remote-sync.feedback.item.delete" ]
+        },
+
+        {
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/records",
+          "permissionsRequired": [ "remote-sync.records.collection.get" ]
+        },{
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/records/{id}",
+          "permissionsRequired": [ "remote-sync.records.item.get" ]
+        },{
+          "methods": ["POST"],
+          "pathPattern": "/remote-sync/feedback",
+          "permissionsRequired": [ "remote-sync.records.item.post" ]
+        },{
+          "methods": ["PUT"],      
+          "pathPattern": "/remote-sync/records/{id}",
+          "permissionsRequired": [ "remote-sync.records.item.put" ]
+        },{
+          "methods": ["DELETE"],
+          "pathPattern": "/remote-sync/records/{id}",
+          "permissionsRequired": [ "remote-sync.records.item.delete" ]
         }
 
       ]
