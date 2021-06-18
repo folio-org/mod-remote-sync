@@ -42,6 +42,8 @@ class PolicyHelperService {
     else {
       // Unknown - fail - here we should check the "ImportKB" to see if we have already been told what to do
       // in this circumstance
+
+      // look for a feedback item for case MANUAL-RESOURCE-MAPPING-NEEDED and.....
       result = false; 
     }
 

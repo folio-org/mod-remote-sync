@@ -184,6 +184,9 @@ databaseChangeLog = {
     createTable(tableName: "feedback_item") {
       column(name: "fb_id",              type: "VARCHAR(36)")   { constraints(nullable: "false") }
       column(name: "fb_version",         type: "BIGINT")
+      column(name: "fb_description",     type: "VARCHAR(255)")  { constraints(nullable: "false") }
+      column(name: "fb_case_indicator",  type: "VARCHAR(255)")  { constraints(nullable: "false") }
+      column(name: "fb_status",          type: "BIGINT")        { constraints(nullable: "false") }
       column(name: "fb_correlation_id",  type: "VARCHAR(255)")  { constraints(nullable: "false") }
       column(name: "fb_question",        type: "TEXT")          { constraints(nullable: "false") }
       column(name: "fb_response",        type: "TEXT")

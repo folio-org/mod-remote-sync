@@ -22,5 +22,6 @@ class UrlMappings {
     }
     "/remote-sync/authorities" (resources: 'authorities');
     "/remote-sync/records" (resources: 'transformationRecord');
+    "/remote-sync/feedback" (resources: 'feedbackItem');
   }
 }
