@@ -58,19 +58,12 @@
           "permissionsRequired": [ "remote-sync.refdata.item.delete" ]
         },
 
+        { "methods": ["GET"], "pathPattern": "/remote-sync/feedback",      "permissionsRequired": [ "remote-sync.feedback.collection.get" ] },
+        { "methods": ["GET"], "pathPattern": "/remote-sync/feedback/{id}", "permissionsRequired": [ "remote-sync.feedback.item.get" ] },
+        { "methods": ["GET"], "pathPattern": "/remote-sync/feedback/todo", "permissionsRequired": [ "remote-sync.feedback.collection.get" ] },
+        { "methods": ["GET"], "pathPattern": "/remote-sync/feedback/done", "permissionsRequired": [ "remote-sync.feedback.collection.get" ] },
+        { "methods": ["POST"], "pathPattern": "/remote-sync/feedback", "permissionsRequired": [ "remote-sync.feedback.item.post" ] },
         {
-          "methods": ["GET"],
-          "pathPattern": "/remote-sync/feedback",
-          "permissionsRequired": [ "remote-sync.feedback.collection.get" ]
-        },{
-          "methods": ["GET"],
-          "pathPattern": "/remote-sync/feedback/{id}",
-          "permissionsRequired": [ "remote-sync.feedback.item.get" ]
-        },{
-          "methods": ["POST"],
-          "pathPattern": "/remote-sync/feedback",
-          "permissionsRequired": [ "remote-sync.feedback.item.post" ]
-        },{
           "methods": ["PUT"],
           "pathPattern": "/remote-sync/feedback/{id}",
           "permissionsRequired": [ "remote-sync.feedback.item.put" ]
