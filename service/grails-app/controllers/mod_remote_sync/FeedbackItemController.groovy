@@ -10,7 +10,8 @@ import org.olf.rs.workflow.*;
 
 import mod_remote_sync.FeedbackItem
 
-
+@Slf4j
+@CurrentTenant
 class FeedbackItemController extends OkapiTenantAwareController<FeedbackItem> {
   
   static responseFormats = ['json', 'xml']
@@ -21,18 +22,18 @@ class FeedbackItemController extends OkapiTenantAwareController<FeedbackItem> {
 
   def todo () {
     Long required_status = 0
-    respond doTheLookup ({
-      readOnly(true)
-      eq 'status', required_status
-    })
+      respond doTheLookup ({
+        readOnly(true)
+        eq 'status', required_status
+      })
   }
 
   def done () {
     Long required_status = 1
-    respond doTheLookup ({
-      readOnly(true)
-      eq 'status', required_status
-    })
+      respond doTheLookup ({
+        readOnly(true)
+        eq 'status', required_status
+      })
   }
 
 }
