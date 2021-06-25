@@ -19,4 +19,16 @@ class FeedbackItemController extends OkapiTenantAwareController<FeedbackItem> {
     super(FeedbackItem)
   }
 
+  def todo () {
+    respond doTheLookup ({
+      eq 'status' 0
+    })
+  }
+
+  def done () {
+    respond doTheLookup ({
+      eq 'status' 1
+    })
+  }
+
 }
