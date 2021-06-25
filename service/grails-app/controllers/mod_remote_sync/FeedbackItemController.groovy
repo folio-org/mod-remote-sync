@@ -20,16 +20,18 @@ class FeedbackItemController extends OkapiTenantAwareController<FeedbackItem> {
   }
 
   def todo () {
+    Long required_status = 0
     respond doTheLookup ({
       readOnly(true)
-      eq 'status', 0
+      eq 'status', required_status
     })
   }
 
   def done () {
+    Long required_status = 1
     respond doTheLookup ({
       readOnly(true)
-      eq 'status', 1
+      eq 'status', required_status
     })
   }
 
