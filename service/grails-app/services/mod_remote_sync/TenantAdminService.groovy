@@ -24,10 +24,11 @@ class TenantAdminService {
         RefdataValue.lookupOrCreate('YN', 'Yes');
         RefdataValue.lookupOrCreate('YN', 'No');
 
-        AppSetting cert_st = new AppSetting(section: 'Secure Mode',
+        AppSetting cert_st = AppSetting.findByKey('PublicKey') ?: new AppSetting(section: 'Secure Mode',
                                        key: 'PublicKey',
                                        settingType: 'String').save(flush:true, failOnError:true);
-        AppSetting mode_st = new AppSetting(section: 'Secure Mode',
+
+        AppSetting mode_st = AppSetting.findByKey('Enabled') ?: new AppSetting(section: 'Secure Mode',
                                        key: 'Enabled',
                                        vocab:'YN',
                                        settingType: 'Refdata').save(flush:true, failOnError:true);

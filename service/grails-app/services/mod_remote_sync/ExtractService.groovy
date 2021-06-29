@@ -205,7 +205,6 @@ where tpr.transformationStatus=:pending
     }
   }
 
-
   def runTransformationTasks() {
     log.debug("ExtractService::runTransformationTasks()");
     TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING'],[readonly:true]).each { tr ->
