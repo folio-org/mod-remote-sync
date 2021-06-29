@@ -36,6 +36,17 @@ public class TestLicenseProcess implements TransformProcess {
       boolean pass = true;
   
       def preflight_log = []
+
+      //
+      // policyHelper.apply( [
+      //   { 
+      //      policy:'ManualResourceMapping', 
+      //      params:{ source:'TEST-LICENSE', resource_id:resource_id, mapping_context:'TEST', target_context:'FOLIO::LICENSE', context: local_context,
+      //      prompt:"Please indicate if the License \"${parsed_record?.licenseName}\" with ID ${resource_id} in the TEST system should bei (a) mapped to an existing FOLIO License, (b) a new FOLIO license created to track it, or (c) the resorce should be ignored"
+      //     }
+      //   }
+      // ],
+      // preflight_log )
   
       // We never automatically create licenses - the user must always choose an existing license to map to,
       // tell us to create a new licenses or tell us to ignore this resource going forwards.
@@ -50,13 +61,13 @@ public class TestLicenseProcess implements TransformProcess {
 
         // Register a question so the human operator knows we need a decision about this, log the result for the next time we
         // process.
-        feedbackHelper.sendFeedback('MANUAL-RESOURCE-MAPPING',  // Feedback case / code
-                                    'TEST-LICENSE',             // What kind of input resource
-                                    'TEST',                     // mapping context
-                                    resource_id,                // ID of input resource
-                                    parsed_record?.licenseName, // Human readable label
-                                    'FOLIO:LICENSE',             // Target FOLIO resource type
-                                    [prompt:"Please indicate if the License \"${parsed_record?.licenseName}\" with ID ${resource_id} in the TEST system should bei (a) mapped to an existing FOLIO License, (b) a new FOLIO license created to track it, or (c) the resorce should be ignored"]);
+        feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',  // Feedback case / code
+                                       'TEST-LICENSE',             // What kind of input resource
+                                       'TEST',                     // mapping context
+                                       resource_id,                // ID of input resource
+                                       parsed_record?.licenseName, // Human readable label
+                                       'FOLIO:LICENSE',             // Target FOLIO resource type
+                                       [prompt:"Please indicate if the License \"${parsed_record?.licenseName}\" with ID ${resource_id} in the TEST system should bei (a) mapped to an existing FOLIO License, (b) a new FOLIO license created to track it, or (c) the resorce should be ignored"]);
       }
   
       result = [

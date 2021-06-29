@@ -6,6 +6,7 @@ import grails.gorm.multitenancy.Tenants
 import com.k_int.web.toolkit.settings.AppSetting
 import com.k_int.web.toolkit.refdata.*
 import com.k_int.okapi.OkapiTenantResolver
+import grails.converters.JSON
 
 @Transactional
 class PolicyHelperService {
@@ -42,6 +43,16 @@ class PolicyHelperService {
     else {
       // Unknown - fail - here we should check the "ImportKB" to see if we have already been told what to do
       // in this circumstance
+      String feedback_correlation_id = "${source}:${resource_id}:${mapping_context}:MANUAL-MAPPING-POLICY".toString()
+      FeedbackItem fi = FeedbackItem.findByCorrelationId(feedback_correlation_id)
+      if ( fi != null ) {
+        log.debug("located feedback for correlation id ${feedback_correlation_id}");
+        if ( ( fi.response != null ) && ( fi.response.length() > 0 ) ) {
+          def parsed_response = JSON.parse(fi.response)
+          log.debug("Parsed response: ${parsed_response}");
+          result = true;
+        }
+      }
 
       // look for a feedback item for case MANUAL-RESOURCE-MAPPING-NEEDED and.....
       result = false; 
