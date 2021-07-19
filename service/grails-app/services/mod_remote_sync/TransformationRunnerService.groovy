@@ -82,13 +82,13 @@ class TransformationRunnerService {
                                                   tpr.inputData,
                                                   ac, 
                                                   local_context)
-    result.preflightStatus = process_result.preflightStatus
+    result.preflightStatus = preflight_result.preflightStatus
 
     if ( preflight_result.preflightStatus == 'PASS' ) {
       log.debug("record passed preflight, progress to process");
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:'Passed preflight check'])
 
-      process_result = transform_process.process(tpr.sourceRecordId,
+      def process_result = transform_process.process(tpr.sourceRecordId,
                                                  tpr.inputData,
                                                  ac, 
                                                  local_context)
