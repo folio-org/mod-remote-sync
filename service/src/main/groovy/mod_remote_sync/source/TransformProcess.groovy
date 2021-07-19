@@ -10,7 +10,7 @@ public interface TransformProcess {
    * prevent the record from being processed.
    * @return Map with the structure below
    * Return  Map {
-   *   okToProceed: true|false,  - BOOL proceed or not
+   *   preflightStatus:          - [PASS|FAIL]
    *   issues: [                 - LIST If not ok to proceed, a list of issues that need to be resolved
    *   ]
    * }
@@ -21,6 +21,12 @@ public interface TransformProcess {
                             ApplicationContext ctx,
                             Map local_context);
 
+  /**
+   *
+   * Return  Map {
+   *   processStatus:          - [COMPLETE|FAIL]
+   * }
+   */
   public Map process(String resource_id,
                      byte[] input_record,
                      ApplicationContext ctx,

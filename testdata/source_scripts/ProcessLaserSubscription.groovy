@@ -10,14 +10,18 @@ public class ProcessLaserSubscription implements TransformProcess {
                             byte[] input_record,
                             ApplicationContext ctx,
                             Map local_context) {
-    return [:]
+    return [
+      preflightStatus:'FAIL'  // FAIL|PASS
+    ]
   }
 
   public Map process(String resource_id,
                      byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context) {
-    return [:]
+    return [
+      processStatus:'FAIL'   // FAIL|COMPLETE
+    ]
   }
 
 }

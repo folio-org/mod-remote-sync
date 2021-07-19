@@ -38,7 +38,18 @@ class TransformationRunnerService {
           log.debug("Close out - return to OPEN");
           TransformationProcessRecord tpr = TransformationProcessRecord.lock(tpr_id)
 
-          this.process(tpr);
+          Map processing_result = this.process(tpr);
+         
+          if ( processing_result.processStatus != null ) {
+            switch ( processing_result.processStatus ) {
+              case 'COMPLETE':
+                tpr.processControlStatus = 'CLOSED'
+                break;
+              default:
+                break;
+            }
+            tpr.transformationStatus = processing_result.processStatus;
+          }
 
           tpr.processControlStatus = 'OPEN'
           tpr.save();
@@ -56,36 +67,41 @@ class TransformationRunnerService {
     log.debug("TransformationRunnerService::process(${tpr})");
     TransformationProcess tp = tpr.getOwner()
     TransformProcess transform_process = (TransformProcess) this.getScriptFor(tp);
-
     ApplicationContext ac = grailsApplication.mainContext
+    Map result = [:];
 
     Map input_record = [:]
-    Map local_context = [:]
-    Map result = transform_process.preflightCheck(tpr.sourceRecordId,
+    Map local_context = [
+      status:null,
+      processLog:[
+        [ ts:System.currentTimeMillis(), msg:'Starting transformation process']
+      ]
+    ]
+
+    Map preflight_result = transform_process.preflightCheck(tpr.sourceRecordId,
                                                   tpr.inputData,
                                                   ac, 
                                                   local_context)
+    result.preflightStatus = process_result.preflightStatus
 
-    if ( result.preflightStatus == 'PASS' ) {
+    if ( preflight_result.preflightStatus == 'PASS' ) {
       log.debug("record passed preflight, progress to process");
-      transform_process.process(tpr.sourceRecordId,
-                                tpr.inputData,
-                                ac, 
-                                local_context)
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:'Passed preflight check'])
+
+      process_result = transform_process.process(tpr.sourceRecordId,
+                                                 tpr.inputData,
+                                                 ac, 
+                                                 local_context)
+      result.processStatus = process_result.processStatus
+
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Processing result status: ${process_result.processStatus}"])
     }
     else {
       log.debug("Record did not pass preflight. process any feedback");
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Preflight did not pass"])
     }
 
-    if ( result.preflightStatus == 'PASS' ) {
-      log.debug("record passed preflight, progress to process");
-      transform_process.process(input_record, 
-                                ac, 
-                                local_context)
-    }
-    else {
-      log.debug("Record did not pass preflight. process any feedback");
-    }
+    result.processLog = local_context.processLog;
 
     log.debug("Result: ${result}");
     return result;
