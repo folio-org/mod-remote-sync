@@ -192,16 +192,54 @@ class TestSourceSpec extends HttpSpec {
       log.info("Todos: ${resp}")
       resp.each { todo ->
         log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}");
-        switch ( todo.correlationId ) {
-          case 'TEST-LICENSE:TEST:LICENSE:test-record-0001:TEST:MANUAL-RESOURCE-MAPPING':
-            log.debug("Post feedback that we should create a license for test license 001");
-            break;
-          case 'TEST-LICENSE:TEST:LICENSE:test-record-0002:TEST:MANUAL-RESOURCE-MAPPING':
-            log.debug("Post feedback that we should create a license for test license 002");
-            break;
-        }
+        log.debug("Post feedback that we should create a license for ${todo.id}/${todo.description}");
+        doPut("/remote-sync/feedback/${todo.id}", [ id:todo.id, status: 1, response:'{"answerType":"create"}' ]);
       }
   }
+
+  void "requery todos and make sure that feedback is posted"() {
+    when:'we request a status report after the sync task has run'
+      def resp = doGet('/remote-sync/feedback/done')
+
+    then:'Should have 2 todos done now'
+      log.info("Todos: ${resp}")
+      resp.each { todo ->
+        log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}");
+        log.debug("Registered feedback: ${todo.response}");
+        assert todo.response != null
+        assert todo.response.contains('create')
+      }
+  }
+
+  void "ReProcess with feedback in place"() {
+    when:'we call the worker task'
+      def resp = doGet('/remote-sync/settings/worker')
+      println("Sleeping....");
+      Thread.sleep(5000);
+
+    then:'get the result'
+      println("Result of calling /remote-sync/settings/worker: ${resp}");
+      resp != null
+
+    then:'ReFech the record log'
+      def records_response = doGet('/remote-sync/records')
+
+    then:
+      log.debug("Got transformation records: ${records_response}");
+
+  }
+
+  void "Check records are processed fully now"() {
+    when:'We list all the active records'
+      def records_response = doGet('/remote-sync/records')
+
+    then:'All should be in status COMPLETE'
+      records_response.each { r ->
+        log.debug("Checking that record ${r.id} has status COMPLETE ${r.transformationStatus}");
+      }
+   
+  }
+
 
 }
 

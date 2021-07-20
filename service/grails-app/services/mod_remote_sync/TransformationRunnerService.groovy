@@ -67,6 +67,12 @@ class TransformationRunnerService {
     }
   }
 
+  /**
+   * Do the actual work of attempting to process a record.
+   * Work is split between the preflight check where we test that we have all the information needed to attempt the process,
+   * this includes checking if we should create local records to track remote resources, or if we should map incoming records
+   * against existing resources. If preflight checks pass, then continue to the processs proper.
+   */
   public Map process(TransformationProcessRecord tpr) {
     log.debug("TransformationRunnerService::process(${tpr})");
     TransformationProcess tp = tpr.getOwner()
@@ -96,6 +102,7 @@ class TransformationRunnerService {
                                                  tpr.inputData,
                                                  ac, 
                                                  local_context)
+      log.debug("result of process: ${process_result}");
       result.processStatus = process_result.processStatus
 
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Processing result status: ${process_result.processStatus}"])

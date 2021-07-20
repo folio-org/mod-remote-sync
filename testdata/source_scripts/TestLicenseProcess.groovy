@@ -95,9 +95,13 @@ public class TestLicenseProcess implements TransformProcess {
                      byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context) {
-    return [
+    log.debug("TestLicenseProcess::process(${resource_id},...)");
+    def result = [
       processStatus:'COMPLETE'
     ]
+
+    log.debug("Return result: ${result}");
+    return result;
   }
 
 }
