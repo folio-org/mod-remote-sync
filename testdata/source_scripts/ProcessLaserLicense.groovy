@@ -27,7 +27,9 @@ public class ProcessLaserLicense implements TransformProcess {
                      byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context) {
-    return [:]
+    return [
+      processStatus:'FAIL'  // FAIL|COMPLETE
+    ]
   }
 
 }

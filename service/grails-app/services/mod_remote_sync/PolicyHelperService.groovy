@@ -43,19 +43,21 @@ class PolicyHelperService {
     else {
       // Unknown - fail - here we should check the "ImportKB" to see if we have already been told what to do
       // in this circumstance
-      String feedback_correlation_id = "${source}:${resource_id}:${mapping_context}:MANUAL-MAPPING-POLICY".toString()
+      String feedback_correlation_id = "${source}:${resource_id}:${mapping_context}:MANUAL-RESOURCE-MAPPING".toString()
       FeedbackItem fi = FeedbackItem.findByCorrelationId(feedback_correlation_id)
       if ( fi != null ) {
         log.debug("located feedback for correlation id ${feedback_correlation_id}");
         if ( ( fi.response != null ) && ( fi.response.length() > 0 ) ) {
-          def parsed_response = JSON.parse(fi.response)
-          log.debug("Parsed response: ${parsed_response}");
+          // For the policy to pass, we don't need the actual detail of the answer, only to know that an answer has
+          // been provided
+          // def parsed_response = JSON.parse(fi.response)
+          // log.debug("Parsed response: ${parsed_response}");
           result = true;
         }
       }
-
-      // look for a feedback item for case MANUAL-RESOURCE-MAPPING-NEEDED and.....
-      result = false; 
+      else {
+        log.debug("No feedback found with correlaction id ${feedback_correlation_id} - policy will prevent processing");
+      }
     }
 
     return result;

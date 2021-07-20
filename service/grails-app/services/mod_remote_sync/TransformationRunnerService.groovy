@@ -6,6 +6,7 @@ import mod_remote_sync.source.TransformProcess
 import mod_remote_sync.source.DynamicClassLoader
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import groovy.json.JsonOutput
 
 @Transactional
 class TransformationRunnerService {
@@ -38,9 +39,23 @@ class TransformationRunnerService {
           log.debug("Close out - return to OPEN");
           TransformationProcessRecord tpr = TransformationProcessRecord.lock(tpr_id)
 
-          this.process(tpr);
+          Map processing_result = this.process(tpr);
+         
+          if ( processing_result.processStatus != null ) {
+            switch ( processing_result.processStatus ) {
+              case 'COMPLETE':
+                tpr.processControlStatus = 'CLOSED'
+                break;
+              default:
+                break;
+            }
+            tpr.transformationStatus = processing_result.processStatus;
+          }
 
           tpr.processControlStatus = 'OPEN'
+          if ( processing_result?.processLog)
+            tpr.statusReport = JsonOutput.toJson(processing_result.processLog)
+
           tpr.save();
         }   
 
@@ -52,40 +67,52 @@ class TransformationRunnerService {
     }
   }
 
+  /**
+   * Do the actual work of attempting to process a record.
+   * Work is split between the preflight check where we test that we have all the information needed to attempt the process,
+   * this includes checking if we should create local records to track remote resources, or if we should map incoming records
+   * against existing resources. If preflight checks pass, then continue to the processs proper.
+   */
   public Map process(TransformationProcessRecord tpr) {
     log.debug("TransformationRunnerService::process(${tpr})");
     TransformationProcess tp = tpr.getOwner()
     TransformProcess transform_process = (TransformProcess) this.getScriptFor(tp);
-
     ApplicationContext ac = grailsApplication.mainContext
+    Map result = [:];
 
     Map input_record = [:]
-    Map local_context = [:]
-    Map result = transform_process.preflightCheck(tpr.sourceRecordId,
+    Map local_context = [
+      status:null,
+      processLog:[
+        [ ts:System.currentTimeMillis(), msg:'Starting transformation process']
+      ]
+    ]
+
+    Map preflight_result = transform_process.preflightCheck(tpr.sourceRecordId,
                                                   tpr.inputData,
                                                   ac, 
                                                   local_context)
+    result.preflightStatus = preflight_result.preflightStatus
 
-    if ( result.preflightStatus == 'PASS' ) {
+    if ( preflight_result.preflightStatus == 'PASS' ) {
       log.debug("record passed preflight, progress to process");
-      transform_process.process(tpr.sourceRecordId,
-                                tpr.inputData,
-                                ac, 
-                                local_context)
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:'Passed preflight check'])
+
+      def process_result = transform_process.process(tpr.sourceRecordId,
+                                                 tpr.inputData,
+                                                 ac, 
+                                                 local_context)
+      log.debug("result of process: ${process_result}");
+      result.processStatus = process_result.processStatus
+
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Processing result status: ${process_result.processStatus}"])
     }
     else {
       log.debug("Record did not pass preflight. process any feedback");
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Preflight did not pass"])
     }
 
-    if ( result.preflightStatus == 'PASS' ) {
-      log.debug("record passed preflight, progress to process");
-      transform_process.process(input_record, 
-                                ac, 
-                                local_context)
-    }
-    else {
-      log.debug("Record did not pass preflight. process any feedback");
-    }
+    result.processLog = local_context.processLog;
 
     log.debug("Result: ${result}");
     return result;
