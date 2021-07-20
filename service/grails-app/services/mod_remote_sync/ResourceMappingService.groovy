@@ -39,4 +39,23 @@ and rm.mappingContext = :ctx
     return result
   }
 
+  public ResourceMapping registerMapping(String source, 
+                                         String source_id, 
+                                         String mappingContext,
+                                         String mappingStatus,
+                                         String folioContext,
+                                         String folioId) {
+    ResourceMapping existing = lookupMapping(source,source_id,mappingContext);
+    if ( existing )
+      throw new RuntimeException("Mapping already exists");
+
+    ResourceMapping new_mapping = new ResourceMapping(source: source,
+                                                      source_id: source_id,
+                                                      mappingContext: mappingContext,
+                                                      mappingStatus: mappingStatus,
+                                                      folioContext: folioContext,
+                                                      folioId: folioId).save(flush:true, failOnError:true)
+
+    return new_mapping;
+  }
 }

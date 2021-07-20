@@ -220,13 +220,6 @@ class TestSourceSpec extends HttpSpec {
     then:'get the result'
       println("Result of calling /remote-sync/settings/worker: ${resp}");
       resp != null
-
-    then:'ReFech the record log'
-      def records_response = doGet('/remote-sync/records')
-
-    then:
-      log.debug("Got transformation records: ${records_response}");
-
   }
 
   void "Check records are processed fully now"() {
@@ -236,6 +229,7 @@ class TestSourceSpec extends HttpSpec {
     then:'All should be in status COMPLETE'
       records_response.each { r ->
         log.debug("Checking that record ${r.id} has status COMPLETE ${r.transformationStatus}");
+        assert r.transformationStatus == 'COMPLETE'
       }
    
   }
