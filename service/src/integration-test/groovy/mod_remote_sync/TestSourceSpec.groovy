@@ -177,5 +177,31 @@ class TestSourceSpec extends HttpSpec {
       assert resp.size() == 1
   }
 
+  void "Query transformation records"() {
+    when:'we request a status report after the sync task has run'
+      def resp = doGet('/remote-sync/records')
+    then:
+      log.debug("Got transformation records: ${resp}");
+  }
+
+  void "Query for pending feedback"() {
+    when:'we request a status report after the sync task has run'
+      def resp = doGet('/remote-sync/feedback/todo')
+
+    then:'Should have 2 todos'
+      log.info("Todos: ${resp}")
+      resp.each { todo ->
+        log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}");
+        switch ( todo.correlationId ) {
+          case 'TEST-LICENSE:TEST:LICENSE:test-record-0001:TEST:MANUAL-RESOURCE-MAPPING':
+            log.debug("Post feedback that we should create a license for test license 001");
+            break;
+          case 'TEST-LICENSE:TEST:LICENSE:test-record-0002:TEST:MANUAL-RESOURCE-MAPPING':
+            log.debug("Post feedback that we should create a license for test license 002");
+            break;
+        }
+      }
+  }
+
 }
 

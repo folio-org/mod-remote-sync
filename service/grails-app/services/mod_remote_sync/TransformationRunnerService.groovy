@@ -6,6 +6,7 @@ import mod_remote_sync.source.TransformProcess
 import mod_remote_sync.source.DynamicClassLoader
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import groovy.json.JsonOutput
 
 @Transactional
 class TransformationRunnerService {
@@ -52,6 +53,9 @@ class TransformationRunnerService {
           }
 
           tpr.processControlStatus = 'OPEN'
+          if ( processing_result?.processLog)
+            tpr.statusReport = JsonOutput.toJson(processing_result.processLog)
+
           tpr.save();
         }   
 
