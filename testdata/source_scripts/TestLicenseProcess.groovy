@@ -96,6 +96,19 @@ public class TestLicenseProcess implements TransformProcess {
                      ApplicationContext ctx,
                      Map local_context) {
     log.debug("TestLicenseProcess::process(${resource_id},...)");
+
+    // Make a json blob and post it to whatever upstream system we need to
+    // In the test harness we don't do this
+    String new_internal_resource_id="INTERNAL-UUID-FOR-${resource_id}"
+   
+    // Store the record mapping to the new ID
+    rms.registerMapping('TEST-LICENSE',
+                        resource_id,
+                        'TEST',
+                        'M', // M==MAPPED
+                        'LICENSES',
+                        new_internal_resource_id);
+
     def result = [
       processStatus:'COMPLETE'
     ]
