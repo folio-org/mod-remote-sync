@@ -102,7 +102,7 @@ public class ProcessLaserLicense implements TransformProcess {
 
     // Lets see if we know about this resource already
     // These three parameters correlate with the first three parameters to policyHelper.manualResourceMapping in the preflight step
-    ResourceMapping rm = rms.lookupMapping('LASER-LICENSE',resource_id, 'LASERIMPORT');
+    ResourceMapping rm = rms.lookupMapping('LASER-LICENSE',resource_id,'LASERIMPORT');
 
     if ( rm == null ) {
       // No existing mapping - see if we have a decision about creating or updating an existing record
@@ -112,13 +112,34 @@ public class ProcessLaserLicense implements TransformProcess {
         def answer = fi.parsedAnswer
         switch ( answer?.answerType ) {
           case 'create':
+            // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
+            // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
             log.debug("Create a new license and track ${resource_id} with that ID");
+            def requestBody = [
+              name:'A laser license',
+              description: "Synchronized from LAS:eR license ${license.reference}/${license.globalUID} on ${new Date()}",
+              // status:statusString,
+              type:'consortial',
+              // localReference: license.globalUID,
+              // customProperties: customProperties,
+              // startDate: license.startDate,
+              // endDate: license.endDate
+            ]   
+            def folio_licenses = folioHelper.okapiPost('/licenses/licenses', requestBody);
+            if ( folio_licenses ) {
+              // Grab the ID of our created license and use the resource mapping service to remember the correlation.
+              // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
+              // that resource maps to folio_licenses.id
+              rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_licenses.id);
+            }
             break;
           case 'ignore':
             log.debug("Ignore ${resource_id} from LASER");
             break;
           case 'map':
             log.debug("Import ${resource_id} as ${answer?.value}");
+            // We are mapping a new external resource to an existing internal license - this is a put rather than a post
+            // def folio_licenses = folioHelper.okapiPut("/licenses/licenses/${answer.value}", requestBody);
             break;
           default:
             break;

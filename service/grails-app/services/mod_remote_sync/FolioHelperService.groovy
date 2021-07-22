@@ -11,8 +11,16 @@ import grails.converters.JSON
 @Transactional
 class FolioHelperService {
 
+  public Object okapiPost(String path, Object o) {
+    log.debug("FolioHelperService::okapiPost(${path},....)");
+  }
+  
   public Object okapiPut(String path, Object o) {
     log.debug("FolioHelperService::okapiPut(${path},....)");
   }
   
+
+  // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
+  // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
+
 }
