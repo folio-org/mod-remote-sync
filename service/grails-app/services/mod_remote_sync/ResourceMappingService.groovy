@@ -50,7 +50,7 @@ and rm.mappingContext = :ctx
       throw new RuntimeException("Mapping already exists");
 
     ResourceMapping new_mapping = new ResourceMapping(source: source,
-                                                      source_id: source_id,
+                                                      sourceId: source_id,
                                                       mappingContext: mappingContext,
                                                       mappingStatus: mappingStatus,
                                                       folioContext: folioContext,
