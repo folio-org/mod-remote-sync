@@ -49,7 +49,7 @@ and tpr.sourceRecordId = :srid
   private static String PENDING_RECORD_TRANSFORMS='''
 select tpr.id
 from TransformationProcessRecord as tpr
-where tpr.transformationStatus=:pending
+where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked
 '''
 
   private static Long DEFAULT_INTERVAL = 1000 * 60 * 60 * 24;
@@ -207,7 +207,7 @@ where tpr.transformationStatus=:pending
 
   def runTransformationTasks() {
     log.debug("ExtractService::runTransformationTasks()");
-    TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING'],[readonly:true]).each { tr ->
+    TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING',blocked:'BLOCKED'],[readonly:true]).each { tr ->
       log.debug("attemptProcess(${tr})");
       transformationRunnerService.attemptProcess(tr);
     }
