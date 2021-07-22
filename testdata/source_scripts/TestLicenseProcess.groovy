@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext
 import groovy.util.logging.Slf4j
 import mod_remote_sync.PolicyHelperService
 import mod_remote_sync.ResourceMappingService
+import mod_remote_sync.FolioHelperService
 import mod_remote_sync.ResourceMapping
 import mod_remote_sync.ImportFeedbackService
 import groovy.json.JsonSlurper
@@ -100,6 +101,7 @@ public class TestLicenseProcess implements TransformProcess {
     ResourceMappingService rms = ctx.getBean('resourceMappingService');
     PolicyHelperService policyHelper = ctx.getBean('policyHelperService');
     ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
+    FolioHelperService folioHelper = ctx.getBean('folioHelperService');
 
     // Make a json blob and post it to whatever upstream system we need to
     // In the test harness we don't do this

@@ -3,6 +3,7 @@ import mod_remote_sync.source.TransformProcess;
 import org.springframework.context.ApplicationContext
 import groovy.util.logging.Slf4j
 import mod_remote_sync.PolicyHelperService
+import mod_remote_sync.FolioHelperService
 import mod_remote_sync.ResourceMappingService
 import mod_remote_sync.ResourceMapping
 import mod_remote_sync.ImportFeedbackService
@@ -97,6 +98,7 @@ public class ProcessLaserLicense implements TransformProcess {
 
     ResourceMappingService rms = ctx.getBean('resourceMappingService');
     ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
+    FolioHelperService folioHelper = ctx.getBean('folioHelperService');
 
     // Lets see if we know about this resource already
     // These three parameters correlate with the first three parameters to policyHelper.manualResourceMapping in the preflight step
