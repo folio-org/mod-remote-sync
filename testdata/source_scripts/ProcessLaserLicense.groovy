@@ -104,6 +104,11 @@ public class ProcessLaserLicense implements TransformProcess {
     // These three parameters correlate with the first three parameters to policyHelper.manualResourceMapping in the preflight step
     ResourceMapping rm = rms.lookupMapping('LASER-LICENSE',resource_id,'LASERIMPORT');
 
+    def jsonSlurper = new JsonSlurper()
+    def parsed_record = jsonSlurper.parseText(new String(input_record))
+
+    log.debug("Load record : ${parsed_record}");
+
     if ( rm == null ) {
       // No existing mapping - see if we have a decision about creating or updating an existing record
       String feedback_correlation_id = "LASER:${resource_id}:LASERIMPORT:MANUAL-RESOURCE-MAPPING".toString()
