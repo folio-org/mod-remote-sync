@@ -4,7 +4,7 @@ import grails.gorm.MultiTenant;
 import mod_remote_sync.source.RemoteSyncActivity;
 import com.k_int.web.toolkit.refdata.Defaults
 import com.k_int.web.toolkit.refdata.RefdataValue
-
+import groovy.json.JsonSlurper
 
 /**
  *
@@ -66,4 +66,11 @@ public class FeedbackItem implements MultiTenant<FeedbackItem> {
                      response column:'fb_response'
   }
 
+  static transients = ['parsedAnswer']
+
+
+  Object getParsedAnswer() {
+    def jsonSlurper = new JsonSlurper()
+    return jsonSlurper.parseText(response)
+  }
 }

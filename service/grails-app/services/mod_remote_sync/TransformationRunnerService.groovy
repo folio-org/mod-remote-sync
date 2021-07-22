@@ -15,6 +15,12 @@ class TransformationRunnerService {
 
   def grailsApplication
 
+  /**
+   *  Given a specific transformation record - see if we can lock the record to be able to process it.
+   *  Bear in mind that if several instances of this module are running, several threads could be competing
+   *  to pull records off the task queue. This method is the mutex that allows only one of the running instances
+   *  to try to process the record.
+   */
   public attemptProcess(String tpr_id) {
     log.debug("TransformationRunnerService::attemptProcess(${tpr_id})");
     // TransformationProcessRecord
@@ -47,12 +53,16 @@ class TransformationRunnerService {
                 tpr.processControlStatus = 'CLOSED'
                 break;
               default:
+                tpr.processControlStatus = 'OPEN'
                 break;
             }
             tpr.transformationStatus = processing_result.processStatus;
           }
+          else {
+            tpr.processControlStatus = 'OPEN'
+          }
 
-          tpr.processControlStatus = 'OPEN'
+          // Stash the processing log in the process record so we can view it in the UI
           if ( processing_result?.processLog)
             tpr.statusReport = JsonOutput.toJson(processing_result.processLog)
 
@@ -110,6 +120,7 @@ class TransformationRunnerService {
     else {
       log.debug("Record did not pass preflight. process any feedback");
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Preflight did not pass"])
+      result.processStatus = 'BLOCKED'
     }
 
     result.processLog = local_context.processLog;

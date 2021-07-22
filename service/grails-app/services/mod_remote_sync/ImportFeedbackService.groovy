@@ -60,5 +60,8 @@ class ImportFeedbackService {
 
   }
 
+  public FeedbackItem lookupFeedback(String correlation_id) {
+    return FeedbackItem.findByCorrelationId(correlation_id)
+  }
 
 }

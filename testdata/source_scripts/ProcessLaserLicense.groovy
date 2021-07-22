@@ -95,6 +95,35 @@ public class ProcessLaserLicense implements TransformProcess {
     log.debug("Record to import: ${new String(input_record)}");
     local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::preflightCheck(${resource_id},..) ${new Date()}"]);
 
+    ResourceMappingService rms = ctx.getBean('resourceMappingService');
+    ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
+
+    // Lets see if we know about this resource already
+    // These three parameters correlate with the first three parameters to policyHelper.manualResourceMapping in the preflight step
+    ResourceMapping rm = rms.lookupMapping('LASER-LICENSE',resource_id, 'LASERIMPORT');
+
+    if ( rm == null ) {
+      // No existing mapping - see if we have a decision about creating or updating an existing record
+      String feedback_correlation_id = "LASER:${resource_id}:LASERIMPORT:MANUAL-RESOURCE-MAPPING".toString()
+      FeedbackItem fi = feedbackHelper.lookupFeedback(feedback_correlation_id)
+      if ( fi != null ) {
+        def answer = fi.parsedAnswer
+        switch ( answer?.answerType ) {
+          case 'create':
+            log.debug("Create a new license and track ${resource_id} with that ID");
+            break;
+          case 'ignore':
+            log.debug("Ignore ${resource_id} from LASER");
+            break;
+          case 'map':
+            log.debug("Import ${resource_id} as ${answer?.value}");
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
     return [
       processStatus:'FAIL'  // FAIL|COMPLETE
     ]
