@@ -97,6 +97,10 @@ public class TestLicenseProcess implements TransformProcess {
                      Map local_context) {
     log.debug("TestLicenseProcess::process(${resource_id},...)");
 
+    ResourceMappingService rms = ctx.getBean('resourceMappingService');
+    PolicyHelperService policyHelper = ctx.getBean('policyHelperService');
+    ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
+
     // Make a json blob and post it to whatever upstream system we need to
     // In the test harness we don't do this
     String new_internal_resource_id="INTERNAL-UUID-FOR-${resource_id}"

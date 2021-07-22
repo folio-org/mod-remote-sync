@@ -182,6 +182,10 @@ class TestSourceSpec extends HttpSpec {
       def resp = doGet('/remote-sync/records')
     then:
       log.debug("Got transformation records: ${resp}");
+      resp.each { r ->
+        log.debug("Checking that record ${r.id} has status PENDING or BLOCKED ${r.transformationStatus}");
+        assert r.transformationStatus == 'PENDING' || r.transformationStatus == 'BLOCKED'
+      }
   }
 
   void "Query for pending feedback"() {
@@ -226,7 +230,7 @@ class TestSourceSpec extends HttpSpec {
     when:'We list all the active records'
       def records_response = doGet('/remote-sync/records')
 
-    then:'All should be in status COMPLETE'
+    then:'All should be in status BLOCKED'
       records_response.each { r ->
         log.debug("Checking that record ${r.id} has status COMPLETE ${r.transformationStatus}");
         assert r.transformationStatus == 'COMPLETE'
