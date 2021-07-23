@@ -94,7 +94,7 @@ public class ProcessLaserLicense implements TransformProcess {
                      Map local_context) {
     log.debug("ProcessLaserLicense::process(${resource_id},...)");
     log.debug("Record to import: ${new String(input_record)}");
-    local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::preflightCheck(${resource_id},..) ${new Date()}"]);
+    local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::process(${resource_id},..) ${new Date()}"]);
 
     ResourceMappingService rms = ctx.getBean('resourceMappingService');
     ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
@@ -130,7 +130,15 @@ public class ProcessLaserLicense implements TransformProcess {
               // startDate: license.startDate,
               // endDate: license.endDate
             ]   
-            def folio_licenses = folioHelper.okapiPost('/licenses/licenses', requestBody);
+
+            try {
+              def folio_licenses = folioHelper.okapiPost('/licenses/licenses', requestBody);
+            }
+            catch ( Exception e ) {
+              e.printStackTrace()
+              local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message]}");
+            }
+
             if ( folio_licenses ) {
               // Grab the ID of our created license and use the resource mapping service to remember the correlation.
               // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
