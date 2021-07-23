@@ -48,6 +48,9 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
           extractService.start()
         }
       }
+
+      // In theory this will clear out the request context and not leave threadlocals hanging around.....
+      RequestContextHolder.resetRequestAttributes()
     }
 
     p.onError { Throwable err ->
