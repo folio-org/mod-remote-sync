@@ -29,7 +29,11 @@ public class ProcessLaserLicense implements TransformProcess {
       def jsonSlurper = new JsonSlurper()
       def parsed_record = jsonSlurper.parseText(new String(input_record))
 
+      // Stash the parsed record so that we can use it in the process step without re-parsing if preflight passes
+      local_context.parsed_record = parsed_record;
+
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::preflightCheck(${resource_id},..) ${new Date()}"]);
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:parsed_record.toString()])
 
       ResourceMappingService rms = ctx.getBean('resourceMappingService');
       PolicyHelperService policyHelper = ctx.getBean('policyHelperService');
@@ -104,8 +108,7 @@ public class ProcessLaserLicense implements TransformProcess {
     // These three parameters correlate with the first three parameters to policyHelper.manualResourceMapping in the preflight step
     ResourceMapping rm = rms.lookupMapping('LASER-LICENSE',resource_id,'LASERIMPORT');
 
-    def jsonSlurper = new JsonSlurper()
-    def parsed_record = jsonSlurper.parseText(new String(input_record))
+    def parsed_record = local_context.parsed_record
 
     log.debug("Load record : ${parsed_record}");
 
