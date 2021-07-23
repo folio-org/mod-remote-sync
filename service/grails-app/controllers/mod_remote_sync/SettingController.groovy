@@ -13,8 +13,8 @@ import mod_remote_sync.Source
 import com.k_int.web.toolkit.async.WithPromises
 import grails.gorm.multitenancy.CurrentTenant
 import grails.gorm.multitenancy.Tenants
-
-
+import org.springframework.web.context.request.RequestContextHolder
+import org.grails.web.servlet.mvc.GrailsWebRequest
 
 class SettingController extends OkapiTenantAwareController<AppSetting> {
   
@@ -33,13 +33,24 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     String tenantId = Tenants.currentId()
     log.debug("Worker thread invoked....${tenantId}");
 
+
+    // May need to RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true) in order to get request attrs into
+    // promise. The true makes the request attributes inheritable by spawned threads. We will try setting it manually instead::
+    GrailsWebRequest gwr = (GrailsWebRequest)RequestContextHolder.requestAttributes
+
     def p = WithPromises.task {
       log.info("Starting....");
+      // this means the request will be available to the worker thread - in particular the OKAPI TOKEN
+      RequestContextHolder.setRequestAttributes(gwr);
+
       Tenants.withId(tenantId) {
         Source.withTransaction {
           extractService.start()
         }
       }
+
+      // In theory this will clear out the request context and not leave threadlocals hanging around.....
+      RequestContextHolder.resetRequestAttributes()
     }
 
     p.onError { Throwable err ->
@@ -76,4 +87,5 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
 
     render result as JSON
   }
+
 }
