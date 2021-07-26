@@ -6,6 +6,7 @@ import mod_remote_sync.PolicyHelperService
 import mod_remote_sync.FolioHelperService
 import mod_remote_sync.ResourceMappingService
 import mod_remote_sync.ResourceMapping
+import mod_remote_sync.FeedbackItem
 import mod_remote_sync.ImportFeedbackService
 import groovy.json.JsonSlurper
 
