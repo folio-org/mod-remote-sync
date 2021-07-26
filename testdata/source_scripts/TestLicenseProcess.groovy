@@ -10,6 +10,8 @@ import mod_remote_sync.FolioHelperService
 import mod_remote_sync.ResourceMapping
 import mod_remote_sync.ImportFeedbackService
 import groovy.json.JsonSlurper
+import mod_remote_sync.FeedbackItem
+
 
 @Slf4j
 public class TestLicenseProcess implements TransformProcess {
