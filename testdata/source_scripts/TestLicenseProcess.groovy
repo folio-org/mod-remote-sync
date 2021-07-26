@@ -29,6 +29,7 @@ public class TestLicenseProcess implements TransformProcess {
       // test source makes JSON records - so parse the byte array accordingly
       def jsonSlurper = new JsonSlurper()
       def parsed_record = jsonSlurper.parseText(new String(input_record))
+      local_context.parsed_record = parsed_record;
   
       ResourceMappingService rms = ctx.getBean('resourceMappingService');
       PolicyHelperService policyHelper = ctx.getBean('policyHelperService');
@@ -103,17 +104,64 @@ public class TestLicenseProcess implements TransformProcess {
     ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
     FolioHelperService folioHelper = ctx.getBean('folioHelperService');
 
-    // Make a json blob and post it to whatever upstream system we need to
-    // In the test harness we don't do this
-    String new_internal_resource_id="INTERNAL-UUID-FOR-${resource_id}"
+    def parsed_record = local_context.parsed_record
+    log.debug("Load record : ${parsed_record}");
+
+    String local_resource_id = null;
+    boolean post_resource = false;
+
+    // Have we seen this resource before and do we know how to handle it in the future?
+    ResourceMapping rm = rms.lookupMapping('TEST-LICENSE',resource_id,'TEST');
+    if ( rm == null ) {
+      // No existing mapping - see if we have a decision about creating or updating an existing record
+      String feedback_correlation_id = "TEST:${resource_id}:TEST:MANUAL-RESOURCE-MAPPING".toString()
+      FeedbackItem fi = feedbackHelper.lookupFeedback(feedback_correlation_id)
+      if ( fi != null ) {
+        def answer = fi.parsedAnswer
+        switch ( answer?.answerType ) {
+          case 'create':
+            post_resource = true;
+            break;
+          case 'map':
+            post_resource = true;
+            local_resource_id = answer?.mappedResource?.id;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    else {
+      // We have seen this resource before - update
+      local_resource_id = rm.folioId
+    }
+
+    if ( post_resource ) {
+      log.debug("Post test license, target ID will be ${local_resource_id}");
+
+      // Create the record structure we want to post - if we are creating a new FOLIO record then local_resource_id will be null,
+      // otherwise it is the ID of the record to update.
+      def record_to_post = [
+        id:local_resource_id,
+        name: parsed_record.licenseName,
+        description: parsed_record.licenseName,
+        type:'consortial'
+      ]
    
-    // Store the record mapping to the new ID
-    rms.registerMapping('TEST-LICENSE',
-                        resource_id,
-                        'TEST',
-                        'M', // M==MAPPED
-                        'LICENSES',
-                        new_internal_resource_id);
+      // Store the record mapping to the new ID
+      def post_result = folioHelper.post('/licenses/licenses', record_to_post);
+      log.debug("post result: ${post_result}");
+
+      // If we didn't have a mapping for this resource, and resource creation worked then
+      // remember how we map this resource going forwards
+      if ( ( local_resource_id == null ) && ( post_result.id != null ) ) {
+        log.debug("Stash new LICENSE id ${post_result.id} to identifier mapping service");
+        rms.registerMapping('TEST-LICENSE', resource_id, 'TEST', 'M', 'LICENSES', post_result.id);
+      }
+    }
+    else {
+      log.debug("Skip post test license");
+    }
 
     def result = [
       processStatus:'COMPLETE'
