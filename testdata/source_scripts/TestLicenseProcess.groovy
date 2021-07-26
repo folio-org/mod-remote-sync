@@ -120,6 +120,7 @@ public class TestLicenseProcess implements TransformProcess {
       FeedbackItem fi = feedbackHelper.lookupFeedback(feedback_correlation_id)
       if ( fi != null ) {
         def answer = fi.parsedAnswer
+        log.debug("located feedback : ${fi} - process answer of type ${answer?.answerType}");
         switch ( answer?.answerType ) {
           case 'create':
             post_resource = true;
@@ -129,11 +130,16 @@ public class TestLicenseProcess implements TransformProcess {
             local_resource_id = answer?.mappedResource?.id;
             break;
           default:
+            log.error("Unhandled feedback item answer: ${answer} ");
             break;
         }
       }
+      else {
+        log.debug("No feedback provided for ${feedback_correlation_id}");
+      }
     }
     else {
+      log.debug("Located existing resource mapping ${rm}");
       // We have seen this resource before - update
       local_resource_id = rm.folioId
     }
