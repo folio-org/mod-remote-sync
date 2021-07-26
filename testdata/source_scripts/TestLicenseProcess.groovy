@@ -157,7 +157,7 @@ public class TestLicenseProcess implements TransformProcess {
       ]
    
       // Store the record mapping to the new ID
-      def post_result = folioHelper.post('/licenses/licenses', record_to_post);
+      def post_result = folioHelper.okapiPost('/licenses/licenses', record_to_post);
       log.debug("post result: ${post_result}");
 
       // If we didn't have a mapping for this resource, and resource creation worked then
