@@ -116,7 +116,7 @@ public class TestLicenseProcess implements TransformProcess {
     ResourceMapping rm = rms.lookupMapping('TEST-LICENSE',resource_id,'TEST');
     if ( rm == null ) {
       // No existing mapping - see if we have a decision about creating or updating an existing record
-      String feedback_correlation_id = "TEST:${resource_id}:TEST:MANUAL-RESOURCE-MAPPING".toString()
+      String feedback_correlation_id = "TEST-LICENSE:${resource_id}:TEST:MANUAL-RESOURCE-MAPPING".toString()
       FeedbackItem fi = feedbackHelper.lookupFeedback(feedback_correlation_id)
       if ( fi != null ) {
         def answer = fi.parsedAnswer
