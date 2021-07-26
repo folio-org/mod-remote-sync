@@ -139,7 +139,7 @@ public class ProcessLaserLicense implements TransformProcess {
             }
             catch ( Exception e ) {
               e.printStackTrace()
-              local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message]}");
+              local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message]}"]);
             }
 
             if ( folio_licenses ) {
