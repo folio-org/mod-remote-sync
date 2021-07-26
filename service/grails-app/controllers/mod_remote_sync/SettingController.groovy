@@ -65,7 +65,7 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
   }
 
   def configureFromRegister() {
-    def result = [result:'OK']
+    def result = null;
     try {
       String tenant_header = request.getHeader('X-OKAPI-TENANT')
       log.debug("configureFromRegister");
@@ -73,16 +73,16 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
       if ( ( request.JSON != null ) &&
            ( request.JSON.url != null ) ) {
         Source.withTransaction {
-          sourceRegisterService.load(request.JSON.url)
+          result = sourceRegisterService.load(request.JSON.url)
         }
       }
     }
     catch ( Exception e ) {
-
       log.error("Problem loading register",e);
-
-      result.result='ERROR'
-      result.message=e.getMessage()
+      result=[
+        result:'ERROR',
+        message:e.getMessage()
+      ]
     }
 
     render result as JSON

@@ -19,8 +19,9 @@ class SourceRegisterService {
 
   def grailsWebDataBinder
 
-  def load(String url) {
+  public Map load(String url) {
     log.debug("Load: ${url}");
+    Map result = [status:'OK',messages:[]]
 
     HttpBuilder http_client = HttpBuilder.configure {
       request.uri = url
@@ -42,18 +43,18 @@ class SourceRegisterService {
           if ( ( entry?.parameters != null ) && 
                ( entry?.parameters instanceof Map ) ) {
             log.debug("Definition states parameters - checking....");
-            ensureSettings(entry.parameters)
+            ensureSettings(entry.parameters, result)
           }
 
           switch ( entry.recordType ) {
             case 'source':
-              processSourceEntry(entry)
+              processSourceEntry(entry, result)
               break;
             case 'process':
-              processProcessEntry(entry)
+              processProcessEntry(entry, result)
               break;
             case 'extract':
-              processExtractEntry(entry)
+              processExtractEntry(entry, result)
               break;
             default:
               log.warn("Unhandled record type: ${entry}");
@@ -61,9 +62,11 @@ class SourceRegisterService {
         }
       }
     }
+
+    return result;
   }
 
-  private void ensureSettings(Map definitions) {
+  private void ensureSettings(Map definitions, Map state) {
     definitions.each { key, defn ->
       log.debug("Ensure definition: ${defn}");
       def st = AppSetting.findBySectionAndKey(defn.section, defn.key)
@@ -82,7 +85,7 @@ class SourceRegisterService {
     }
   }
 
-  private void processExtractEntry(Map descriptor) {
+  private void processExtractEntry(Map descriptor, Map state) {
     log.debug("SourceRegisterService::processExtract(${descriptor})");
     if ( descriptor.extractName &&
          descriptor.source && 
@@ -105,11 +108,11 @@ class SourceRegisterService {
     }
   }
 
-  private void processSourceEntry(Map agent_descriptor) {
+  private void processSourceEntry(Map agent_descriptor, Map state) {
     println("Got agent descriptor: ${agent_descriptor}");
     switch ( agent_descriptor.packaging ) {
       case 'script':
-        processScript(agent_descriptor);
+        processScript(agent_descriptor, state);
         break;
       default:
         log.warn("unhandled packaging: ${agent_descriptor.packaging}");
@@ -117,11 +120,11 @@ class SourceRegisterService {
     }
   }
 
-  private void processProcessEntry(Map descriptor) {
+  private void processProcessEntry(Map descriptor, Map state) {
     println("Got process descriptor: ${descriptor}");
     switch ( descriptor.packaging ) {
       case 'script':
-        ingestProcessDescriptor(descriptor);
+        ingestProcessDescriptor(descriptor, state);
         break;
       default:
         log.warn("unhandled packaging: ${descriptor.packaging}");
@@ -129,11 +132,11 @@ class SourceRegisterService {
     }
   }
 
-  private void ingestProcessDescriptor(Map descriptor) {
+  private void ingestProcessDescriptor(Map descriptor, Map state) {
     log.debug("ingestProcessDescriptor ${descriptor.processName}");
     if (  ( descriptor.processName ) &&
           ( descriptor.sourceUrl ) ) {
-      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, descriptor.language, TransformProcess.class);
+      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, descriptor.language, TransformProcess.class, state);
       if ( code_info?.is_valid ) {
         TransformationProcess tp = TransformationProcess.findByName(descriptor.processName) ?: new TransformationProcess()
         tp.name = descriptor.processName
@@ -153,14 +156,14 @@ class SourceRegisterService {
     }
   }
 
-  private void processScript(Map agent_descriptor) {
+  private void processScript(Map agent_descriptor, Map state) {
     log.debug("processScript ${agent_descriptor.sourceName} ${agent_descriptor.sourceUrl} ${agent_descriptor.parameters}");
     if ( ( agent_descriptor.sourceUrl ) &&
          ( agent_descriptor.authority ) && 
          ( agent_descriptor.sourceName ) ) {
 
       // Fetch the code and validate it
-      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, agent_descriptor.language, RemoteSyncActivity.class);
+      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, agent_descriptor.language, RemoteSyncActivity.class, state);
 
       // Step 3 - Script is valid, and signature checks out, create (Or update) record
       if ( code_info?.is_valid ) {
@@ -188,7 +191,7 @@ class SourceRegisterService {
     }
   }
 
-  private Map fetchAndValidateCode(String source_url, String language, Class required_interface) {
+  private Map fetchAndValidateCode(String source_url, String language, Class required_interface, Map state) {
 
     log.debug("SourceRegisterService::fetchAndValidateCode(${source_url},${language})")
 
@@ -216,7 +219,14 @@ class SourceRegisterService {
         // Step 2 - Validate the script
         switch ( language ) {
           case 'groovy':
-            result.is_valid = validateGroovyScript(result.plugin_content, required_interface)
+            result.is_valid = validateGroovyScript(result.plugin_content, required_interface, state)
+            if ( result.is_valid ) {
+              state.messages.add("${source_url} : Validated")
+            }
+            else {
+              state.messages.add("${source_url} : FAIL")
+              state.status='ERROR'
+            }
             break;
           default:
             log.warn("unhandled language: ${descriptor.language}");
@@ -228,7 +238,7 @@ class SourceRegisterService {
     return result;
   }
 
-  private boolean validateGroovyScript(String code, Class required_interface) {
+  private boolean validateGroovyScript(String code, Class required_interface, Map state) {
 
     boolean result = false;
 
@@ -244,11 +254,15 @@ class SourceRegisterService {
       }
       else {
         log.warn("Acquired class ${clazz} does not implement ${required_interface}.. Skip");
+        state.messages.add("Provided script does not implement required interface ${required_interface}. FAIL");
+        state.status='ERROR'
       }
       // clazz
     }
     catch ( Exception e ) {
       log.error("Error",e);
+      state.messages.add("Exception validating groovy script: ${e.message}");
+      state.status='ERROR'
     }
 
     return result;
