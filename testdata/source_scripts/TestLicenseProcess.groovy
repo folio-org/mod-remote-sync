@@ -162,7 +162,9 @@ public class TestLicenseProcess implements TransformProcess {
 
       // If we didn't have a mapping for this resource, and resource creation worked then
       // remember how we map this resource going forwards
-      if ( ( local_resource_id == null ) && ( post_result.id != null ) ) {
+      if ( ( local_resource_id == null ) && 
+           ( post_result != null ) &&
+           ( post_result.id != null ) ) {
         log.debug("Stash new LICENSE id ${post_result.id} to identifier mapping service");
         rms.registerMapping('TEST-LICENSE', resource_id, 'TEST', 'M', 'LICENSES', post_result.id);
       }
