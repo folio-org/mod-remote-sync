@@ -57,14 +57,14 @@ public class ProcessLaserLicense implements TransformProcess {
 
         // Register a question so the human operator knows we need a decision about this, log the result for the next time we
         // process.
-        feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',  // Feedback case / code
+        feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
                                        'LASER-LICENSE',             // What kind of input resource
                                        'LASERIMPORT',                     // mapping context
-                                       resource_id,                // ID of input resource
-                                       parsed_record?.licenseName, // Human readable label
+                                       resource_id,                 // ID of input resource
+                                       parsed_record?.reference,    // Human readable label
                                        'FOLIO:LICENSE',             // Target FOLIO resource type
                                        [
-                                         prompt:"Please indicate if the LASER License \"${parsed_record?.licenseName}\" with ID ${resource_id} in the TEST system should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored",
+                                         prompt:"Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} in the TEST system should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored",
                                          folioResourceType:'License']);
       }
 
