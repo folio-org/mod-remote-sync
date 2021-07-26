@@ -29,5 +29,10 @@
     "extractName":"TestLicenseExtract",
     "source":"TestLicenses",
     "process":"TestLicenseImport"
+    "parameters":{
+              "widget":{ "section":"Testing", "key":"widget.number",            "type": "String",  "required":true, "label":"Test Param For Extract Task" },
+          "widgetType":{ "section":"Testing", "key":"widget.type",              "type": "Refdata", "required":true, "label":"Test Param For Extract Task",
+                         "category":"EnumerationTest", "values":["One", "Two", "Three" ] }
+
   }
 ]
