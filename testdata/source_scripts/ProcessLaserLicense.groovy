@@ -3,7 +3,7 @@ import mod_remote_sync.source.TransformProcess;
 import org.springframework.context.ApplicationContext
 import groovy.util.logging.Slf4j
 import mod_remote_sync.PolicyHelperService
-import mod_remote_sync.FolioHelperService
+import mod_remote_sync.folio.FolioHelperService
 import mod_remote_sync.ResourceMappingService
 import mod_remote_sync.ResourceMapping
 import mod_remote_sync.FeedbackItem
