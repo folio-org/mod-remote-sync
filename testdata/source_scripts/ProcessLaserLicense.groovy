@@ -121,9 +121,15 @@ public class ProcessLaserLicense implements TransformProcess {
     println("Load record : ${parsed_record}");
 
     if ( rm == null ) {
+
+      println("No existing resource mapping found checking for feedback item");
+
       // No existing mapping - see if we have a decision about creating or updating an existing record
-      String feedback_correlation_id = "LASER:${resource_id}:LASERIMPORT:MANUAL-RESOURCE-MAPPING".toString()
+      String feedback_correlation_id = "LASER-LICENSE:${resource_id}:LASERIMPORT:MANUAL-RESOURCE-MAPPING".toString()
       FeedbackItem fi = feedbackHelper.lookupFeedback(feedback_correlation_id)
+
+      println("Got feedback: ${fi}");
+
       if ( fi != null ) {
         def answer = fi.parsedAnswer
         switch ( answer?.answerType ) {
@@ -171,6 +177,9 @@ public class ProcessLaserLicense implements TransformProcess {
             println("Unhandled answer type: ${answer?.answerType}");
             break;
         }
+      }
+      else {
+        local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Process blocked awaiting feedback with correlation id ${feedback_correlation_id}"]);
       }
     }
     else {
