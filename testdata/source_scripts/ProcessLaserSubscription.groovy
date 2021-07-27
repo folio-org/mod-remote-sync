@@ -1,3 +1,5 @@
+package folio.modrs.scripts
+
 import mod_remote_sync.source.TransformProcess;
 
 import org.springframework.context.ApplicationContext
