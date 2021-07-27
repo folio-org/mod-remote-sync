@@ -1,4 +1,4 @@
-package mod_remote_sync.plugins.test
+package folio.modrs.scripts
 
 import mod_remote_sync.source.TransformProcess;
 
