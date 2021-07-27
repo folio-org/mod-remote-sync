@@ -8,7 +8,15 @@ import com.k_int.web.toolkit.refdata.*
 import com.k_int.okapi.OkapiTenantResolver
 import grails.converters.JSON
 import com.k_int.okapi.OkapiClient
+import groovy.util.logging.Slf4j
+import grails.core.GrailsApplication
+import org.springframework.beans.factory.annotation.Autowired
 
+/**
+ * Folio helper service impl
+ *
+ */
+@Slf4j
 @Transactional
 class FolioHelperServiceImpl implements FolioHelperService {
 
