@@ -138,8 +138,8 @@ public class ProcessLaserLicense implements TransformProcess {
             // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
             println("Create a new license and track ${resource_id} with that ID");
             def requestBody = [
-              name:'A laser license',
-              description: "Synchronized from LAS:eR license ${license.reference}/${license.globalUID} on ${new Date()}",
+              name:parsed_record?.reference,
+              description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
               // status:statusString,
               type:'consortial',
               // localReference: license.globalUID,
