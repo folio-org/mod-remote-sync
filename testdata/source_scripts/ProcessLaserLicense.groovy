@@ -51,7 +51,7 @@ public class ProcessLaserLicense implements TransformProcess {
         preflight_log.add([
                            code:'MANUAL-RESOURCE-MAPPING-NEEDED',
                            id: resource_id,
-                           description: 'License title',
+                           description: 'Unmapped LASER License - user input needed(Create/Match Existing/Ignore) :'+parsed_record?.reference,
                            message:MANUAL_POLICY_MESSAGE
                          ])
 
@@ -135,20 +135,21 @@ public class ProcessLaserLicense implements TransformProcess {
               // endDate: license.endDate
             ]   
 
+            def folio_license
             try {
-              def folio_licenses = folioHelper.okapiPost('/licenses/licenses', requestBody);
+              def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
+              if ( folio_license ) {
+                // Grab the ID of our created license and use the resource mapping service to remember the correlation.
+                // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
+                // that resource maps to folio_licenses.id
+                rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
+              }
             }
             catch ( Exception e ) {
               e.printStackTrace()
               local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message}"]);
             }
 
-            if ( folio_licenses ) {
-              // Grab the ID of our created license and use the resource mapping service to remember the correlation.
-              // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
-              // that resource maps to folio_licenses.id
-              rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_licenses.id);
-            }
             break;
           case 'ignore':
             log.debug("Ignore ${resource_id} from LASER");
