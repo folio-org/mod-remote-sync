@@ -207,7 +207,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
   def runTransformationTasks() {
     log.debug("ExtractService::runTransformationTasks()");
-    TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING',blocked:'BLOCKED',failed:'FAILED'],[readonly:true]).each { tr ->
+    TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING',blocked:'BLOCKED',failed:'FAIL'],[readonly:true]).each { tr ->
       log.debug("attemptProcess(${tr})");
       transformationRunnerService.attemptProcess(tr);
     }
