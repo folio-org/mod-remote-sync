@@ -23,7 +23,7 @@ public class ProcessLaserLicense implements TransformProcess {
                             byte[] input_record,
                             ApplicationContext ctx,
                             Map local_context) {
-    log.debug("ProcessLaserLicense::preflightCheck()");
+    println("ProcessLaserLicense::preflightCheck()");
     Map result = null;
 
     try {
@@ -104,8 +104,8 @@ public class ProcessLaserLicense implements TransformProcess {
       processStatus:'FAIL'  // FAIL|COMPLETE
     ]
 
-    log.debug("ProcessLaserLicense::process(${resource_id},...)");
-    log.debug("Record to import: ${new String(input_record)}");
+    println("ProcessLaserLicense::process(${resource_id},...)");
+    println("Record to import: ${new String(input_record)}");
     local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::process(${resource_id},..) ${new Date()}"]);
 
     ResourceMappingService rms = ctx.getBean('resourceMappingService');
@@ -118,7 +118,7 @@ public class ProcessLaserLicense implements TransformProcess {
 
     def parsed_record = local_context.parsed_record
 
-    log.debug("Load record : ${parsed_record}");
+    println("Load record : ${parsed_record}");
 
     if ( rm == null ) {
       // No existing mapping - see if we have a decision about creating or updating an existing record
@@ -130,7 +130,7 @@ public class ProcessLaserLicense implements TransformProcess {
           case 'create':
             // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
             // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
-            log.debug("Create a new license and track ${resource_id} with that ID");
+            println("Create a new license and track ${resource_id} with that ID");
             def requestBody = [
               name:'A laser license',
               description: "Synchronized from LAS:eR license ${license.reference}/${license.globalUID} on ${new Date()}",
@@ -142,7 +142,8 @@ public class ProcessLaserLicense implements TransformProcess {
               // endDate: license.endDate
             ]   
 
-            def folio_license
+            def folio_license = null;
+
             try {
               def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
               if ( folio_license ) {
@@ -160,18 +161,22 @@ public class ProcessLaserLicense implements TransformProcess {
 
             break;
           case 'ignore':
-            log.debug("Ignore ${resource_id} from LASER");
+            println("Ignore ${resource_id} from LASER");
             result.processStatus = 'COMPLETE'
             break;
           case 'map':
-            log.debug("Import ${resource_id} as ${answer?.value}");
+            println("Import ${resource_id} as ${answer?.value}");
             // We are mapping a new external resource to an existing internal license - this is a put rather than a post
             // def folio_licenses = folioHelper.okapiPut("/licenses/licenses/${answer.value}", requestBody);
             break;
           default:
+            println("Unhandled answer type: ${answer?.answerType}");
             break;
         }
       }
+    }
+    else {
+      println("Got existing mapping... process ${rm}");
     }
 
     return result;
