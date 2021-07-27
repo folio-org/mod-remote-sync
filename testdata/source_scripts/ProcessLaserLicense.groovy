@@ -142,8 +142,6 @@ public class ProcessLaserLicense implements TransformProcess {
               // endDate: license.endDate
             ]   
 
-            def folio_license = null;
-
             try {
               def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
               if ( folio_license ) {
