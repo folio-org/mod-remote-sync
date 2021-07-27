@@ -108,47 +108,48 @@ public class ProcessLaserLicense implements TransformProcess {
     println("Record to import: ${new String(input_record)}");
     local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::process(${resource_id},..) ${new Date()}"]);
 
-    ResourceMappingService rms = ctx.getBean('resourceMappingService');
-    ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
-    FolioHelperService folioHelper = ctx.getBean('folioHelperService');
+    try {
 
-    // Lets see if we know about this resource already
-    // These three parameters correlate with the first three parameters to policyHelper.manualResourceMapping in the preflight step
-    ResourceMapping rm = rms.lookupMapping('LASER-LICENSE',resource_id,'LASERIMPORT');
+      ResourceMappingService rms = ctx.getBean('resourceMappingService');
+      ImportFeedbackService feedbackHelper = ctx.getBean('importFeedbackService');
+      FolioHelperService folioHelper = ctx.getBean('folioHelperService');
 
-    def parsed_record = local_context.parsed_record
+      // Lets see if we know about this resource already
+      // These three parameters correlate with the first three parameters to policyHelper.manualResourceMapping in the preflight step
+      ResourceMapping rm = rms.lookupMapping('LASER-LICENSE',resource_id,'LASERIMPORT');
 
-    println("Load record : ${parsed_record}");
+      def parsed_record = local_context.parsed_record
 
-    if ( rm == null ) {
+      println("Load record : ${parsed_record}");
 
-      println("No existing resource mapping found checking for feedback item");
+      if ( rm == null ) {
 
-      // No existing mapping - see if we have a decision about creating or updating an existing record
-      String feedback_correlation_id = "LASER-LICENSE:${resource_id}:LASERIMPORT:MANUAL-RESOURCE-MAPPING".toString()
-      FeedbackItem fi = feedbackHelper.lookupFeedback(feedback_correlation_id)
+        println("No existing resource mapping found checking for feedback item");
 
-      println("Got feedback: ${fi}");
+        // No existing mapping - see if we have a decision about creating or updating an existing record
+        String feedback_correlation_id = "LASER-LICENSE:${resource_id}:LASERIMPORT:MANUAL-RESOURCE-MAPPING".toString()
+        FeedbackItem fi = feedbackHelper.lookupFeedback(feedback_correlation_id)
 
-      if ( fi != null ) {
-        def answer = fi.parsedAnswer
-        switch ( answer?.answerType ) {
-          case 'create':
-            // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
-            // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
-            println("Create a new license and track ${resource_id} with that ID");
-            def requestBody = [
-              name:'A laser license',
-              description: "Synchronized from LAS:eR license ${license.reference}/${license.globalUID} on ${new Date()}",
-              // status:statusString,
-              type:'consortial',
-              // localReference: license.globalUID,
-              // customProperties: customProperties,
-              // startDate: license.startDate,
-              // endDate: license.endDate
-            ]   
+        println("Got feedback: ${fi}");
 
-            try {
+        if ( fi != null ) {
+          def answer = fi.parsedAnswer
+          switch ( answer?.answerType ) {
+            case 'create':
+              // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
+              // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
+              println("Create a new license and track ${resource_id} with that ID");
+              def requestBody = [
+                name:parsed_record?.reference,
+                description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
+                // status:statusString,
+                type:'consortial',
+                // localReference: license.globalUID,
+                // customProperties: customProperties,
+                // startDate: license.startDate,
+                // endDate: license.endDate
+              ]   
+
               def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
               if ( folio_license ) {
                 // Grab the ID of our created license and use the resource mapping service to remember the correlation.
@@ -157,33 +158,33 @@ public class ProcessLaserLicense implements TransformProcess {
                 rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
                 result.processStatus = 'COMPLETE'
               }
-            }
-            catch ( Exception e ) {
-              e.printStackTrace()
-              local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message}"]);
-            }
-
-            break;
-          case 'ignore':
-            println("Ignore ${resource_id} from LASER");
-            result.processStatus = 'COMPLETE'
-            break;
-          case 'map':
-            println("Import ${resource_id} as ${answer?.value}");
-            // We are mapping a new external resource to an existing internal license - this is a put rather than a post
-            // def folio_licenses = folioHelper.okapiPut("/licenses/licenses/${answer.value}", requestBody);
-            break;
-          default:
-            println("Unhandled answer type: ${answer?.answerType}");
-            break;
+              break;
+            case 'ignore':
+              println("Ignore ${resource_id} from LASER");
+              result.processStatus = 'COMPLETE'
+              break;
+            case 'map':
+              println("Import ${resource_id} as ${answer?.value}");
+              // We are mapping a new external resource to an existing internal license - this is a put rather than a post
+              // def folio_licenses = folioHelper.okapiPut("/licenses/licenses/${answer.value}", requestBody);
+              break;
+            default:
+              println("Unhandled answer type: ${answer?.answerType}");
+              break;
+          }
+        }
+        else {
+          local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Process blocked awaiting feedback with correlation id ${feedback_correlation_id}"]);
         }
       }
       else {
-        local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Process blocked awaiting feedback with correlation id ${feedback_correlation_id}"]);
+        println("Got existing mapping... process ${rm}");
       }
     }
-    else {
-      println("Got existing mapping... process ${rm}");
+    catch ( Exception e ) {
+      println("\n\n***Exception in record processing***\n\n");
+      e.printStackTrace()
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message}"]);
     }
 
     return result;
