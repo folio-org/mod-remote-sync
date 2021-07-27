@@ -1,3 +1,5 @@
+package folio.modrs.scripts
+
 import mod_remote_sync.source.TransformProcess;
 
 import org.springframework.context.ApplicationContext
@@ -97,6 +99,11 @@ public class ProcessLaserLicense implements TransformProcess {
                      byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context) {
+
+    def result = [
+      processStatus:'FAIL'  // FAIL|COMPLETE
+    ]
+
     log.debug("ProcessLaserLicense::process(${resource_id},...)");
     log.debug("Record to import: ${new String(input_record)}");
     local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::process(${resource_id},..) ${new Date()}"]);
@@ -143,6 +150,7 @@ public class ProcessLaserLicense implements TransformProcess {
                 // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
                 // that resource maps to folio_licenses.id
                 rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
+                result.processStatus = 'COMPLETE'
               }
             }
             catch ( Exception e ) {
@@ -153,6 +161,7 @@ public class ProcessLaserLicense implements TransformProcess {
             break;
           case 'ignore':
             log.debug("Ignore ${resource_id} from LASER");
+            result.processStatus = 'COMPLETE'
             break;
           case 'map':
             log.debug("Import ${resource_id} as ${answer?.value}");
@@ -165,9 +174,7 @@ public class ProcessLaserLicense implements TransformProcess {
       }
     }
 
-    return [
-      processStatus:'FAIL'  // FAIL|COMPLETE
-    ]
+    return result;
   }
 
 }

@@ -1,3 +1,5 @@
+package folio.modrs.scripts
+
 import mod_remote_sync.source.RemoteSyncActivity;
 import mod_remote_sync.source.RecordSourceController;
 import javax.crypto.spec.SecretKeySpec
