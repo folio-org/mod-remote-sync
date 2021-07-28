@@ -101,6 +101,10 @@ public class TestLicenseProcess implements TransformProcess {
                      Map local_context) {
     log.debug("TestLicenseProcess::process(${resource_id},...)");
   
+    def result = [
+      processStatus:'COMPLETE'
+    ]
+
     try {
   
       ResourceMappingService rms = ctx.getBean('resourceMappingService');
@@ -168,7 +172,8 @@ public class TestLicenseProcess implements TransformProcess {
              ( post_result != null ) &&
              ( post_result.id != null ) ) {
           log.debug("Stash new LICENSE id ${post_result.id} to identifier mapping service");
-          rms.registerMapping('TEST-LICENSE', resource_id, 'TEST', 'M', 'LICENSES', post_result.id);
+          def resource_mapping = rms.registerMapping('TEST-LICENSE', resource_id, 'TEST', 'M', 'LICENSES', post_result.id);
+          result.resource_mapping = resource_mapping
         }
       }
       else {
@@ -180,10 +185,6 @@ public class TestLicenseProcess implements TransformProcess {
       e.printStackTrace()
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message}"]);
     }
-
-    def result = [
-      processStatus:'COMPLETE'
-    ]
 
     log.debug("Return result: ${result}");
     return result;

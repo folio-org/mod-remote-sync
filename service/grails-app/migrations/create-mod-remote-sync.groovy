@@ -198,6 +198,12 @@ databaseChangeLog = {
       column(name: "fb_correlation_id")
     }
 
+    addColumn (tableName: "mrs_tp_record" ) {
+      column(name: "mtr_last_process_attempt", type: "timestamp")
+      column(name: "mtr_last_process_complete", type: "timestamp")
+      column(name: "mtr_associated_mapping_fk", type: "VARCHAR(36)")
+    }
+
   }
 
 }

@@ -29,12 +29,23 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
   // The input data
   byte[] inputData
 
+  // Date of last attempt to process this record
+  Date lastProcessAttempt
+
+  // Last successful completion
+  Date lastProcessComplete
+
   String statusReport
 
+  ResourceMapping associatedMapping
+
   static constraints = {
-           owner (nullable : false)
-       inputData (nullable : true)
-    statusReport (nullable : true)
+                  owner (nullable : false)
+              inputData (nullable : true)
+           statusReport (nullable : true)
+     lastProcessAttempt (nullable : true)
+    lastProcessComplete (nullable : true)
+      associatedMapping (nullable : true)
   }
 
   static mapping = {
@@ -47,6 +58,16 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
                sourceRecordId column:'mtr_source_record_id'
                     inputData column:'mtr_input_data'
                  statusReport column:'mtr_status_report'
+           lastProcessAttempt column:'mtr_last_process_attempt'
+          lastProcessComplete column:'mtr_last_process_complete'
+            associatedMapping column:'mtr_associated_mapping_fk'
   }
+
+  static transients = ['inputDataString']
+
+  public String getInputDataString() {
+    return new String(inputData);
+  }
+
 
 }
