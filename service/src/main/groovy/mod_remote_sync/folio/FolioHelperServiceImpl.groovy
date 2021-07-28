@@ -25,16 +25,23 @@ class FolioHelperServiceImpl implements FolioHelperService {
 
   public Object okapiPost(String path, Object o, Map params=null) {
     log.debug("FolioHelperService::okapiPost(${path},....)");
-    return okapiClient.post(path, o, params)
+    def result = okapiClient.post(path, o, params)
+    log.debug("Result of okapiPost(${path}...): ${result}");
+    return result;
   }
   
   public Object okapiPut(String path, Object o, Map params=null) {
     log.debug("FolioHelperService::okapiPut(${path},....)");
-    return okapiClient.put(path, o, params)
+    def result = okapiClient.put(path, o, params)
+    log.debug("Result of okapiPut(${path}...): ${result}");
+    return result;
   }
 
   public Object okapiGet(String path, Map params) {
-    return okapiClient.get(path, params)
+    log.debug("FolioHelperService::okapiGet(${path},${params}....)");
+    def result = okapiClient.get(path, params)
+    log.debug("Result of okapiGet(${path}...): ${result}");
+    return result;
   }
 
   // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
