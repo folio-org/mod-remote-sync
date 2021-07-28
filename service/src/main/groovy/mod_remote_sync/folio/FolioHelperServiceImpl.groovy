@@ -22,14 +22,14 @@ class FolioHelperServiceImpl implements FolioHelperService {
 
   OkapiClient okapiClient
 
-  public Object okapiPost(String path, Object o) {
+  public Object okapiPost(String path, Object o, Map params=null) {
     log.debug("FolioHelperService::okapiPost(${path},....)");
-    return okapiClient.post(path, o)
+    return okapiClient.post(path, o, params)
   }
   
-  public Object okapiPut(String path, Object o) {
+  public Object okapiPut(String path, Object o, Map params=null) {
     log.debug("FolioHelperService::okapiPut(${path},....)");
-    return okapiClient.put(path, o)
+    return okapiClient.put(path, o, params)
   }
 
   public Object okapiGet(String path, Map params) {
