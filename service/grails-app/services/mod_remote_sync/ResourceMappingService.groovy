@@ -45,6 +45,8 @@ and rm.mappingContext = :ctx
                                          String mappingStatus,
                                          String folioContext,
                                          String folioId) {
+    log.debug("ResourceMappingService::registerMapping(${source},${source_id},${mappingContext},${mappingStatus},${folioContext},${folioId}");
+
     ResourceMapping existing = lookupMapping(source,source_id,mappingContext);
     if ( existing )
       throw new RuntimeException("Mapping already exists");

@@ -44,18 +44,13 @@ public class ProcessLaserLicense implements TransformProcess {
 
       boolean pass = true;
 
-      def preflight_log = []
-
       // For licenses, we require that a human tells us if we should create a new license internally, or map to an existing
       // license or ignore the license. This policy checks for that decision and halts the import if we don't know yet.
       if ( policyHelper.manualResourceMapping('LASER-LICENSE', resource_id, 'LASERIMPORT', 'FOLIO::LICENSE', local_context)  == false ) {
         pass = false;
-        preflight_log.add([
-                           code:'MANUAL-RESOURCE-MAPPING-NEEDED',
-                           id: resource_id,
-                           description: 'Unmapped LASER License - user input needed(Create/Match Existing/Ignore) :'+parsed_record?.reference,
-                           message:MANUAL_POLICY_MESSAGE
-                         ])
+
+        local_context.processLog.add([ts:System.currentTimeMillis(), 
+                                      msg:"Import blocked pending map/create/ignore decision - ${parsed_record?.reference}(${resource_id})"]);
 
         // Register a question so the human operator knows we need a decision about this, log the result for the next time we
         // process.
@@ -71,8 +66,7 @@ public class ProcessLaserLicense implements TransformProcess {
       }
 
       result = [
-        preflightStatus: pass ? 'PASS' : 'FAIL',
-        log: preflight_log
+        preflightStatus: pass ? 'PASS' : 'FAIL'
       ]
 
     }
@@ -155,8 +149,13 @@ public class ProcessLaserLicense implements TransformProcess {
                 // Grab the ID of our created license and use the resource mapping service to remember the correlation.
                 // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
                 // that resource maps to folio_licenses.id
-                rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
+                def resource_mapping = rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
                 result.processStatus = 'COMPLETE'
+                // Send back the resource mapping so it can be stashed in the record
+                result.resource_mapping = resource_mapping;
+              }
+              else {
+                local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Post to licenses endpoint did not return a record"]);
               }
               break;
             case 'ignore':

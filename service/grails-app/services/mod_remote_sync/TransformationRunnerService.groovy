@@ -45,12 +45,16 @@ class TransformationRunnerService {
           log.debug("Close out - return to OPEN");
           TransformationProcessRecord tpr = TransformationProcessRecord.lock(tpr_id)
 
+          tpr.lastProcessAttempt = new Date();
+
           Map processing_result = this.process(tpr);
          
           if ( processing_result.processStatus != null ) {
             switch ( processing_result.processStatus ) {
               case 'COMPLETE':
+                tpr.lastProcessComplete = new Date()
                 tpr.processControlStatus = 'CLOSED'
+                tpr.associatedMapping = processing_result.resource_mapping
                 break;
               default:
                 tpr.processControlStatus = 'OPEN'
