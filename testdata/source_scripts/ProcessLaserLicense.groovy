@@ -158,6 +158,9 @@ public class ProcessLaserLicense implements TransformProcess {
                 rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
                 result.processStatus = 'COMPLETE'
               }
+              else {
+                local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Post to licenses endpoint did not return a record"]);
+              }
               break;
             case 'ignore':
               println("Ignore ${resource_id} from LASER");
