@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired
 @Transactional
 class FolioHelperServiceImpl implements FolioHelperService {
 
+  @Autowired
   OkapiClient okapiClient
 
   public Object okapiPost(String path, Object o, Map params=null) {
