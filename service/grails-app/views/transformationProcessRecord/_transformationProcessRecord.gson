@@ -4,6 +4,6 @@ import mod_remote_sync.TransformationProcessRecord
 @Field TransformationProcessRecord transformationProcessRecord
 
 // Special template returns shallow copy of both ends.
-json g.render (transformationProcessRecord, [expand:[], excludes:['inputData']]) {
+json g.render (transformationProcessRecord, [expand:['associatedMapping'], excludes:['inputData']]) {
 }
 

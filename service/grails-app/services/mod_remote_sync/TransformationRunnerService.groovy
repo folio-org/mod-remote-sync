@@ -70,7 +70,7 @@ class TransformationRunnerService {
           if ( processing_result?.processLog)
             tpr.statusReport = JsonOutput.toJson(processing_result.processLog)
 
-          tpr.save();
+          tpr.save(flush:true,failOnError:true);
         }   
 
       }
