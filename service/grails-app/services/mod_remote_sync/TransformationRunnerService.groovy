@@ -173,4 +173,7 @@ class TransformationRunnerService {
     return result;
   }
 
+  public clearProcessCache() {
+    transform_process_cache.clear()
+  }
 }
