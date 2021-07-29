@@ -197,6 +197,9 @@ databaseChangeLog = {
     createIndex(indexName: "feedback_item_res_idx", tableName: "feedback_item") {
       column(name: "fb_correlation_id")
     }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "i202107291410-001") {
 
     addColumn (tableName: "mrs_tp_record" ) {
       column(name: "mtr_last_process_attempt", type: "timestamp")
