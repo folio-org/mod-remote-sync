@@ -18,6 +18,7 @@ import com.k_int.web.toolkit.settings.AppSetting
 class SourceRegisterService {
 
   def grailsWebDataBinder
+  def transformationRunnerService
 
   public Map load(String url) {
     log.debug("Load: ${url}");
@@ -60,6 +61,8 @@ class SourceRegisterService {
               log.warn("Unhandled record type: ${entry}");
           }
         }
+
+        transformationRunnerService.clearProcessCache()
       }
     }
 
