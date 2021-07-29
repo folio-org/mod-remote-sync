@@ -126,6 +126,9 @@ public class ProcessLaserLicense implements TransformProcess {
 
         println("Got feedback: ${fi}");
 
+        // This needs to be mapped
+        String statusString = 'Active'
+
         if ( fi != null ) {
           def answer = fi.parsedAnswer
           switch ( answer?.answerType ) {
@@ -142,6 +145,11 @@ public class ProcessLaserLicense implements TransformProcess {
                 // customProperties: customProperties,
                 // startDate: license.startDate,
                 // endDate: license.endDate
+                status:statusString,
+                localReference: parsed_record.globalUID,
+                // customProperties: customProperties,
+                startDate: parsed_record?.startDate,
+                endDate: parsed_record?.endDate
               ]   
 
               def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
