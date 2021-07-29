@@ -19,6 +19,34 @@ public class ProcessLaserLicense implements TransformProcess {
 
 
 
+  private boolean mappingCheck(PolicyHelperService policyHelper,
+                               ImportFeedbackService feedbackHelper,
+                               boolean mandatory,
+                               String resource_type,
+                               String resource_id,
+                               String context,
+                               String target_context,
+                               Map local_conext,
+                               String resource_label,
+                               String prompt) {
+    boolean pass=true;
+    if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, local_context)  == false ) {
+      pass=false;
+      local_context.processLog.add([ts:System.currentTimeMillis(), 
+                                      msg:"Import blocked pending map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
+
+      feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
+                                     resource_type,             // What kind of input resource
+                                     context,
+                                     resource_id,                 // ID of input resource
+                                     resource_label,
+                                     target_context,
+                                     [ prompt:prompt, folioResourceType:'License']);  // THIS CORRELATES WITH FRONTEND - COORDINATE
+
+    }
+    return pass;
+  }
+
   public Map preflightCheck(String resource_id,
                             byte[] input_record,
                             ApplicationContext ctx,
