@@ -52,6 +52,7 @@ class TransformationRunnerService {
           if ( processing_result.processStatus != null ) {
             switch ( processing_result.processStatus ) {
               case 'COMPLETE':
+                log.debug("processing completed: ${processing_result}");
                 tpr.lastProcessComplete = new Date()
                 tpr.processControlStatus = 'CLOSED'
                 tpr.associatedMapping = processing_result.resource_mapping
