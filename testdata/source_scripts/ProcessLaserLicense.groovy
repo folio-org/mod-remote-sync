@@ -18,7 +18,7 @@ public class ProcessLaserLicense implements TransformProcess {
   public static String MANUAL_POLICY_MESSAGE='The manual resource mapping policy applies - Operator needs to choose if the system should Create a new License, Map to an Existing one, or Ignore this license';
 
 
-
+  // Helper function for mapping a remote resource (EG a License) to a local one
   private boolean mappingCheck(PolicyHelperService policyHelper,
                                ImportFeedbackService feedbackHelper,
                                boolean mandatory,
@@ -45,6 +45,21 @@ public class ProcessLaserLicense implements TransformProcess {
 
     }
     return pass;
+  }
+
+  // Helper for mapping a remote value (EG a Status Code) to a local one
+  private boolean checkValueMapping(PolicyHelperService policyHelper,
+                               ImportFeedbackService feedbackHelper,
+                               boolean mandatory,
+                               String resource_type,
+                               String resource_id,
+                               String context,
+                               String target_context,
+                               Map local_conext,
+                               String resource_label,
+                               String prompt) {
+    log.debug("checkValueMapping(${prompt})");
+    return true
   }
 
   public Map preflightCheck(String resource_id,
@@ -75,6 +90,14 @@ public class ProcessLaserLicense implements TransformProcess {
       // See if we should create or map this license
       pass &= mappingCheck(policyHelper,feedbackHelper,true,'LASER-LICENSE', resource_id, 'LASERIMPORT', 'FOLIO::LICENSE', local_context, parsed_record?.reference,
                            "Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored");
+
+      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-STATUS', parsed_record.status, 'LASERIMPORT', 'FOLIO::LICENSE/STATUS', local_context, parsed_record?.status,
+                           "Please provide a mapping for LASER License Status ${parsed_record.status}");
+
+      String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
+
+      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-TYPE', type_value, 'LASERIMPORT', 'FOLIO::LICENSE/TYPE', local_context, parsed_record?.status,
+                           "Please provide a mapping for LASER License Status ${type_value}");
 
       result = [
         preflightStatus: pass ? 'PASS' : 'FAIL'
@@ -139,6 +162,8 @@ public class ProcessLaserLicense implements TransformProcess {
 
         // This needs to be mapped
         String statusString = 'Active'
+        // String typeString = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
+        String typeString = 'Consortial'
 
         if ( fi != null ) {
           def answer = fi.parsedAnswer
@@ -150,15 +175,10 @@ public class ProcessLaserLicense implements TransformProcess {
               def requestBody = [
                 name:parsed_record?.reference,
                 description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
-                // status:statusString,
-                type:'consortial',
-                // localReference: license.globalUID,
+                type:type_value,
                 // customProperties: customProperties,
-                // startDate: license.startDate,
-                // endDate: license.endDate
                 status:statusString,
                 localReference: parsed_record.globalUID,
-                // customProperties: customProperties,
                 startDate: parsed_record?.startDate,
                 endDate: parsed_record?.endDate
               ]   
