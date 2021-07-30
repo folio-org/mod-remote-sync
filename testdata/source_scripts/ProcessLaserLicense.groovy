@@ -72,26 +72,9 @@ public class ProcessLaserLicense implements TransformProcess {
 
       boolean pass = true;
 
-      // For licenses, we require that a human tells us if we should create a new license internally, or map to an existing
-      // license or ignore the license. This policy checks for that decision and halts the import if we don't know yet.
-      if ( policyHelper.manualResourceMapping('LASER-LICENSE', resource_id, 'LASERIMPORT', 'FOLIO::LICENSE', local_context)  == false ) {
-        pass = false;
-
-        local_context.processLog.add([ts:System.currentTimeMillis(), 
-                                      msg:"Import blocked pending map/create/ignore decision - ${parsed_record?.reference}(${resource_id})"]);
-
-        // Register a question so the human operator knows we need a decision about this, log the result for the next time we
-        // process.
-        feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
-                                       'LASER-LICENSE',             // What kind of input resource
-                                       'LASERIMPORT',                     // mapping context
-                                       resource_id,                 // ID of input resource
-                                       parsed_record?.reference,    // Human readable label
-                                       'FOLIO:LICENSE',             // Target FOLIO resource type
-                                       [
-                                         prompt:"Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} in the TEST system should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored",
-                                         folioResourceType:'License']);
-      }
+      // See if we should create or map this license
+      pass &= mappingCheck(policyHelper,feedbackHelper,true,'LASER-LICENSE', resource_id, 'LASERIMPORT', 'FOLIO::LICENSE', local_context, parsed_record?.reference,
+                           "Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored");
 
       result = [
         preflightStatus: pass ? 'PASS' : 'FAIL'
