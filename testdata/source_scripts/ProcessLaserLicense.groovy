@@ -26,7 +26,7 @@ public class ProcessLaserLicense implements TransformProcess {
                                String resource_id,
                                String context,
                                String target_context,
-                               Map local_conext,
+                               Map local_context,
                                String resource_label,
                                String prompt) {
     boolean pass=true;
@@ -56,7 +56,7 @@ public class ProcessLaserLicense implements TransformProcess {
                                String resource_id,
                                String context,
                                String target_context,
-                               Map local_conext,
+                               Map local_context,
                                String resource_label,
                                String prompt) {
     boolean result = true;
