@@ -178,7 +178,7 @@ public class ProcessLaserLicense implements TransformProcess {
               def requestBody = [
                 name:parsed_record?.reference,
                 description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
-                type:type_value,
+                type:typeString,
                 // customProperties: customProperties,
                 status:statusString,
                 localReference: parsed_record.globalUID,
