@@ -18,6 +18,49 @@ public class ProcessLaserLicense implements TransformProcess {
   public static String MANUAL_POLICY_MESSAGE='The manual resource mapping policy applies - Operator needs to choose if the system should Create a new License, Map to an Existing one, or Ignore this license';
 
 
+  // Helper function for mapping a remote resource (EG a License) to a local one
+  private boolean mappingCheck(PolicyHelperService policyHelper,
+                               ImportFeedbackService feedbackHelper,
+                               boolean mandatory,
+                               String resource_type,
+                               String resource_id,
+                               String context,
+                               String target_context,
+                               Map local_conext,
+                               String resource_label,
+                               String prompt) {
+    boolean pass=true;
+    if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, local_context)  == false ) {
+      pass=false;
+      local_context.processLog.add([ts:System.currentTimeMillis(), 
+                                      msg:"Import blocked pending map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
+
+      feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
+                                     resource_type,             // What kind of input resource
+                                     context,
+                                     resource_id,                 // ID of input resource
+                                     resource_label,
+                                     target_context,
+                                     [ prompt:prompt, folioResourceType:'License']);  // THIS CORRELATES WITH FRONTEND - COORDINATE
+
+    }
+    return pass;
+  }
+
+  // Helper for mapping a remote value (EG a Status Code) to a local one
+  private boolean checkValueMapping(PolicyHelperService policyHelper,
+                               ImportFeedbackService feedbackHelper,
+                               boolean mandatory,
+                               String resource_type,
+                               String resource_id,
+                               String context,
+                               String target_context,
+                               Map local_conext,
+                               String resource_label,
+                               String prompt) {
+    log.debug("checkValueMapping(${prompt})");
+    return true
+  }
 
   public Map preflightCheck(String resource_id,
                             byte[] input_record,
@@ -44,26 +87,17 @@ public class ProcessLaserLicense implements TransformProcess {
 
       boolean pass = true;
 
-      // For licenses, we require that a human tells us if we should create a new license internally, or map to an existing
-      // license or ignore the license. This policy checks for that decision and halts the import if we don't know yet.
-      if ( policyHelper.manualResourceMapping('LASER-LICENSE', resource_id, 'LASERIMPORT', 'FOLIO::LICENSE', local_context)  == false ) {
-        pass = false;
+      // See if we should create or map this license
+      pass &= mappingCheck(policyHelper,feedbackHelper,true,'LASER-LICENSE', resource_id, 'LASERIMPORT', 'FOLIO::LICENSE', local_context, parsed_record?.reference,
+                           "Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored");
 
-        local_context.processLog.add([ts:System.currentTimeMillis(), 
-                                      msg:"Import blocked pending map/create/ignore decision - ${parsed_record?.reference}(${resource_id})"]);
+      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-STATUS', parsed_record.status, 'LASERIMPORT', 'FOLIO::LICENSE/STATUS', local_context, parsed_record?.status,
+                           "Please provide a mapping for LASER License Status ${parsed_record.status}");
 
-        // Register a question so the human operator knows we need a decision about this, log the result for the next time we
-        // process.
-        feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
-                                       'LASER-LICENSE',             // What kind of input resource
-                                       'LASERIMPORT',                     // mapping context
-                                       resource_id,                 // ID of input resource
-                                       parsed_record?.reference,    // Human readable label
-                                       'FOLIO:LICENSE',             // Target FOLIO resource type
-                                       [
-                                         prompt:"Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} in the TEST system should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored",
-                                         folioResourceType:'License']);
-      }
+      String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
+
+      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-TYPE', type_value, 'LASERIMPORT', 'FOLIO::LICENSE/TYPE', local_context, parsed_record?.status,
+                           "Please provide a mapping for LASER License Status ${type_value}");
 
       result = [
         preflightStatus: pass ? 'PASS' : 'FAIL'
@@ -126,6 +160,11 @@ public class ProcessLaserLicense implements TransformProcess {
 
         println("Got feedback: ${fi}");
 
+        // This needs to be mapped
+        String statusString = 'Active'
+        // String typeString = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
+        String typeString = 'Consortial'
+
         if ( fi != null ) {
           def answer = fi.parsedAnswer
           switch ( answer?.answerType ) {
@@ -136,12 +175,12 @@ public class ProcessLaserLicense implements TransformProcess {
               def requestBody = [
                 name:parsed_record?.reference,
                 description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
-                // status:statusString,
-                type:'consortial',
-                // localReference: license.globalUID,
+                type:type_value,
                 // customProperties: customProperties,
-                // startDate: license.startDate,
-                // endDate: license.endDate
+                status:statusString,
+                localReference: parsed_record.globalUID,
+                startDate: parsed_record?.startDate,
+                endDate: parsed_record?.endDate
               ]   
 
               def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
