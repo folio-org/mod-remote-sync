@@ -108,6 +108,7 @@ public class ProcessLaserLicense implements TransformProcess {
     }
     catch ( Exception e ) {
       e.printStackTrace();
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in preflight ${e.message}"]);
       result = [
         preflightStatus: 'FAIL',
         log: [ code:'GENERAL-EXCEPTION',
@@ -178,7 +179,7 @@ public class ProcessLaserLicense implements TransformProcess {
               def requestBody = [
                 name:parsed_record?.reference,
                 description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
-                type:type_value,
+                type:typeString,
                 // customProperties: customProperties,
                 status:statusString,
                 localReference: parsed_record.globalUID,
