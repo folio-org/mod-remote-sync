@@ -44,6 +44,7 @@ public class ProcessLaserLicense implements TransformProcess {
                                      [ prompt:prompt, folioResourceType:'License']);  // THIS CORRELATES WITH FRONTEND - COORDINATE
 
     }
+    println("Result of mappingCheck: ${pass}");
     return pass;
   }
 
@@ -58,15 +59,16 @@ public class ProcessLaserLicense implements TransformProcess {
                                Map local_conext,
                                String resource_label,
                                String prompt) {
-    log.debug("checkValueMapping(${prompt})");
-    return true
+    boolean result = true;
+    log.debug("checkValueMapping(${prompt}) result=${result}");
+    return result;
   }
 
   public Map preflightCheck(String resource_id,
                             byte[] input_record,
                             ApplicationContext ctx,
                             Map local_context) {
-    println("ProcessLaserLicense::preflightCheck()");
+    println("ProcessLaserLicense::preflightCheck(resource=${resource_id})");
     Map result = null;
 
     try {
@@ -105,6 +107,7 @@ public class ProcessLaserLicense implements TransformProcess {
 
     }
     catch ( Exception e ) {
+      e.printStackTrace();
       result = [
         preflightStatus: 'FAIL',
         log: [ code:'GENERAL-EXCEPTION',
