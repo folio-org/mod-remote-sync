@@ -79,7 +79,7 @@ public class ProcessLaserLicense implements TransformProcess {
       local_context.parsed_record = parsed_record;
 
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::preflightCheck(${resource_id},..) ${new Date()}"]);
-      local_context.processLog.add([ts:System.currentTimeMillis(), msg:parsed_record.toString()])
+      // local_context.processLog.add([ts:System.currentTimeMillis(), msg:parsed_record.toString()])
 
       ResourceMappingService rms = ctx.getBean('resourceMappingService');
       PolicyHelperService policyHelper = ctx.getBean('policyHelperService');
