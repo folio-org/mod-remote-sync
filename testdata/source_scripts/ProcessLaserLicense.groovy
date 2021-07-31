@@ -108,6 +108,7 @@ public class ProcessLaserLicense implements TransformProcess {
     }
     catch ( Exception e ) {
       e.printStackTrace();
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in preflight ${e.message}"]);
       result = [
         preflightStatus: 'FAIL',
         log: [ code:'GENERAL-EXCEPTION',
