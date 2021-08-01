@@ -29,6 +29,15 @@ class PolicyHelperService {
                                        String mapping_context,
                                        String target_context,
                                        Map local_context) {
+    return manualResourceMapping(source,resource_id,mapping_context,target_context,'MANUAL-RESOURCE-MAPPING',local_context);
+  }
+
+  public boolean manualResourceMapping(String source,
+                                       String resource_id,
+                                       String mapping_context,
+                                       String target_context,
+                                       String case_code,
+                                       Map local_context) {
 
     log.debug("PolicyHelperService::manualResourceMapping(${source},${resource_id},${mapping_context},${target_context},${local_context})");
 
@@ -43,7 +52,7 @@ class PolicyHelperService {
     else {
       // Unknown - fail - here we should check the "ImportKB" to see if we have already been told what to do
       // in this circumstance
-      String feedback_correlation_id = "${source}:${resource_id}:${mapping_context}:MANUAL-RESOURCE-MAPPING".toString()
+      String feedback_correlation_id = "${source}:${resource_id}:${mapping_context}:${case_code}".toString()
       FeedbackItem fi = FeedbackItem.findByCorrelationId(feedback_correlation_id)
       if ( fi != null ) {
         log.debug("located feedback for correlation id ${feedback_correlation_id}");
