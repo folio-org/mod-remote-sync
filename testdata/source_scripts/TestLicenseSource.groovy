@@ -20,7 +20,7 @@ public class TestLicenseSource implements RemoteSyncActivity {
       ],
       [ 
         id:'test-record-0002',
-        licenseName:'Test Licenses 002'
+        licenseName:'Test Licenses 002',
         status:'UnMappedCurrent',
         type:'UnMappedConsortial',
       ]
