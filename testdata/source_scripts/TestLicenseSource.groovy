@@ -25,7 +25,14 @@ public class TestLicenseSource implements RemoteSyncActivity {
         status:'UnMappedCurrent',
         type:'UnMappedConsortial',
         testRefdata:'One',
-      ]
+      ],
+      [
+        id:'test-record-0003',
+        licenseName:'Test Licenses 002',
+        status:'Active',
+        type:'Consortial',
+        testRefdata:'Two',
+      ],
     ]
 
     test_records.each { Map testrec ->

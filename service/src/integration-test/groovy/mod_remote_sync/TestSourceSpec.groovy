@@ -195,9 +195,9 @@ class TestSourceSpec extends HttpSpec {
     then:'Should have 2 todos'
       log.info("Todos: ${resp}")
       assert resp instanceof List
-      assert resp.size() == 4
+      assert resp.size() == 5  // 3 resource mapping tasks and 2 value mapping tasks
       resp.each { todo ->
-        log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}");
+        log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}, case: ${todo.caseIndicator}");
         // For the manual resource mapping cases, set the answer to create....
         if ( todo.caseIndicator == 'MANUAL-RESOURCE-MAPPING' ) {
           log.debug("Post feedback that we should create a license for ${todo.id}/${todo.description}");
@@ -210,13 +210,18 @@ class TestSourceSpec extends HttpSpec {
     when:'we request a status report after the sync task has run'
       def resp = doGet('/remote-sync/feedback/done')
 
-    then:'Should have 2 todos done now'
+    then:'Should have 3 todos done now'
       log.info("Todos: ${resp}")
       resp.each { todo ->
-        log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}");
+        log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}, case:${todo.caseIndicator}");
         log.debug("Registered feedback: ${todo.response}");
-        assert todo.response != null
-        assert todo.response.contains('create')
+        if ( todo.caseIndicator == 'MANUAL-RESOURCE-MAPPING' ) {
+          assert todo.response != null
+          assert todo.response.contains('create')
+        }
+        else {
+          assert todo.caseIndicator == 'MANUAL-VALUE-MAPPING'
+        }
       }
   }
 
