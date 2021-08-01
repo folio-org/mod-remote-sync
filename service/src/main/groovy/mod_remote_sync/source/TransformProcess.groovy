@@ -2,7 +2,6 @@ package mod_remote_sync.source
 
 import org.springframework.context.ApplicationContext
 
-
 public interface TransformProcess {
 
   /**
@@ -31,5 +30,6 @@ public interface TransformProcess {
                      byte[] input_record,
                      ApplicationContext ctx,
                      Map local_context);
+
 
 }
