@@ -50,15 +50,15 @@ public class TestLicenseProcess extends BaseTransformProcess implements Transfor
                            'FOLIO::LICENSE', local_context,  // Target resource type, state
                            parsed_record?.licenseName,       // Labe for resource
                            [ 
-                             prompt:"Please indicate if the License \"${parsed_record?.licenseName}\" with ID ${resource_id} in the TEST system should bei (a) mapped to an existing FOLIO License, (b) a new FOLIO license created to track it, or (c) the resorce should be ignored",
-                             folioResourceType:'License'])   // folioResourceType used for UI to indicate picker
+                             'prompt':"Please indicate if the License \"${parsed_record?.licenseName}\" with ID ${resource_id} in the TEST system should bei (a) mapped to an existing FOLIO License, (b) a new FOLIO license created to track it, or (c) the resorce should be ignored",
+                             'folioResourceType':'License'])   // folioResourceType used for UI to indicate picker
 
 
       pass &= checkValueMapping(policyHelper, feedbackHelper, false, 'TEST::LICENSE/TYPE', parsed_record.type, 'TEST',
-                    'FOLIO::LICENSE/TYPE', local_context, parsed_record?.type, [prompt:"Please map test license type ${parsed_record?.type} to a FOLIO license type"]);
+                    'FOLIO::LICENSE/TYPE', local_context, parsed_record?.type, ['prompt':"Please map test license type ${parsed_record?.type} to a FOLIO license type"]);
 
       pass &= checkValueMapping(policyHelper, feedbackHelper, false, 'TEST::LICENSE/STATUS', parsed_record.status, 'TEST',
-                    'FOLIO::LICENSE/STATUS', local_context, parsed_record?.status, [prompt:"Please map test license status ${parsed_record?.status} to a FOLIO license status"]);
+                    'FOLIO::LICENSE/STATUS', local_context, parsed_record?.status, ['prompt':"Please map test license status ${parsed_record?.status} to a FOLIO license status"]);
 
 
       result = [
