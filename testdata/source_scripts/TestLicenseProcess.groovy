@@ -144,7 +144,8 @@ public class TestLicenseProcess extends BaseTransformProcess implements Transfor
           id:local_resource_id,
           name: parsed_record.licenseName,
           description: parsed_record.licenseName,
-          type:'consortial'
+          type: getMappedValue(rms,'TEST::LICENSE/TYPE',parsed_record.type,'TEST'),
+          status: getMappedValue(rms,'TEST::LICENSE/STATUS',parsed_record.status,'TEST')
         ]
      
         // Store the record mapping to the new ID
