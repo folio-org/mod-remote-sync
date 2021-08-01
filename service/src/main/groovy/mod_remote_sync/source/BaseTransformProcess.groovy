@@ -50,7 +50,7 @@ public abstract class BaseTransformProcess implements TransformProcess {
                                Map details) {  // Details eg [ prompt:prompt, folioResourceType:'License']
     log.debug("mappingCheck(${resource_type},${resource_id}}...)");
     boolean pass=true;
-    if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, local_context)  == false ) {
+    if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, 'MANUAL-RESOURCE-MAPPING', local_context)  == false ) {
 
       log.debug("Mapping check failed manual resource mapping test... log feedback");
 
@@ -84,12 +84,12 @@ public abstract class BaseTransformProcess implements TransformProcess {
                                String resource_label,
                                Map details) {
     boolean result = true;
-    log.debug("checkValueMapping(${prompt}) result=${result}");
+    log.debug("checkValueMapping(${resource_type},${resource_id},${context})");
     if ( mandatory==true && resource_id==null ) {
       result=false;
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Missing mandatory value - type/context = ${resource_type} ${context}"])
     }
-    else if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, local_context)  == false ) {
+    else if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, 'MANUAL-VALUE-MAPPING', local_context)  == false ) {
       result=false;
       local_context.processLog.add([ts:System.currentTimeMillis(),
                                       msg:"Need map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
@@ -103,7 +103,7 @@ public abstract class BaseTransformProcess implements TransformProcess {
                                      details);
     }
 
-    log.debug("checkValueMapping(${prompt}) result=${result} || ${!mandatory}");
+    log.debug("checkValueMapping(${resource_type},${resource_id},${context}) result=${result} || ${!mandatory}");
     return result || !mandatory;
   }
 

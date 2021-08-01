@@ -195,11 +195,14 @@ class TestSourceSpec extends HttpSpec {
     then:'Should have 2 todos'
       log.info("Todos: ${resp}")
       assert resp instanceof List
-      assert resp.size() == 2
+      assert resp.size() == 4
       resp.each { todo ->
         log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}");
-        log.debug("Post feedback that we should create a license for ${todo.id}/${todo.description}");
-        doPut("/remote-sync/feedback/${todo.id}", [ id:todo.id, status: 1, response:'{"answerType":"create"}' ]);
+        // For the manual resource mapping cases, set the answer to create....
+        if ( todo.caseIndicator == 'MANUAL-RESOURCE-MAPPING' ) {
+          log.debug("Post feedback that we should create a license for ${todo.id}/${todo.description}");
+          doPut("/remote-sync/feedback/${todo.id}", [ id:todo.id, status: 1, response:'{"answerType":"create"}' ]);
+        }
       }
   }
 
