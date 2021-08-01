@@ -17,12 +17,14 @@ public class TestLicenseSource implements RemoteSyncActivity {
         licenseName:'Test Licenses 001',
         status:'UnMappedCurrent',
         type:'UnMappedConsortial',
+        testRefdata:'One',
       ],
       [ 
         id:'test-record-0002',
         licenseName:'Test Licenses 002',
         status:'UnMappedCurrent',
         type:'UnMappedConsortial',
+        testRefdata:'One',
       ]
     ]
 
