@@ -4,8 +4,9 @@ import org.springframework.context.ApplicationContext
 
 import mod_remote_sync.ImportFeedbackService
 import mod_remote_sync.PolicyHelperService
+import groovy.util.logging.Slf4j
 
-
+@Slf4j
 public abstract class BaseTransformProcess implements TransformProcess {
 
   /**
@@ -47,12 +48,17 @@ public abstract class BaseTransformProcess implements TransformProcess {
                                Map local_context,
                                String resource_label,
                                Map details) {  // Details eg [ prompt:prompt, folioResourceType:'License']
+    log.debug("mappingCheck(${resource_type},${resource_id}}...)");
     boolean pass=true;
     if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, local_context)  == false ) {
+
+      log.debug("Mapping check failed manual resource mapping test... log feedback");
+
       pass=false;
       local_context.processLog.add([ts:System.currentTimeMillis(),
                                       msg:"Import blocked pending map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
 
+      log.debug("requiring feedback....");
       feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
                                      resource_type,             // What kind of input resource
                                      context,
@@ -61,7 +67,7 @@ public abstract class BaseTransformProcess implements TransformProcess {
                                      target_context,
                                      details);  // THIS CORRELATES WITH FRONTEND - COORDINATE
     }
-    println("Result of mappingCheck: ${pass}");
+    log.debug("Result of mappingCheck: ${pass}");
     return pass;
   }
 

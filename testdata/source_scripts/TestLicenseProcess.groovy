@@ -39,8 +39,6 @@ public class TestLicenseProcess implements TransformProcess {
   
       boolean pass = true;
   
-      def preflight_log = []
-
       //Force users to manually decide if newly seen incoming records should be created or mapped to existing licenses
       pass &= mappingCheck(policyHelper,       
                            feedbackHelper, 
@@ -55,18 +53,18 @@ public class TestLicenseProcess implements TransformProcess {
                              folioResourceType:'License'])   // folioResourceType used for UI to indicate picker
 
       result = [
-        preflightStatus: pass ? 'PASS' : 'FAIL',
-        log: preflight_log
+        preflightStatus: pass ? 'PASS' : 'FAIL'
       ]
   
     }
     catch ( Exception e ) {
+
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Problem in processing ${e.message}"]);
+
+      e.printStackTrace()
+
       result = [
-        preflightStatus: 'FAIL',
-        log: [ code:'GENERAL-EXCEPTION',
-               id:null,
-               description:null,
-               message: e.message ]
+        preflightStatus: 'FAIL'
       ]
     }
 

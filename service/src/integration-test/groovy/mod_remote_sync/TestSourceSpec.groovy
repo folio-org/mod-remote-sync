@@ -194,6 +194,8 @@ class TestSourceSpec extends HttpSpec {
 
     then:'Should have 2 todos'
       log.info("Todos: ${resp}")
+      assert resp instanceof List
+      assert resp.size() == 2
       resp.each { todo ->
         log.debug("todo: ${todo.id}, correlactionId:${todo.correlationId}");
         log.debug("Post feedback that we should create a license for ${todo.id}/${todo.description}");
