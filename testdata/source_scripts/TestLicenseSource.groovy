@@ -14,11 +14,15 @@ public class TestLicenseSource implements RemoteSyncActivity {
     def test_records = [
       [ 
         id:'test-record-0001',
-        licenseName:'Test Licenses 001'
+        licenseName:'Test Licenses 001',
+        status:'UnMappedCurrent',
+        type:'UnMappedConsortial',
       ],
       [ 
         id:'test-record-0002',
         licenseName:'Test Licenses 002'
+        status:'UnMappedCurrent',
+        type:'UnMappedConsortial',
       ]
     ]
 

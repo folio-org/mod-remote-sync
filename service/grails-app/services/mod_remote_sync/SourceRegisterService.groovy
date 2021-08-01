@@ -19,6 +19,7 @@ class SourceRegisterService {
 
   def grailsWebDataBinder
   def transformationRunnerService
+  def resourceMappingService
 
   public Map load(String url) {
     log.debug("Load: ${url}");
@@ -56,6 +57,9 @@ class SourceRegisterService {
               break;
             case 'extract':
               processExtractEntry(entry, result)
+              break;
+            case 'mappings':
+              processMappings(entry, result)
               break;
             default:
               log.warn("Unhandled record type: ${entry}");
@@ -269,5 +273,20 @@ class SourceRegisterService {
     }
 
     return result;
+  }
+
+  private void processMappings(Map descriptor, Map state) {
+    descriptor.mappings?.each { mapping ->
+      // log.debug("Process mapping: ${mapping}");
+      if ( mapping ) {
+        ResourceMapping rm = resourceMappingService.registerMapping(mapping.srcCtx,
+                                                                    mapping.srcValue,
+                                                                    mapping.mappingContext,
+                                                                    mapping.mappingStatus?:'M',
+                                                                    mapping.targetCtx,
+                                                                    mapping.targetValue);
+        log.debug("Created resource mapping: ${rm}");
+      }
+    }
   }
 }

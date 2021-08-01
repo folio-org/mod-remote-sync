@@ -1,6 +1,7 @@
 package folio.modrs.scripts
 
 import mod_remote_sync.source.TransformProcess;
+import mod_remote_sync.source.BaseTransformProcess;
 
 import org.springframework.context.ApplicationContext
 import groovy.util.logging.Slf4j
@@ -13,56 +14,11 @@ import mod_remote_sync.ImportFeedbackService
 import groovy.json.JsonSlurper
 
 @Slf4j
-public class ProcessLaserLicense implements TransformProcess {
+public class ProcessLaserLicense extends BaseTransformProcess implements TransformProcess {
+
+  // TransformProcess now provides mappingCheck and  checkValueMapping as a base class service
 
   public static String MANUAL_POLICY_MESSAGE='The manual resource mapping policy applies - Operator needs to choose if the system should Create a new License, Map to an Existing one, or Ignore this license';
-
-
-  // Helper function for mapping a remote resource (EG a License) to a local one
-  private boolean mappingCheck(PolicyHelperService policyHelper,
-                               ImportFeedbackService feedbackHelper,
-                               boolean mandatory,
-                               String resource_type,
-                               String resource_id,
-                               String context,
-                               String target_context,
-                               Map local_context,
-                               String resource_label,
-                               String prompt) {
-    boolean pass=true;
-    if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, local_context)  == false ) {
-      pass=false;
-      local_context.processLog.add([ts:System.currentTimeMillis(), 
-                                      msg:"Import blocked pending map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
-
-      feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
-                                     resource_type,             // What kind of input resource
-                                     context,
-                                     resource_id,                 // ID of input resource
-                                     resource_label,
-                                     target_context,
-                                     [ prompt:prompt, folioResourceType:'License']);  // THIS CORRELATES WITH FRONTEND - COORDINATE
-
-    }
-    println("Result of mappingCheck: ${pass}");
-    return pass;
-  }
-
-  // Helper for mapping a remote value (EG a Status Code) to a local one
-  private boolean checkValueMapping(PolicyHelperService policyHelper,
-                               ImportFeedbackService feedbackHelper,
-                               boolean mandatory,
-                               String resource_type,
-                               String resource_id,
-                               String context,
-                               String target_context,
-                               Map local_context,
-                               String resource_label,
-                               String prompt) {
-    boolean result = true;
-    log.debug("checkValueMapping(${prompt}) result=${result}");
-    return result;
-  }
 
   public Map preflightCheck(String resource_id,
                             byte[] input_record,
@@ -89,12 +45,13 @@ public class ProcessLaserLicense implements TransformProcess {
 
       boolean pass = true;
 
-      // See if we should create or map this license
+      // Check to see if we already know about this license or if we should ask the user to create/map it
       pass &= mappingCheck(policyHelper,feedbackHelper,true,'LASER-LICENSE', resource_id, 'LASERIMPORT', 'FOLIO::LICENSE', local_context, parsed_record?.reference,
-                           "Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored");
+                           [ prompt:"Please indicate if the LASER License \"${parsed_record?.reference}\" with ID ${resource_id} should be mapped to an existing FOLIO License, a new FOLIO license created to track it, or the resorce should be ignored", folioResourceType:'License']);
 
-      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-STATUS', parsed_record.status, 'LASERIMPORT', 'FOLIO::LICENSE/STATUS', local_context, parsed_record?.status,
-                           "Please provide a mapping for LASER License Status ${parsed_record.status}");
+      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-STATUS', parsed_record.status, 'LASERIMPORT', 
+                                'FOLIO::LICENSE/STATUS', local_context, parsed_record?.status,
+                                "Please provide a mapping for LASER License Status ${parsed_record.status}");
 
       String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
 
