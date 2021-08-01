@@ -4,6 +4,8 @@ import org.springframework.context.ApplicationContext
 
 import mod_remote_sync.ImportFeedbackService
 import mod_remote_sync.PolicyHelperService
+import mod_remote_sync.ResourceMappingService
+import mod_remote_sync.ResourceMapping
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -107,4 +109,17 @@ public abstract class BaseTransformProcess implements TransformProcess {
     return result || !mandatory;
   }
 
+  protected String getMappedValue(ResourceMappingService rms,
+                                  String resource_type,
+                                  String resource_id,
+                                  String context) {
+    String result = null;
+    ResourceMapping rm = rms.lookupMapping(resource_type, resource_id, context)
+    if ( rm != null ) {
+      result = rm.folioId
+    }
+
+    log.debug("getMappedValue(...,${resource_type},${resource_id},${context}) = ${result}");
+    return result;
+  }
 }
