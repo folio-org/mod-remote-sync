@@ -1,6 +1,7 @@
 package folio.modrs.scripts
 
 import mod_remote_sync.source.TransformProcess;
+import mod_remote_sync.source.BaseTransformProcess;
   
 import org.springframework.context.ApplicationContext
 import groovy.util.logging.Slf4j
@@ -14,7 +15,7 @@ import mod_remote_sync.FeedbackItem
   
   
 @Slf4j
-public class TestLicenseProcess implements TransformProcess {
+public class TestLicenseProcess extends BaseTransformProcess implements TransformProcess {
   
   public static String MANUAL_POLICY_MESSAGE='The manual resource mapping policy applies - Operator needs to choose if the system should Create a new License, Map to an Existing one, or Ignore this license';
   
