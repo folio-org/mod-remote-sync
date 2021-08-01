@@ -41,6 +41,6 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
   }
 
   public String toString() {
-    return "ResourceMapping:${id}"
+    return "ResourceMapping:${id} ${source}:${sourceId} -(${mappingContext})-> ${folioContext}:${folioId} (${mappingStatus})"
   }
 }
