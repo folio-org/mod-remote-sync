@@ -56,7 +56,7 @@ public abstract class BaseTransformProcess implements TransformProcess {
 
       pass=false;
       local_context.processLog.add([ts:System.currentTimeMillis(),
-                                      msg:"Import blocked pending map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
+                                      msg:"Need map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
 
       log.debug("requiring feedback....");
       feedbackHelper.requireFeedback('MANUAL-RESOURCE-MAPPING',   // Feedback case / code
@@ -67,8 +67,9 @@ public abstract class BaseTransformProcess implements TransformProcess {
                                      target_context,
                                      details);  // THIS CORRELATES WITH FRONTEND - COORDINATE
     }
-    log.debug("Result of mappingCheck: ${pass}");
-    return pass;
+    log.debug("Result of mappingCheck: ${pass} || ${!mandatory}");
+
+    return pass || !mandatory;
   }
 
   // Helper for mapping a remote value (EG a Status Code) to a local one
@@ -81,10 +82,29 @@ public abstract class BaseTransformProcess implements TransformProcess {
                                String target_context,
                                Map local_context,
                                String resource_label,
-                               String prompt) {
+                               Map details) {
     boolean result = true;
     log.debug("checkValueMapping(${prompt}) result=${result}");
-    return result;
+    if ( mandatory==true && resource_id==null ) {
+      result=false;
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Missing mandatory value - type/context = ${resource_type} ${context}"])
+    }
+    else if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, local_context)  == false ) {
+      result=false;
+      local_context.processLog.add([ts:System.currentTimeMillis(),
+                                      msg:"Need map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
+
+      feedbackHelper.requireFeedback('MANUAL-VALUE-MAPPING',   // Feedback case / code
+                                     resource_type,             // What kind of input resource
+                                     context,
+                                     resource_id,                 // ID of input resource
+                                     resource_label,
+                                     target_context,
+                                     details);
+    }
+
+    log.debug("checkValueMapping(${prompt}) result=${result} || ${!mandatory}");
+    return result || !mandatory;
   }
 
 }
