@@ -151,7 +151,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
             // use rs.cursor to get any new resources
             // Create or update TransformationProcessRecord for that record in the target context
-            long cursor_value = parsed_cursor.maxts ?: 0
+            long cursor_value = parsed_cursor.maxts ? Long.parseLong("${parsed_cursor.maxts}".toString()) : 0
             long highest_seqts = cursor_value;
 
             Long num_source_records = SourceRecord.executeQuery('select count(sr.id) from SourceRecord as sr where sr.owner = :owner',[owner: rs.source])[0]

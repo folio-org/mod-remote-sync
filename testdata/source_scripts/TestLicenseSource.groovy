@@ -32,6 +32,7 @@ public class TestLicenseSource implements RemoteSyncActivity {
         status:'Active',
         type:'Consortial',
         testRefdata:'Two',
+        dynamicField: new Date()
       ],
     ]
 
