@@ -245,7 +245,6 @@ class TestSourceSpec extends HttpSpec {
         log.debug("Checking that record ${r.id} has status COMPLETE ${r.transformationStatus}");
         assert r.transformationStatus == 'COMPLETE'
       }
-   
   }
 
 
