@@ -149,18 +149,24 @@ public class TestLicenseProcess extends BaseTransformProcess implements Transfor
           status: getMappedValue(rms,'TEST::LICENSE/STATUS',parsed_record.status,'TEST')
         ]
      
-        // Store the record mapping to the new ID
-        def post_result = folioHelper.okapiPost('/licenses/licenses', record_to_post);
-        log.debug("post result: ${post_result}");
-  
         // If we didn't have a mapping for this resource, and resource creation worked then
         // remember how we map this resource going forwards
         if ( ( local_resource_id == null ) && 
              ( post_result != null ) &&
              ( post_result.id != null ) ) {
+          // Store the record mapping to the new ID
+          def post_result = folioHelper.okapiPost('/licenses/licenses', record_to_post);
+          log.debug("post result: ${post_result}");
           log.debug("Stash new LICENSE id ${post_result.id} to identifier mapping service");
           def resource_mapping = rms.registerMapping('TEST-LICENSE', resource_id, 'TEST', 'M', 'LICENSES', post_result.id);
           result.resource_mapping = resource_mapping
+        }
+        else {
+          // We are updating the existing record at ${local_resource_id}
+          // We first retrieve the license and then apply any updates.
+          log.debug("update existing record ${local_resource_id}");
+          def post_result = folioHelper.okapiPost('/licenses/licenses', record_to_post);
+          log.debug("post result: ${post_result}");
         }
       }
       else {
