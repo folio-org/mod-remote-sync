@@ -51,12 +51,12 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
 
       pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-STATUS', parsed_record.status, 'LASERIMPORT', 
                                 'FOLIO::LICENSE/STATUS', local_context, parsed_record?.status,
-                                "Please provide a mapping for LASER License Status ${parsed_record.status}");
+                                [prompt:"Please provide a mapping for LASER License Status ${parsed_record.status}"]);
 
       String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
 
       pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-TYPE', type_value, 'LASERIMPORT', 'FOLIO::LICENSE/TYPE', local_context, type_value,
-                           "Please provide a mapping for LASER License Type ${type_value}");
+                           [prompt:"Please provide a mapping for LASER License Type ${type_value}"]);
 
       result = [
         preflightStatus: pass ? 'PASS' : 'FAIL'
