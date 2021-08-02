@@ -50,6 +50,9 @@ class PolicyHelperService {
       result = true;
     }
     else {
+
+      local_context.processLog?.add([ts:System.currentTimeMillis(), msg:"Failed to locate resource mapping ${source}/${resource_id}/${mapping_context}/${target_context}"]);
+
       // Unknown - fail - here we should check the "ImportKB" to see if we have already been told what to do
       // in this circumstance
       String feedback_correlation_id = "${source}:${resource_id}:${mapping_context}:${case_code}".toString()
@@ -57,14 +60,19 @@ class PolicyHelperService {
       if ( fi != null ) {
         log.debug("located feedback for correlation id ${feedback_correlation_id}");
         if ( ( fi.response != null ) && ( fi.response.length() > 0 ) ) {
+          local_context.processLog?.add([ts:System.currentTimeMillis(), msg:"-> Found answered feedback request ${feedback_correlation_id}"]);
           // For the policy to pass, we don't need the actual detail of the answer, only to know that an answer has
           // been provided
           // def parsed_response = JSON.parse(fi.response)
           // log.debug("Parsed response: ${parsed_response}");
           result = true;
         }
+        else {
+          local_context.processLog?.add([ts:System.currentTimeMillis(), msg:"-> Found open feedback request ${feedback_correlation_id}"]);
+        }
       }
       else {
+        local_context.processLog?.add([ts:System.currentTimeMillis(), msg:"-> No existing feedback request located"])
         log.debug("No feedback found with correlaction id ${feedback_correlation_id} - policy will prevent processing");
       }
     }

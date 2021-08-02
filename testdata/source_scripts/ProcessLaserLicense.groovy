@@ -55,8 +55,8 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
 
       String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
 
-      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-TYPE', type_value, 'LASERIMPORT', 'FOLIO::LICENSE/TYPE', local_context, parsed_record?.status,
-                           "Please provide a mapping for LASER License Status ${type_value}");
+      pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER-LICENSE-TYPE', type_value, 'LASERIMPORT', 'FOLIO::LICENSE/TYPE', local_context, type_value,
+                           "Please provide a mapping for LASER License Type ${type_value}");
 
       result = [
         preflightStatus: pass ? 'PASS' : 'FAIL'
@@ -122,9 +122,9 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
         println("Got feedback: ${fi}");
 
         // This needs to be mapped
-        String statusString = 'Active'
-        // String typeString = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
-        String typeString = 'Consortial'
+        String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
+        String typeString =  getMappedValue(rms,'LASER::LICENSE/STATUS',type_value,'LASERIMPORT')
+        String statusString =  getMappedValue(rms,'LASER::LICENSE/STATUS',parsed_record.status,'LASERIMPORT')
 
         if ( fi != null ) {
           def answer = fi.parsedAnswer
