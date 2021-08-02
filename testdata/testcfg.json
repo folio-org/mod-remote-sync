@@ -9,6 +9,7 @@
     "sourceMD5":"",
     "sourceSignedBy":null,
     "sourceSignature":null,
+    "interval":1000,
     "parameters":{
     },
     "emits":"TEST::LICENSE"

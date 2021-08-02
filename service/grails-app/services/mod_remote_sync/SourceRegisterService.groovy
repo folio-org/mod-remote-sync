@@ -182,7 +182,7 @@ class SourceRegisterService {
         bs.sourceLocation = agent_descriptor.sourceUrl;
         bs.checksum = code_info.hash;
         bs.lastPull = new Date()
-        bs.interval = 1000*60*60*12
+        bs.interval = agent_descriptor.interval ?: 1000*60*60*12
         bs.nextDue = 0;
         bs.language = RefdataValue.lookupOrCreate('BespokeSource.Language',agent_descriptor.language);
         bs.packaging = RefdataValue.lookupOrCreate('BespokeSource.Packaging',agent_descriptor.packaging);
