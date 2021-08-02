@@ -279,13 +279,15 @@ class SourceRegisterService {
     descriptor.mappings?.each { mapping ->
       // log.debug("Process mapping: ${mapping}");
       if ( mapping ) {
-        ResourceMapping rm = resourceMappingService.registerMapping(mapping.srcCtx,
-                                                                    mapping.srcValue,
-                                                                    mapping.mappingContext,
-                                                                    mapping.mappingStatus?:'M',
-                                                                    mapping.targetCtx,
-                                                                    mapping.targetValue);
-        log.debug("Created resource mapping: ${rm}");
+        if ( resourceMappingService.lookupMapping(mapping.srcCtx, mapping.srcValue, mapping.mappingContext) == null ) {
+          ResourceMapping rm = resourceMappingService.registerMapping(mapping.srcCtx,
+                                                                      mapping.srcValue,
+                                                                      mapping.mappingContext,
+                                                                      mapping.mappingStatus?:'M',
+                                                                      mapping.targetCtx,
+                                                                      mapping.targetValue);
+          log.debug("Created resource mapping: ${rm}");
+        }
       }
     }
   }
