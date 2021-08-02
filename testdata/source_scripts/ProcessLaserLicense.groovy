@@ -123,7 +123,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
 
         // This needs to be mapped
         String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
-        String typeString =  getMappedValue(rms,'LASER::LICENSE/STATUS',type_value,'LASERIMPORT')
+        String typeString =  getMappedValue(rms,'LASER::LICENSE/TYPE',type_value,'LASERIMPORT')
         String statusString =  getMappedValue(rms,'LASER::LICENSE/STATUS',parsed_record.status,'LASERIMPORT')
 
         if ( fi != null ) {
