@@ -20,16 +20,16 @@ class ExtractService {
   private static String PENDING_SOURCE_JOBS='''
 select s.id
 from Source as s
-where s.nextDue is null OR s.nextDue < :systime
-and s.enabled = :enabled or s.enabled is null
-and s.status = :idle or s.status is null
+where ( s.nextDue is null OR s.nextDue < :systime )
+  and ( s.enabled = :enabled or s.enabled is null )
+  and ( s.status = :idle or s.status is null )
 '''
 
   private static String PENDING_EXTRACT_JOBS='''
 select rs.id
 from ResourceStream as rs
-where rs.nextDue is null OR rs.nextDue < :systime
-and rs.streamStatus = :idle or rs.streamStatus is null
+where ( rs.nextDue is null OR rs.nextDue < :systime )
+and ( rs.streamStatus = :idle or rs.streamStatus is null )
 '''
 
   private static String SOURCE_RECORD_QUERY='''
@@ -89,21 +89,26 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
       }
 
       if ( continue_processing ) {
-        Source.withNewTransaction {
-          try{
+        log.debug("updated source to be in-progress- continuing");
+        try{
+          Source.withNewTransaction {
             Source src = Source.get(source_id)
             log.debug("Process source ${src} - service to use is ${src.getHandlerServiceName()}");
             def runner_service = grailsApplication.mainContext.getBean(src.getHandlerServiceName())
             log.debug("Got runner service: ${runner_service}");
             runner_service.start(src);
-  
+          }
+        }
+        catch ( Exception e ) {
+          log.error("Problem processing source",e);
+        }
+        finally {
+          Source.withNewTransaction {
+            Source src = Source.get(source_id)
             src.status = 'IDLE';
             src.nextDue = System.currentTimeMillis() + src.interval
             log.debug("Completed processing on src ${src} return status to IDLE and set next due to ${src.nextDue}");
             src.save(flush:true, failOnError:true)
-          }
-          catch ( Exception e ) {
-            log.error("Problem processing source",e);
           }
         }
 
