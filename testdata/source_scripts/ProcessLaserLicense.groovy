@@ -93,7 +93,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
       processStatus:'FAIL'  // FAIL|COMPLETE
     ]
 
-    println("ProcessLaserLicense::process(${resource_id},...)");
+    log.debug("ProcessLaserLicense::process(${resource_id},...)");
     println("Record to import: ${new String(input_record)}");
     local_context.processLog.add([ts:System.currentTimeMillis(), msg:"ProcessLaserLicense::process(${resource_id},..) ${new Date()}"]);
 
@@ -121,42 +121,12 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
 
         println("Got feedback: ${fi}");
 
-        // This needs to be mapped
-        String type_value = parsed_record.calculatedType ?: parsed_record.instanceOf.calculatedType ?: 'NO TYPE' 
-        String typeString =  getMappedValue(rms,'LASER::LICENSE/TYPE',type_value,'LASERIMPORT')
-        String statusString =  getMappedValue(rms,'LASER::LICENSE/STATUS',parsed_record.status,'LASERIMPORT')
 
         if ( fi != null ) {
           def answer = fi.parsedAnswer
           switch ( answer?.answerType ) {
             case 'create':
-              // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
-              // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
-              println("Create a new license and track ${resource_id} with that ID");
-              def requestBody = [
-                name:parsed_record?.reference,
-                description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
-                type:typeString,
-                // customProperties: customProperties,
-                status:statusString,
-                localReference: parsed_record.globalUID,
-                startDate: parsed_record?.startDate,
-                endDate: parsed_record?.endDate
-              ]   
-
-              def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
-              if ( folio_license ) {
-                // Grab the ID of our created license and use the resource mapping service to remember the correlation.
-                // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
-                // that resource maps to folio_licenses.id
-                def resource_mapping = rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
-                result.processStatus = 'COMPLETE'
-                // Send back the resource mapping so it can be stashed in the record
-                result.resource_mapping = resource_mapping;
-              }
-              else {
-                local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Post to licenses endpoint did not return a record"]);
-              }
+              createLicense(folioHelper, rms, parsed_record,result);
               break;
             case 'ignore':
               println("Ignore ${resource_id} from LASER");
@@ -164,6 +134,9 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
               break;
             case 'map':
               println("Import ${resource_id} as ${answer?.value}");
+              def resource_mapping = rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',answer?.value);
+              result.resource_mapping = resource_mapping;
+              updateLicense(folioHelper, rm.folioId,parsed_record,result)
               // We are mapping a new external resource to an existing internal license - this is a put rather than a post
               // def folio_licenses = folioHelper.okapiPut("/licenses/licenses/${answer.value}", requestBody);
               break;
@@ -178,6 +151,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
       }
       else {
         println("Got existing mapping... process ${rm}");
+        updateLicense(folioHelper, rm.folioId, parsed_record, result)
       }
     }
     catch ( Exception e ) {
@@ -187,6 +161,47 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
     }
 
     return result;
+  }
+
+  private void createLicense(FolioHelperService folioHelper, ResourceMappingService rms, Map laser_record, Map result) {
+
+    // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
+    // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
+    log.debug("Create a new license");
+
+    String type_value = laser_record.calculatedType ?: laser_record.instanceOf.calculatedType ?: 'NO TYPE' 
+    String typeString =  getMappedValue(rms,'LASER::LICENSE/TYPE',type_value,'LASERIMPORT')
+    String statusString =  getMappedValue(rms,'LASER::LICENSE/STATUS',laser_record.status,'LASERIMPORT')
+
+    def requestBody = [
+      name:laser_record?.reference,
+      description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
+      type:typeString,
+      // customProperties: customProperties,
+      status:statusString,
+      localReference: laser_record.globalUID,
+      startDate: laser_record?.startDate,
+      endDate: laser_record?.endDate
+    ]
+
+    def folio_license = folioHelper.okapiPost('/licenses/licenses', requestBody);
+
+    if ( folio_license ) {
+      // Grab the ID of our created license and use the resource mapping service to remember the correlation.
+      // Next time we see resource_id as an ID of a LASER-LICENSE in the context of LASERIMPORT we will know that 
+      // that resource maps to folio_licenses.id
+      def resource_mapping = rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',folio_license.id);
+      result.processStatus = 'COMPLETE'
+      // Send back the resource mapping so it can be stashed in the record
+      result.resource_mapping = resource_mapping;
+    }
+    else {
+      local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Post to licenses endpoint did not return a record"]);
+    }
+  }
+
+  private void updateLicense(FolioHelperService folioHelper, String folio_license_id, Map laser_record, Map result) {
+    log.debug("update existing license");
   }
 
 }
