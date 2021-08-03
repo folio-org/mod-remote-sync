@@ -126,7 +126,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
           def answer = fi.parsedAnswer
           switch ( answer?.answerType ) {
             case 'create':
-              createLicense(parsed_record,result);
+              createLicense(folioHelper, rms, parsed_record,result);
               break;
             case 'ignore':
               println("Ignore ${resource_id} from LASER");
@@ -136,7 +136,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
               println("Import ${resource_id} as ${answer?.value}");
               def resource_mapping = rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',answer?.value);
               result.resource_mapping = resource_mapping;
-              updateLicense(rm.folioId,parsed_record,result)
+              updateLicense(folioHelper, rm.folioId,parsed_record,result)
               // We are mapping a new external resource to an existing internal license - this is a put rather than a post
               // def folio_licenses = folioHelper.okapiPut("/licenses/licenses/${answer.value}", requestBody);
               break;
@@ -151,7 +151,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
       }
       else {
         println("Got existing mapping... process ${rm}");
-        updateLicense(rm.folioId,parsed_record,result)
+        updateLicense(folioHelper, rm.folioId, parsed_record, result)
       }
     }
     catch ( Exception e ) {
@@ -163,7 +163,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
     return result;
   }
 
-  private void createLicense(Map laser_record, Map result) {
+  private void createLicense(FolioHelperService folioHelper, ResourceMappingService rms, Map laser_record, Map result) {
 
     // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
     // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
@@ -200,7 +200,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
     }
   }
 
-  private void updateLicense(String folio_license_id, Map laser_record, Map result) {
+  private void updateLicense(FolioHelperService folioHelper, String folio_license_id, Map laser_record, Map result) {
     log.debug("update existing license");
   }
 
