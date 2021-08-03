@@ -7,6 +7,7 @@ import mod_remote_sync.source.RemoteSyncActivity
 import mod_remote_sync.source.RecordSourceController
 import mod_remote_sync.source.DynamicClassLoader
 import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
 @Transactional
 class BespokeSourceRunnerService implements RecordSourceController {
@@ -30,7 +31,10 @@ class BespokeSourceRunnerService implements RecordSourceController {
         state_info = jsonSlurper.parseText(src.stateInfo);
       }
 
+      // the RemoteSyncActivity should update state_info in place if it wants values remembered for the next run
       rsa.getNextBatch(src.id, state_info, this)
+
+      updateState(src.id, state_info);
     }
     catch ( Throwable t ) {
       log.error("Exception processing remote sync activity",t);
@@ -71,6 +75,12 @@ class BespokeSourceRunnerService implements RecordSourceController {
 
   public void updateState(String source_id, Map state) {
     log.debug("BespokeSourceRunnerService::updateState(${source_id},${state})");
+    try {
+      Source.executeUpdate('update Source s set s.stateInfo = :s where s.id=:id',[s:JsonOutput.toJson(state),id:source_id]);
+    }
+    catch ( Exception e ) {
+      log.error("Error updating state info for source ${source_id}",e);
+    }
   }
 
   public void upsertSourceRecord(String source_id,

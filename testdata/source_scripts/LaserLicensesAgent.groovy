@@ -99,6 +99,9 @@ public class LaserLicensesAgent implements RemoteSyncActivity {
                                    license_hash,
                                    license_json_bytes);
 
+            // N.B. in an OAI agent we would update state here so that the next run could pick up
+            // where the last run completed. In LASER we have to reprocess the full list every time
+            // as there appears to be no cursor mechanism
           }
         }
       }

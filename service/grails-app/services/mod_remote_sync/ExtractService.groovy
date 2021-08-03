@@ -86,6 +86,9 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
           continue_processing = true;
           s.save(flush:true, failOnError:true);
         }
+        else {
+          log.warn("Source not IDLE (${s.status}) so skipping");
+        }
       }
 
       if ( continue_processing ) {
@@ -95,7 +98,6 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             Source src = Source.get(source_id)
             log.debug("Process source ${src} - service to use is ${src.getHandlerServiceName()}");
             def runner_service = grailsApplication.mainContext.getBean(src.getHandlerServiceName())
-            log.debug("Got runner service: ${runner_service}");
             runner_service.start(src);
           }
         }
@@ -110,6 +112,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             log.debug("Completed processing on src ${src} return status to IDLE and set next due to ${src.nextDue}");
             src.save(flush:true, failOnError:true)
           }
+          log.debug("Completed processing");
         }
 
       }
@@ -170,7 +173,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
                                                        transformationStatus:'PENDING',
                                                        processControlStatus:'OPEN',
                                                        sourceRecordId:sr.resourceUri,
-                                                       label:"${sr.rectype}/${sr.seqts}",
+                                                       label:"${sr.recType}/${sr.seqts}",
                                                        inputData:sr.record )
                 if ( tpr.owner != null ) {
                   log.debug("Saving new tpr, owner is ${tpr.owner}");

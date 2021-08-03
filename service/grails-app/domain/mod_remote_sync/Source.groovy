@@ -59,4 +59,8 @@ public abstract class Source implements MultiTenant<Source> {
   public abstract RemoteSyncActivity getActivity();
   public abstract String getHandlerServiceName();
   public abstract Long getRecordCount();
+
+  public String toString() {
+    return "Source::${id}/${name}/${status}".toString()
+  }
 }
