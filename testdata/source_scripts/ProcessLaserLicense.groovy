@@ -127,6 +127,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
           switch ( answer?.answerType ) {
             case 'create':
               createLicense(folioHelper, rms, parsed_record,result);
+              result.processStatus = 'COMPLETE'
               break;
             case 'ignore':
               println("Ignore ${resource_id} from LASER");
@@ -137,6 +138,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
               def resource_mapping = rms.registerMapping('LASER-LICENSE',resource_id, 'LASERIMPORT','M','LICENSES',answer?.value);
               result.resource_mapping = resource_mapping;
               updateLicense(folioHelper, rm.folioId,parsed_record,result)
+              result.processStatus = 'COMPLETE'
               // We are mapping a new external resource to an existing internal license - this is a put rather than a post
               // def folio_licenses = folioHelper.okapiPut("/licenses/licenses/${answer.value}", requestBody);
               break;
@@ -152,6 +154,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
       else {
         println("Got existing mapping... process ${rm}");
         updateLicense(folioHelper, rm.folioId, parsed_record, result)
+        result.processStatus = 'COMPLETE'
       }
     }
     catch ( Exception e ) {
@@ -177,7 +180,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
       name:laser_record?.reference,
       description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
       type:typeString,
-      // customProperties: customProperties,
+      customProperties: processLicenseProperties([:],laser_record),
       status:statusString,
       localReference: laser_record.globalUID,
       startDate: laser_record?.startDate,
@@ -204,4 +207,25 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
     log.debug("update existing license");
   }
 
+  private Map processLicenseProperties(Map folio_license, Map laser_license) {
+    Map result = [:]
+    laser_license?.properties?.each { licprop ->
+      log/debug("Process license property : ${licprop}");
+      String property_name = licprop.token
+
+      // See if we have a mapping for LASER::CUSTPROP/${licprop.token} 
+
+      // "note": "my test note",
+      // "paragraph": "\u00a7 3 Abs. 1d:",
+      // "refdataCategory": "permissions",
+      // "scope": "License Property",
+      // "isPublic": "Yes",
+      // "type": "Refdata",
+      // "type": "Text",
+      // "value": "Prohibited (explicit)",
+      // "token": "ILL electronic"
+    }
+    return result;
+
+  }
 }

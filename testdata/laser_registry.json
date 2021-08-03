@@ -74,23 +74,24 @@
   {
     "recordType":"mappings",
     "mappings":[
-      { "srcCtx":"LASER::LICENSE/TYPE",             "srcValue":"Consortium",    "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Consortial" },
-      { "srcCtx":"LASER::LICENSE/TYPE",             "srcValue":"Local",         "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Local" },
-      { "srcCtx":"LASER::LICENSE/TYPE",             "srcValue":"National",      "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"National" },
-      { "srcCtx":"LASER::LICENSE/TYPE",             "srcValue":"Alliance",      "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Alliance" },
-      { "srcCtx":"LASER::LICENSE/TYPE",             "srcValue":"Participation", "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Alliance" },
+      { "srcCtx":"LASER::LICENSE/TYPE",      "srcValue":"Consortium",    "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Consortial" },
+      { "srcCtx":"LASER::LICENSE/TYPE",      "srcValue":"Local",         "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Local" },
+      { "srcCtx":"LASER::LICENSE/TYPE",      "srcValue":"National",      "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"National" },
+      { "srcCtx":"LASER::LICENSE/TYPE",      "srcValue":"Alliance",      "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Alliance" },
+      { "srcCtx":"LASER::LICENSE/TYPE",      "srcValue":"Participation", "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/TYPE",      "targetValue":"Alliance" },
 
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"In Progress",   "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Active" },
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"Current",       "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Active" },
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"Participation", "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Active" },
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"In negotiation","mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"In negotiation" },
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"Not yet active","mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Not yet active" },
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"Rejected",      "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Rejected" },
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"Retired",       "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Expired" },
-      { "srcCtx":"LASER::LICENSE/STATUS",           "srcValue":"Expired",       "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Expired" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"In Progress",   "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Active" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"Current",       "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Active" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"Participation", "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Active" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"In negotiation","mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"In negotiation" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"Not yet active","mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Not yet active" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"Rejected",      "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Rejected" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"Retired",       "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Expired" },
+      { "srcCtx":"LASER::LICENSE/STATUS",    "srcValue":"Expired",       "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/STATUS",    "targetValue":"Expired" },
 
-      { "srcCtx":"LASER::LICENSE/PROPERTYDEF",      "srcValue":"isPublic",      "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/PROPDEF",   "targetValue":"isPublic" },
-      { "srcCtx":"LASER::LICENSE/REFDATA-ISPUBLIC", "srcValue":"Yes",           "mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/RDV/ISPUBLIC", "targetValue":"Yes" }
+      { "srcCtx":"LASER::LICENSE/PROPERTY",  "srcValue":"ILL electronic","mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/PROPDEF",   "targetValue":"Electronic ILL" },
+
+      { "srcCtx":"LASER::LICENSE/REFDATA/permissions", "srcValue":"Permitted (explicit)","mappingContext":"LASERIMPORT", "targetCtx":"FOLIO::LICENSE/REFDATA/permissions",   "targetValue":"Permitted (explicit)" }
     ]
   }
 ]
