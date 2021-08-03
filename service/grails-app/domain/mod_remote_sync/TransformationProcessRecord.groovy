@@ -23,6 +23,8 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
   // OPEN | LOCKED
   String processControlStatus
 
+  String label
+
   // A globally unique id reflecting the resource in the source system 0 EG: LASER:LICENSE:<<Seq#1>> / LASER:SUB:<<Seq#1>> / FOLIO:INV:<<UUID>> / KB
   String sourceRecordId 
 
@@ -43,6 +45,7 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
                   owner (nullable : false)
               inputData (nullable : true)
            statusReport (nullable : true)
+                  label (nullable : true)
      lastProcessAttempt (nullable : true)
     lastProcessComplete (nullable : true)
       associatedMapping (nullable : true)
@@ -57,6 +60,7 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
          processControlStatus column:'mtr_process_control_status'
                sourceRecordId column:'mtr_source_record_id'
                     inputData column:'mtr_input_data'
+                        label column:'mtr_label'
                  statusReport column:'mtr_status_report'
            lastProcessAttempt column:'mtr_last_process_attempt'
           lastProcessComplete column:'mtr_last_process_complete'

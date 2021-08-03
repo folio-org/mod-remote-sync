@@ -170,6 +170,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
                                                        transformationStatus:'PENDING',
                                                        processControlStatus:'OPEN',
                                                        sourceRecordId:sr.resourceUri,
+                                                       label:"${sr.rectype}/${sr.seqts}",
                                                        inputData:sr.record )
                 if ( tpr.owner != null ) {
                   log.debug("Saving new tpr, owner is ${tpr.owner}");

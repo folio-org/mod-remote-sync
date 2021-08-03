@@ -58,6 +58,12 @@ and rm.mappingContext = :ctx
                                                       folioContext: folioContext,
                                                       folioId: folioId).save(flush:true, failOnError:true)
 
+    log.debug("ResourceMappingService::registerMapping returns ${new_mapping}");
+
     return new_mapping;
+  }
+
+  public String toString() {
+    return "${id}/${source}/${source_id}/${mappingContext}/${mappingStatus}".toString()
   }
 }

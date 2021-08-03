@@ -206,7 +206,12 @@ databaseChangeLog = {
       column(name: "mtr_last_process_complete", type: "timestamp")
       column(name: "mtr_associated_mapping_fk", type: "VARCHAR(36)")
     }
+  }
 
+  changeSet(author: "ianibbo (generated)", id: "i202108030943-001") {
+    addColumn (tableName: "mrs_tp_record" ) {
+      column(name: "mtr_label", type: "VARCHAR(255)")
+    }
   }
 
 }
