@@ -58,6 +58,8 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
       pass &= checkValueMapping(policyHelper,feedbackHelper,true,'LASER::LICENSE/TYPE', type_value, 'LASERIMPORT', 'FOLIO::LICENSE/TYPE', local_context, type_value,
                            [prompt:"Please provide a mapping for LASER License Type ${type_value}"]);
 
+      pass &= preflightLicenseProperties(parsed_record, rms, policyHelper, feedbackHelper, local_context)
+
       result = [
         preflightStatus: pass ? 'PASS' : 'FAIL'
       ]
@@ -205,6 +207,22 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
 
   private void updateLicense(FolioHelperService folioHelper, String folio_license_id, Map laser_record, Map result) {
     log.debug("update existing license");
+  }
+
+  private boolean preflightLicenseProperties(Map laser_license,
+                                             ResourceMappingService rms,
+                                             PolicyHelperService policyHelper,
+                                             ImportFeedbackService feedbackHelper,
+                                             Map local_context) {
+    boolean result = true;
+    laser_license?.properties?.each { licprop ->
+      log.debug("preflight laser license prop ${licprop}");
+      result &= checkValueMapping(policyHelper,
+                        feedbackHelper,false,'LASER::LICENSE/PROPERTY', licprop.token, 'LASERIMPORT', 'FOLIO::LICENSE/PROPERTY', local_context, licprop.token,
+                           [prompt:"License Property ${licprop.token} - Please provide an optional mapping to a folio property",
+                            type:"refdata"
+                           ]);
+    }
   }
 
   private Map processLicenseProperties(Map folio_license, Map laser_license) {
