@@ -51,6 +51,7 @@ class ImportFeedbackService {
                       description:label,
                     caseIndicator:code,
                          question:json_question,
+                        timestamp:System.currentTimeMillis(),
                          response:null).save(flush:true, failOnError:true);
 
     }

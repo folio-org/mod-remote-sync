@@ -45,6 +45,9 @@ public class FeedbackItem implements MultiTenant<FeedbackItem> {
   // JSON encoding of the response
   String response
 
+  // Timestamp feedback request was created
+  Long timestamp
+
   static constraints = {
      correlationId (nullable : false)
        description (nullable : false)
@@ -52,6 +55,7 @@ public class FeedbackItem implements MultiTenant<FeedbackItem> {
             status (nullable : false)
           question (nullable : false)
           response (nullable : true)
+         timestamp (nullable : true)
   }
 
   static mapping = {
@@ -64,6 +68,7 @@ public class FeedbackItem implements MultiTenant<FeedbackItem> {
                        status column:'fb_status'
                      question column:'fb_question'
                      response column:'fb_response'
+                    timestamp column:'fb_timestamp'
   }
 
   static transients = ['parsedAnswer']

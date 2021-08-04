@@ -214,4 +214,10 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "i202108041239-001") {
+    addColumn (tableName: "feedback_item" ) {
+      column(name: "fb_timestamp",          type: "BIGINT")
+    }
+  }
+
 }
