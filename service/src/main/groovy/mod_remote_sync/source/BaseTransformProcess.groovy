@@ -96,13 +96,21 @@ public abstract class BaseTransformProcess implements TransformProcess {
       local_context.processLog.add([ts:System.currentTimeMillis(),
                                       msg:"Need map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
 
+      Map extended_details = details + [
+        mandatory: mandatory,
+        resource_type: resource_type,
+        resource_id: resource_id,
+        context: context,
+        target_context: target_context
+      ]
+
       feedbackHelper.requireFeedback('MANUAL-VALUE-MAPPING',   // Feedback case / code
                                      resource_type,             // What kind of input resource
                                      context,
                                      resource_id,                 // ID of input resource
                                      resource_label,
                                      target_context,
-                                     details);
+                                     extended_details);
     }
 
     log.debug("checkValueMapping(${resource_type},${resource_id},${context}) result=${result} || ${!mandatory}");
