@@ -182,7 +182,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
       name:laser_record?.reference,
       description: "Synchronized from LAS:eR license ${laser_record?.reference}/${laser_record?.globalUID} on ${new Date()}",
       type:typeString,
-      customProperties: processLicenseProperties([:],laser_record),
+      customProperties: processLicenseProperties([:],laser_record,local_context),
       status:statusString,
       localReference: laser_record.globalUID,
       startDate: laser_record?.startDate,
