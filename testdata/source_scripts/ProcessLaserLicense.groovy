@@ -128,7 +128,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
           def answer = fi.parsedAnswer
           switch ( answer?.answerType ) {
             case 'create':
-              createLicense(folioHelper, rms, parsed_record,result);
+              createLicense(folioHelper, rms, parsed_record, result, local_context);
               result.processStatus = 'COMPLETE'
               break;
             case 'ignore':
@@ -168,7 +168,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
     return result;
   }
 
-  private void createLicense(FolioHelperService folioHelper, ResourceMappingService rms, Map laser_record, Map result) {
+  private void createLicense(FolioHelperService folioHelper, ResourceMappingService rms, Map laser_record, Map result, Map local_context) {
 
     // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
     // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/FolioClient.groovy#L74
