@@ -217,11 +217,18 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
     boolean result = true;
     laser_license?.properties?.each { licprop ->
       log.debug("preflight laser license prop ${licprop}");
-      result &= checkValueMapping(policyHelper,
+      if ( rms.lookupMapping('LASER::LICENSE/PROPERTY',licprop.token,'LASERIMPORT') != null ) {
+        // We know about this license property - if it's refdata see if we know about the value mapping
+        log.debug("Check license property value for ${licprop}");
+      }
+      else {
+        // We've not seen this license property before - add it to the list of potentials
+        result &= checkValueMapping(policyHelper,
                         feedbackHelper,false,'LASER::LICENSE/PROPERTY', licprop.token, 'LASERIMPORT', 'FOLIO::LICENSE/PROPERTY', local_context, licprop.token,
                            [prompt:"License Property ${licprop.token} - Please provide an optional mapping to a folio property",
                             type:"refdata"
                            ]);
+      }
     }
   }
 
