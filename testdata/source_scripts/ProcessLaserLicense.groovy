@@ -255,19 +255,19 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
         // See if we have a mapping for LASER::CUSTPROP/${licprop.token} 
         switch ( licprop.type ) {
           case 'Text':
-            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding text property: ${licprop.token}");
+            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding text property: ${licprop.token}"]);
             break;
           case 'Date':
-            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding date property: ${licprop.token}");
+            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding date property: ${licprop.token}"]);
             break;
           case 'Refdata':
-            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding refdata property: ${licprop.token}");
+            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding refdata property: ${licprop.token}"]);
             break;
         }
       }
       else {
         // Skip any unmapped license property
-        local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Skipping unmapped license property: ${licprop.token}");
+        local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Skipping unmapped license property: ${licprop.token}"]);
       }
 
       // "note": "my test note",
