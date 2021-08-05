@@ -246,7 +246,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
   private Map processLicenseProperties(Map folio_license, Map laser_license, Map local_context) {
     Map result = [:]
     laser_license?.properties?.each { licprop ->
-      log/debug("Process license property : ${licprop}");
+      log.debug("Process license property : ${licprop}");
       String property_name = licprop.token
 
       def mapped_property = rms.lookupMapping('LASER::LICENSE/PROPERTY',licprop.token,'LASERIMPORT')
