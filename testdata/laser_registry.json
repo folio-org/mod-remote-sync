@@ -10,11 +10,11 @@
     "sourceSignedBy":null,
     "sourceSignature":null,
     "parameters":{
-                 "url":{ "section":"LASER.Integration", "key":"laser.url",            "type": "String", "required":true, "label":"Laser URL" },
+                 "url":{ "section":"LASER.Integration", "key":"laser.url",            "type": "String", "required":true, "label":"Laser URL", "default":"https://laser-qa.hbz-nrw.de" },
               "secret":{ "section":"LASER.Integration", "key":"laser.secret",         "type": "String", "required":true, "label":"Laser Secret" },
                "token":{ "section":"LASER.Integration", "key":"laser.token",          "type": "String", "required":true, "label":"Laser Token" },
           "identifier":{ "section":"LASER.Integration", "key":"laser.identifier",     "type": "String", "required":true, "label":"Laser Identifier" },
-      "identifierType":{ "section":"LASER.Integration", "key":"laser.identifierType", "type": "String", "required":true, "label":"Laser Identifier Type" }
+      "identifierType":{ "section":"LASER.Integration", "key":"laser.identifierType", "type": "String", "required":true, "label":"Laser Identifier Type","default":"globalUID" }
     },
     "emits":"LASER::LICENSE"
   },

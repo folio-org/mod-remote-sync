@@ -180,7 +180,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
 
     def requestBody = [
       name:laser_record?.reference,
-      description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
+      description: "Synchronized from LAS:eR license ${laser_record?.reference}/${laser_record?.globalUID} on ${new Date()}",
       type:typeString,
       customProperties: processLicenseProperties([:],laser_record),
       status:statusString,

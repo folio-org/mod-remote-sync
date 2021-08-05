@@ -82,7 +82,8 @@ class SourceRegisterService {
           case 'String':
             st = new AppSetting(section: defn.section,
                                 key: defn.key,
-                                settingType: 'String').save(flush:true, failOnError:true);
+                                settingType: 'String',
+                                defValue: defn.default).save(flush:true, failOnError:true);
             break;
           default:
             log.warn("Unhandled setting type: ${defn.type}");
