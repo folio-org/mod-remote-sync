@@ -226,7 +226,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
                         feedbackHelper,false,"LASER::LICENSE/REFDATA/${licprop.refdataCategory}", licprop.value, 'LASERIMPORT', 
                            "FOLIO::LICENSE/REFDATA/${mapped_property.folioId}", 
                            local_context, licprop.value,
-                           [prompt:"License refdata ${licprop.refdataCategory}/${licprop.value} - Please provide an optional mapping to a folio license refdata in category ${mapped_property.folioId}",
+                           [prompt:"Map License refdata value ${licprop.refdataCategory}/${licprop.value} - in target category ${mapped_property.folioId}",
                             type:"refdata"
                            ]);
         }
@@ -236,7 +236,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
         // We've not seen this license property before - add it to the list of potentials
         result &= checkValueMapping(policyHelper,
                         feedbackHelper,false,'LASER::LICENSE/PROPERTY', licprop.token, 'LASERIMPORT', 'FOLIO::LICENSE/PROPERTY', local_context, licprop.token,
-                           [prompt:"License Property ${licprop.token} - Please provide an optional mapping to a folio property",
+                           [prompt:"Map Optional License Property ${licprop.token}(${licprop.type})",
                             type:"refdata"
                            ]);
       }
