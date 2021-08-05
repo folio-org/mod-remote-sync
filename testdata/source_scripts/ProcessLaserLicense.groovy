@@ -180,7 +180,7 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
 
     def requestBody = [
       name:laser_record?.reference,
-      description: "Synchronized from LAS:eR license ${parsed_record?.reference}/${parsed_record?.globalUID} on ${new Date()}",
+      description: "Synchronized from LAS:eR license ${laser_record?.reference}/${laser_record?.globalUID} on ${new Date()}",
       type:typeString,
       customProperties: processLicenseProperties([:],laser_record),
       status:statusString,
@@ -217,28 +217,58 @@ public class ProcessLaserLicense extends BaseTransformProcess implements Transfo
     boolean result = true;
     laser_license?.properties?.each { licprop ->
       log.debug("preflight laser license prop ${licprop}");
-      if ( rms.lookupMapping('LASER::LICENSE/PROPERTY',licprop.token,'LASERIMPORT') != null ) {
+      def mapped_property = rms.lookupMapping('LASER::LICENSE/PROPERTY',licprop.token,'LASERIMPORT')
+      if ( mapped_property != null ) {
         // We know about this license property - if it's refdata see if we know about the value mapping
         log.debug("Check license property value for ${licprop}");
+        if ( licprop.type == 'Refdata' ) {
+          result &= checkValueMapping(policyHelper,
+                        feedbackHelper,false,"LASER::LICENSE/REFDATA/${licprop.refdataCategory}", licprop.value, 'LASERIMPORT', 
+                           "FOLIO::LICENSE/REFDATA/${mapped_property.folioId}", 
+                           local_context, licprop.value,
+                           [prompt:"Map License refdata value ${licprop.refdataCategory}/${licprop.value} - in target category ${mapped_property.folioId}",
+                            type:"refdata"
+                           ]);
+        }
+        // other types are Text and Date
       }
       else {
         // We've not seen this license property before - add it to the list of potentials
         result &= checkValueMapping(policyHelper,
                         feedbackHelper,false,'LASER::LICENSE/PROPERTY', licprop.token, 'LASERIMPORT', 'FOLIO::LICENSE/PROPERTY', local_context, licprop.token,
-                           [prompt:"License Property ${licprop.token} - Please provide an optional mapping to a folio property",
+                           [prompt:"Map Optional License Property ${licprop.token}(${licprop.type})",
                             type:"refdata"
                            ]);
       }
     }
   }
 
-  private Map processLicenseProperties(Map folio_license, Map laser_license) {
+  private Map processLicenseProperties(Map folio_license, Map laser_license, Map local_context) {
     Map result = [:]
     laser_license?.properties?.each { licprop ->
       log/debug("Process license property : ${licprop}");
       String property_name = licprop.token
 
-      // See if we have a mapping for LASER::CUSTPROP/${licprop.token} 
+      def mapped_property = rms.lookupMapping('LASER::LICENSE/PROPERTY',licprop.token,'LASERIMPORT')
+
+      if ( mapped_property != null ) {
+        // See if we have a mapping for LASER::CUSTPROP/${licprop.token} 
+        switch ( licprop.type ) {
+          case 'Text':
+            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding text property: ${licprop.token}");
+            break;
+          case 'Date':
+            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding date property: ${licprop.token}");
+            break;
+          case 'Refdata':
+            local_context.processLog.add([ts:System.currentTimeMillis(), msg:"adding refdata property: ${licprop.token}");
+            break;
+        }
+      }
+      else {
+        // Skip any unmapped license property
+        local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Skipping unmapped license property: ${licprop.token}");
+      }
 
       // "note": "my test note",
       // "paragraph": "\u00a7 3 Abs. 1d:",
