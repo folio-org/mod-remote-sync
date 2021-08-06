@@ -49,6 +49,7 @@ public class TestLicenseSource implements RemoteSyncActivity {
                               'TEST',
                               'TEST:LICENSE:'+testrec.id,
                               'TEST:LICENSE',
+                              testrec.licenseName,
                               license_hash,
                               license_json_bytes);
     }
