@@ -173,7 +173,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
                                                        transformationStatus:'PENDING',
                                                        processControlStatus:'OPEN',
                                                        sourceRecordId:sr.resourceUri,
-                                                       label:"${sr.recType}/${sr.seqts}",
+                                                       label:sr.label ?: "${sr.recType}/${sr.seqts}",
                                                        inputData:sr.record )
                 if ( tpr.owner != null ) {
                   log.debug("Saving new tpr, owner is ${tpr.owner}");
@@ -189,6 +189,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
                 log.debug("Updating existing tpr: ${tpr}");
 
                 tpr.inputData = new String(sr.record)
+                tpr.label = sr.label ?: "${sr.recType}/${sr.seqts}"
 		tpr.transformationStatus='PENDING'
                 tpr.processControlStatus='OPEN'
                 tpr.save(flush:true, failOnError:true);
