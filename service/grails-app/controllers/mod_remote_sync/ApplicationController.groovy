@@ -3,6 +3,7 @@ package mod_remote_sync
 import grails.core.GrailsApplication
 import grails.plugins.*
 import grails.converters.JSON
+import java.text.SimpleDateFormat
 
 class ApplicationController implements PluginManagerAware {
 
@@ -31,6 +32,8 @@ group by tpr.transformationStatus
   def statusReport() {
     def result = []
 
+    SimpleDateFormat isosdf = new SimpleDateFormat('yyyy-MM-dd'T'HH:mm:ss.SSSXXX')
+
     Source.withTransaction {
       Source.list().each { src ->
 
@@ -46,6 +49,8 @@ group by tpr.transformationStatus
         source_row.nextDueTS = src.nextDue
         source_row.emits = src.emits
         source_row.status = src.status
+        source_row.nextDueString = isosdf.format(new Date(src.nextDue));
+        source_row.timeRemaining = src.nextDue != null ? System.currentTimeMillis() - src.nextDue : 0
         source_row.recordCount = src.recordCount
         // Now iterate extractors attached to this source
 
