@@ -11,6 +11,14 @@ public interface RecordSourceController {
 
   public void upsertSourceRecord(String source_id,
                                  String authority,
+                                 String resource_id,
+                                 String resource_type,
+                                 String label,
+                                 String hash,
+                                 byte[] record)
+
+  public void upsertSourceRecord(String source_id,
+                                 String authority,
                                  String resource_id, 
                                  String resource_type, 
                                  String hash,

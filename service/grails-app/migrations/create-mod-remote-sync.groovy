@@ -220,4 +220,9 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "i202108060912-001") {
+    addColumn (tableName: "mrs_source_resource_2" ) {
+      column(name: "sr_label",          type: "VARCHAR(255)")
+    }
+  }
 }

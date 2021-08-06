@@ -89,6 +89,16 @@ class BespokeSourceRunnerService implements RecordSourceController {
                                  String resource_type,
                                  String hash,
                                  byte[] record) {
+    upsertSourceRecord(source_id,authority,resource_id,resource_type,"${authority}:${resource_type}/${resource_id}",hash,record);
+  }
+
+  public void upsertSourceRecord(String source_id,
+                                 String authority,
+                                 String resource_id,
+                                 String resource_type,
+                                 String label,
+                                 String hash,
+                                 byte[] record) {
     log.debug("BespokeSourceRunnerService::updateState(${source_id},${resource_id},${resource_type},${hash},...)");
     Authority a = Authority.findByName(authority) ?: new Authority(name:authority).save(flush:true, failOnError:true)
     SourceRecord existing_record = SourceRecord.findByResourceUriAndAuth(resource_id,a)
@@ -100,6 +110,7 @@ class BespokeSourceRunnerService implements RecordSourceController {
                                          recType: resource_type,
                                          record: record,
                                          checksum: hash,
+                                         label: label,
                                          seqts: System.currentTimeMillis(),
                                          owner:Source.get(source_id))
       log.debug("Saving new source record: ${resource_id}");

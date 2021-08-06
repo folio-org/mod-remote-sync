@@ -16,6 +16,7 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
   Date lastUpdated
   Long seqts
   String recType
+  String label
   Source owner
 
   static constraints = {
@@ -27,6 +28,7 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
      lastUpdated (nullable : true)
          recType (nullable : false)
            owner (nullable : false)
+           label (nullable : true)
            seqts (nullable : false)
   }
 
@@ -42,6 +44,7 @@ public class SourceRecord implements MultiTenant<SourceRecord> {
        checksum column : 'sr_checksum'
         recType column : 'sr_rectype'
           owner column : 'sr_owner_source_fk'
+          label column : 'sr_label'
           seqts column : 'sr_seqts'
   }
 }
