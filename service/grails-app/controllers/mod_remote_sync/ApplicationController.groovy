@@ -32,7 +32,7 @@ group by tpr.transformationStatus
   def statusReport() {
     def result = []
 
-    SimpleDateFormat isosdf = new SimpleDateFormat('yyyy-MM-dd'T'HH:mm:ss.SSSXXX')
+    SimpleDateFormat isosdf = new SimpleDateFormat('''yyyy-MM-dd'T'HH:mm:ss.SSSXXX''')
 
     Source.withTransaction {
       Source.list().each { src ->
