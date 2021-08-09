@@ -49,7 +49,7 @@ group by tpr.transformationStatus
         source_row.nextDueTS = src.nextDue
         source_row.emits = src.emits
         source_row.status = src.status
-        source_row.nextDueString = src.nextDue != null isosdf.format(new Date(src.nextDue)) : 'Now';
+        source_row.nextDueString = src.nextDue != null ? isosdf.format(new Date(src.nextDue)) : 'Now';
         source_row.timeRemaining = src.nextDue != null ? System.currentTimeMillis() - src.nextDue : 0
         source_row.recordCount = src.recordCount
         // Now iterate extractors attached to this source
