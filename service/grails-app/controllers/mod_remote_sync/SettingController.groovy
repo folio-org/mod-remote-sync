@@ -39,9 +39,9 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     GrailsWebRequest gwr = (GrailsWebRequest)RequestContextHolder.requestAttributes
 
     def p = WithPromises.task {
-      log.info("Starting....");
       // this means the request will be available to the worker thread - in particular the OKAPI TOKEN
       RequestContextHolder.setRequestAttributes(gwr);
+      log.info("Starting.... context: ${RequestContextHolder.requestAttributes}");
 
       Tenants.withId(tenantId) {
         Source.withTransaction {

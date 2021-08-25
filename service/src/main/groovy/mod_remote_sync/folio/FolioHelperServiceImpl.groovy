@@ -11,6 +11,7 @@ import com.k_int.okapi.OkapiClient
 import groovy.util.logging.Slf4j
 import grails.core.GrailsApplication
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.context.request.RequestContextHolder
 
 /**
  * Folio helper service impl
@@ -25,6 +26,7 @@ class FolioHelperServiceImpl implements FolioHelperService {
 
   public Object okapiPost(String path, Object o, Map params=null) {
     log.debug("FolioHelperService::okapiPost(${path},....)");
+    log.debug("Request attributes: ${RequestContextHolder.requestAttributes}");
     def result = okapiClient.post(path, o, params)
     log.debug("Result of okapiPost(${path}...): ${result}");
     return result;
