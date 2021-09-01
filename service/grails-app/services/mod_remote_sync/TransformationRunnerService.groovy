@@ -75,10 +75,16 @@ class TransformationRunnerService {
         }   
 
       }
+      else {
+        log.debug("Record is not in a processControlStatus of OPEN - skipping");
+      }
 
     }
     catch ( Exception e ) {
       log.error("Problem in attemptProcess",e);
+    }
+    finally {
+      log.debug("TransformationRunnerService::attemptProcess(${tpr_id}) - complete");
     }
   }
 

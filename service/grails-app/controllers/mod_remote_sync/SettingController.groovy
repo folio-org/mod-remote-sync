@@ -40,6 +40,7 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
 
     def p = WithPromises.task {
       // this means the request will be available to the worker thread - in particular the OKAPI TOKEN
+      log.debug("Setting request attributes to ${gwr}");
       RequestContextHolder.setRequestAttributes(gwr);
       log.info("Starting.... context: ${RequestContextHolder.requestAttributes}");
 
