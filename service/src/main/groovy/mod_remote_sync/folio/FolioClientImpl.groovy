@@ -48,7 +48,7 @@ class FolioClientImpl implements FolioClient {
     this.user = user;
     this.pass = pass;
     this.read_timeout = read_timeout;
-    this.url = "http://${okapi_host}:${oakpi_port}".toString()
+    this.url = "http://${okapi_host}:${okapi_port}".toString()
   }
 
   public boolean init() {
