@@ -161,6 +161,7 @@ class FolioClientImpl implements FolioClient {
       request.headers['X-Okapi-Token']=session_ctx.token
       request.contentType='application/json'
       request.uri.query = params
+
       response.failure{ FromServer fs, Object body ->
         log.error("Problem in get: ${new String(body)}");
       }
