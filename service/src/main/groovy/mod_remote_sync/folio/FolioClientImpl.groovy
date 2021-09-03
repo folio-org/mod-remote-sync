@@ -58,7 +58,7 @@ class FolioClientImpl implements FolioClient {
 
     def postBody = [username: this.user, password: this.pass]
 
-    println("attempt login (url=http://${url}) / tenant=${tenant}) ${postBody}");
+    log.debug("attempt login (url=http://${url}) / tenant=${tenant}) ${postBody}");
 
     def http = configure {
       request.uri = url;
@@ -81,16 +81,14 @@ class FolioClientImpl implements FolioClient {
       request.body=postBody
 
       response.failure{ FromServer fs, Object body ->
-        println("Problem logging into FOLIO ${new String(body)}");
+        log.warn("Problem logging into FOLIO ${new String(body)}");
       }
 
       response.success{ FromServer fs, Object body ->
         session_ctx.auth = body
-        println("OK _ headers == ${fs.getHeaders()}");
         session_ctx.token = fs.getHeaders().find { it.key.equalsIgnoreCase('x-okapi-token')}?.value
-        println("LOGIN OK - TokenHeader=${session_ctx.token}");
+        log.debug("LOGIN OK - TokenHeader=${session_ctx.token}");
       }
-
     }
   }
 
@@ -111,13 +109,68 @@ class FolioClientImpl implements FolioClient {
   public Object okapiPut(String path, Object o, Map params=null) {
     log.debug("FolioClientImpl::okapiPut(${path},....)");
     //def result = okapiClient.put(path, o, params)
+
+    Object result = null;
+
+    ensureLogin();
+
+    // lookup
+    def http = configure {
+      request.uri = url
+    }
+
+    http.put {
+      request.uri.path = path;
+      request.headers['X-Okapi-Tenant']=this.tenant;
+      request.headers['accept']='application/json'
+      request.headers['X-Okapi-Token']=session_ctx.token
+      request.contentType='application/json'
+      request.uri.query = params
+      request.body = o
+      response.failure{ FromServer fs, Object body ->
+        log.error("Problem in put: ${new String(body)}");
+      }
+
+      response.success{ FromServer fs, Object body ->
+        result = body;
+      }
+
+    }
+
     log.debug("Result of okapiPut(${path}...): ${result}");
     return result;
   }
 
   public Object okapiGet(String path, Map params) {
     log.debug("FolioClientImpl::okapiGet(${path},${params}....)");
+
     //def result = okapiClient.get(path, params)
+    Object result = null;
+
+    ensureLogin();
+
+    // lookup
+    def http = configure {
+      request.uri = url
+    }
+
+    http.post {
+      request.uri.path = path;
+      request.headers['X-Okapi-Tenant']=this.tenant;
+      request.headers['accept']='application/json'
+      request.headers['X-Okapi-Token']=session_ctx.token
+      request.contentType='application/json'
+      request.uri.query = params
+      response.failure{ FromServer fs, Object body ->
+        log.error("Problem in get: ${new String(body)}");
+      }
+
+      response.success{ FromServer fs, Object body ->
+        result = body;
+      }
+
+    }
+
     log.debug("Result of okapiGet(${path}...): ${result}");
     return result;
   }
@@ -143,11 +196,10 @@ class FolioClientImpl implements FolioClient {
       request.contentType='application/json'
       request.body = params
       response.failure{ FromServer fs, Object body ->
-        println("Problem in term creation: ${new String(body)}");
+        log.warn("Problem in post: ${new String(body)}");
       }
 
       response.success{ FromServer fs, Object body ->
-        println("Term POST OK");
         result = body;
       }
 
