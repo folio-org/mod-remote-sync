@@ -154,7 +154,7 @@ class FolioClientImpl implements FolioClient {
       request.uri = url
     }
 
-    http.post {
+    http.get {
       request.uri.path = path;
       request.headers['X-Okapi-Tenant']=this.tenant;
       request.headers['accept']='application/json'
