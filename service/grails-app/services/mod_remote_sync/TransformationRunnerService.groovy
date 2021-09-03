@@ -7,6 +7,7 @@ import mod_remote_sync.source.DynamicClassLoader
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import groovy.json.JsonOutput
+import org.springframework.web.context.request.RequestContextHolder
 
 @Transactional
 class TransformationRunnerService {
@@ -104,6 +105,7 @@ class TransformationRunnerService {
     Map input_record = [:]
     Map local_context = [
       status:null,
+      tenant:RequestContextHolder.getRequestAttributes()?.getRequest()?.getHeader('X-Okapi-Tenant'),
       processLog:[
         [ ts:System.currentTimeMillis(), msg:'Starting transformation process']
       ]
