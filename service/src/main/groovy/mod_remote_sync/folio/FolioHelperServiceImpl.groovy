@@ -15,7 +15,6 @@ import org.springframework.web.context.request.RequestContextHolder
 
 /**
  * Folio helper service impl
- *
  */
 @Slf4j
 @Transactional
@@ -28,21 +27,21 @@ class FolioHelperServiceImpl implements FolioHelperService {
     log.debug("FolioHelperService::okapiPost(${path},....)");
     log.debug("Request attributes: ${RequestContextHolder.requestAttributes}");
     def result = okapiClient.post(path, o, params)
-    log.debug("Result of okapiPost(${path}...): ${result}");
+    log.debug("Result of okapiClient.post(${path}...): ${result}");
     return result;
   }
   
   public Object okapiPut(String path, Object o, Map params=null) {
     log.debug("FolioHelperService::okapiPut(${path},....)");
     def result = okapiClient.put(path, o, params)
-    log.debug("Result of okapiPut(${path}...): ${result}");
+    log.debug("Result of okapiClient.put(${path}...): ${result}");
     return result;
   }
 
   public Object okapiGet(String path, Map params) {
     log.debug("FolioHelperService::okapiGet(${path},${params}....)");
-    def result = okapiClient.get(path, params)
-    log.debug("Result of okapiGet(${path}...): ${result}");
+    def result = okapiClient.getSync(path, params)
+    log.debug("Result of okapiClient.getSync(${path}...): ${result}");
     return result;
   }
 

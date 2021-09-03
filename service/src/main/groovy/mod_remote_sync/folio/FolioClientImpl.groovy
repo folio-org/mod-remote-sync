@@ -32,6 +32,7 @@ class FolioClientImpl implements FolioClient {
   private String tenant;
   private String user;
   private String pass;  
+  private long read_timeout = 6000;
   private Map session_ctx = [:]
 
 
@@ -39,12 +40,14 @@ class FolioClientImpl implements FolioClient {
                          String okapi_port,
                          String tenant,
                          String user,
-                         String pass) {
+                         String pass,
+                         long read_timeout = 6000) {
     this.okapi_host = okapi_host;
     this.okapi_port = okapi_port;
     this.tenant = tenant;
     this.user = user;
     this.pass = pass;
+    this.read_timeout = read_timeout;
     this.url = "http://${okapi_host}:${oakpi_port}".toString()
   }
 
@@ -59,6 +62,13 @@ class FolioClientImpl implements FolioClient {
 
     def http = configure {
       request.uri = url;
+
+      // Add timeouts.
+      client.clientCustomizer { HttpURLConnection conn ->
+        conn.connectTimeout = 5000
+        conn.readTimeout = this.read_timeout
+      }
+
     }
 
     def result = http.post {
