@@ -81,7 +81,7 @@ class FolioClientImpl implements FolioClient {
       request.body=postBody
 
       response.failure{ FromServer fs, Object body ->
-        log.warn("Problem logging into FOLIO ${new String(body)}");
+        log.warn("Problem logging into FOLIO ${body}");
       }
 
       response.success{ FromServer fs, Object body ->
