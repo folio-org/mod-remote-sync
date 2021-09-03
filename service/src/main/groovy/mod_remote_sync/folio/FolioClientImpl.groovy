@@ -81,7 +81,7 @@ class FolioClientImpl implements FolioClient {
       request.body=postBody
 
       response.failure{ FromServer fs, Object body ->
-        log.warn("Problem logging into FOLIO ${new String(body)}");
+        log.warn("Problem logging into FOLIO ${body}");
       }
 
       response.success{ FromServer fs, Object body ->
@@ -154,7 +154,7 @@ class FolioClientImpl implements FolioClient {
       request.uri = url
     }
 
-    http.post {
+    http.get {
       request.uri.path = path;
       request.headers['X-Okapi-Tenant']=this.tenant;
       request.headers['accept']='application/json'
