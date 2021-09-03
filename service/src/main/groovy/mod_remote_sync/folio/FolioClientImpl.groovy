@@ -128,7 +128,7 @@ class FolioClientImpl implements FolioClient {
       request.uri.query = params
       request.body = o
       response.failure{ FromServer fs, Object body ->
-        log.error("Problem in put: ${new String(body)}");
+        log.error("Problem in put: ${body}");
       }
 
       response.success{ FromServer fs, Object body ->
@@ -163,7 +163,7 @@ class FolioClientImpl implements FolioClient {
       request.uri.query = params
 
       response.failure{ FromServer fs, Object body ->
-        log.error("Problem in get: ${new String(body)}");
+        log.error("Problem in get: ${body}");
       }
 
       response.success{ FromServer fs, Object body ->
@@ -197,7 +197,7 @@ class FolioClientImpl implements FolioClient {
       request.contentType='application/json'
       request.body = params
       response.failure{ FromServer fs, Object body ->
-        log.warn("Problem in post: ${new String(body)}");
+        log.warn("Problem in post: ${body}");
       }
 
       response.success{ FromServer fs, Object body ->
