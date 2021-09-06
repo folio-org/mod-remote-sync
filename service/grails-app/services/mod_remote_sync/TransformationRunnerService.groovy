@@ -128,6 +128,7 @@ class TransformationRunnerService {
                                                  local_context)
       log.debug("result of process: ${process_result}");
       result.processStatus = process_result.processStatus
+      result.resource_mapping = process_result.resource_mapping
 
       local_context.processLog.add([ts:System.currentTimeMillis(), msg:"Processing result status: ${process_result.processStatus}"])
     }
