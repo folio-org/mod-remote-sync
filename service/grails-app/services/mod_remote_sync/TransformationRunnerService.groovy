@@ -56,6 +56,7 @@ class TransformationRunnerService {
                 log.debug("processing completed: ${processing_result}");
                 tpr.lastProcessComplete = new Date()
                 tpr.processControlStatus = 'CLOSED'
+                log.debug("Assigning associated mapping ${processing_result.resource_mapping}");
                 tpr.associatedMapping = processing_result.resource_mapping
                 break;
               default:
