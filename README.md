@@ -27,5 +27,3 @@ The main control loop started by mod_remote_sync.ExtractService performs the fol
 Within step 3 above we may discover that we need to ask questions of the human operator. Transformation tasks in step three can register feedbackItems which
 generate UI tasks for an operator to complete. Having registered their decision, subsequent loops should be able to complete record import.
 
-
-
