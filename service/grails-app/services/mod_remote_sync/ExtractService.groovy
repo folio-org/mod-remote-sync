@@ -161,9 +161,10 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
             log.debug("  -> Resource stream current has ${num_source_records} records");
 
+            log.debug("Find all ${rs.id} records where ts > ${cursor_value}");
             SourceRecord.executeQuery(SOURCE_RECORD_QUERY,[owner:rs.source,cursor:cursor_value]).each { sr ->
 
-              log.debug("    -> Process record ${sr} (owner: ${rs.streamId})");
+              log.debug("    -> Process record ${sr.id}/${sr.seqts} (owner: ${rs.streamId}, cursor:${cursor_value})");
               List<TransformationProcessRecord> tprqr = TransformationProcessRecord.executeQuery(FIND_TPR_QUERY,[owner:rs.streamId, srid:sr.resourceUri])
 
               if ( tprqr.size() == 0 ) {

@@ -103,6 +103,7 @@ class BespokeSourceRunnerService implements RecordSourceController {
     Authority a = Authority.findByName(authority) ?: new Authority(name:authority).save(flush:true, failOnError:true)
     SourceRecord existing_record = SourceRecord.findByResourceUriAndAuth(resource_id,a)
     if ( existing_record == null ) {
+      log.debug("No existing source record - creating ${resource_id}/hash:${hash}");
       existing_record = new SourceRecord(auth:a,
                                          resourceUri: resource_id,
                                          dateCreated: new Date(),
@@ -118,7 +119,9 @@ class BespokeSourceRunnerService implements RecordSourceController {
       log.debug("Made new source record: ${existing_record}");
     }
     else {
+      log.debug("Found existing source record - creating ${resource_id}/hash:${hash} vs ${existing_record.checksum}");
       if ( existing_record.checksum != hash ) {
+        log.debug("Checksum different - updating record");
         existing_record.record = record;
         existing_record.checksum = hash;
         existing_record.seqts = System.currentTimeMillis();
