@@ -195,7 +195,8 @@ class FolioClientImpl implements FolioClient {
       request.headers['accept']='application/json'
       request.headers['X-Okapi-Token']=session_ctx.token
       request.contentType='application/json'
-      request.body = params
+      request.body = o
+      request.uri.query=params
       response.failure{ FromServer fs, Object body ->
         log.warn("Problem in post: ${body}");
       }
@@ -206,8 +207,7 @@ class FolioClientImpl implements FolioClient {
 
     }
 
-    //def result = okapiClient.post(path, o, params)
-    log.debug("Result of okapiPost(${path}...): ${result}");
+    log.debug("okapiPost(${path}...) completed");
     return result;
   }
 
