@@ -77,6 +77,8 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
           result = sourceRegisterService.load(request.JSON.url)
         }
       }
+
+      log.info("SettingController::configureFromRegister complete");
     }
     catch ( Exception e ) {
       log.error("Problem loading register",e);
