@@ -146,6 +146,14 @@ class TestSourceSpec extends HttpSpec {
 
   }
 
+  void "getCurrentDefinitions"() {
+    when:'we request current definitions'
+      def resp = doGet('/remote-sync/settings/currentDefinitions')
+
+    then:'got definitions'
+      log.info("Definitions: ${resp}")
+  }
+
   void "getStatusReport"() {
     when:'we request a status report'
       def resp = doGet('/remote-sync/statusReport')

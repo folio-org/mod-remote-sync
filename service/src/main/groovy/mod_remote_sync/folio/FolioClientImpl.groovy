@@ -207,7 +207,8 @@ class FolioClientImpl implements FolioClient {
 
     }
 
-    log.debug("okapiPost(${path}...) completed");
+    log.debug("okapiPost(${path}...) completed ${result}");
+
     return result;
   }
 
