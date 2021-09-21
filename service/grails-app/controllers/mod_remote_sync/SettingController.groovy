@@ -91,4 +91,28 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     render result as JSON
   }
 
+  def currentDefinitions() {  
+    def result = [
+      sources:[],
+      streams:[],
+      processes:[]
+    ]
+
+    Source.withTransaction {
+      Source.list().each { s->
+        result.sources.add([id:s.id, name:s.name, lastUpdated:s.lastUpdated, cls:s.class.name, enabled: s.enabled]);
+      }
+
+      ResourceStream.list().each { s ->
+        result.streams.add([id:s.id, name:s.name, streamStatus:s.streamStatus]);
+      }
+
+      TransformationProcess.list().each { tp ->
+        result.processes.add([id:tp.id, name:tp.name, lastPull: tp.lastPull])
+      }
+    }
+
+    render result as JSON
+  }
+
 }
