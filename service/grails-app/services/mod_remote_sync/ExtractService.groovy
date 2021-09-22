@@ -112,7 +112,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             log.debug("Completed processing on src ${src} return status to IDLE and set next due to ${src.nextDue}");
             src.save(flush:true, failOnError:true)
           }
-          log.debug("Completed processing");
+          log.debug("Source ${source_id} Completed processing");
         }
 
       }

@@ -37,7 +37,7 @@ group by tpr.transformationStatus
     Source.withTransaction {
       Source.list().each { src ->
 
-        log.debug("Adding source ${src}");
+        log.debug("Adding source ${src} (${src.id})");
 
         def source_row = [:]
 
@@ -58,7 +58,7 @@ group by tpr.transformationStatus
         source_row.processes = []
 
         ResourceStream.findAllBySource(src).each { extract ->
-          log.debug("Adding stream ${extract}");
+          log.debug("Adding stream ${extract}(${extract.id})");
           def extractor = [
             id:extract.id,
             name:extract.name,
