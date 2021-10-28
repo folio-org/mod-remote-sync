@@ -61,6 +61,9 @@ class SourceRegisterService {
             case 'mappings':
               processMappings(entry, result)
               break;
+            case 'authorityControl':
+              processAuthorityControlSources(entry, result)
+              break;
             default:
               log.warn("Unhandled record type: ${entry}");
           }
@@ -296,6 +299,12 @@ class SourceRegisterService {
           log.debug("Created resource mapping: ${rm}");
         }
       }
+    }
+  }
+
+  private void processAuthorityControlSources(descriptor, result) {
+    descriptor.authorities?.each { authority ->
+      log.debug("Process authority: ${authority}");
     }
   }
 }
