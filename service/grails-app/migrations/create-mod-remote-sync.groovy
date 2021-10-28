@@ -225,4 +225,17 @@ databaseChangeLog = {
       column(name: "sr_label",          type: "VARCHAR(255)")
     }
   }
+
+  changeSet(author: "ianibbo (generated)", id: "i202110280943-001") {
+    createTable(tableName: "mrs_authority_control_source") {
+      column(name: "acs_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "acs_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "acs_date_created", type: "TIMESTAMP") { constraints(nullable: "true") }
+      column(name: "acs_date_updated", type: "TIMESTAMP") { constraints(nullable: "true") }
+      column(name: "acs_vocab_uri", type: "VARCHAR(255)") { constraints(nullable: "false") }
+      column(name: "acs_vocab_type", type: "VARCHAR(255)") { constraints(nullable: "false") }
+      column(name: "acs_service_url", type: "VARCHAR(255)") { constraints(nullable: "false") }
+    }
+  }
+
 }
