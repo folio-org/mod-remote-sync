@@ -21,6 +21,8 @@ class SourceRegisterService {
   def transformationRunnerService
   def resourceMappingService
 
+  private List<Map> crosswalk_cache = null;
+
   public Map load(String url) {
     log.debug("Load: ${url}");
     Map result = [status:'OK',messages:[]]
@@ -69,7 +71,11 @@ class SourceRegisterService {
           }
         }
 
+        // Clear the compiled process cache to adopt any changed handlers
         transformationRunnerService.clearProcessCache()
+
+        // Clear the crosswalk cache to force it to be rebuilt
+        this.crosswalk_cache = null;
       }
     }
 
@@ -303,8 +309,30 @@ class SourceRegisterService {
   }
 
   private void processAuthorityControlSources(descriptor, result) {
-    descriptor.authorities?.each { authority ->
-      log.debug("Process authority: ${authority}");
+    descriptor.authorities?.each { k, v ->
+      log.debug("Process authority: ${k} => ${v}");
+      AuthorityControlSource acs = AuthorityControlSource.createCriteria().get {
+        vocabUri: k
+      }
+      if ( acs == null ) {
+        acs = new AuthorityControlSource()
+      }
+      acs.vocabUri = k
+      acs.vocabType = v.type
+      acs.serviceUrl = v.service
+      acs.save(flush:true)
     }
+  }
+
+  public List<Map> getCrosswalks() {
+    if ( this.crosswalk_cache == null ) {
+      synchronized(this) {
+        ResourceMapping.executeQuery('select distinct rm.srcCtx, rm.targetCtx, rm.mappingContext from ResourceMapping as rm').each {
+          this.crosswalk_cache.add( [ srcCtx: it[0], targetCtx:it[1], mappingContext: it[2] ] );
+        }
+      }
+    }
+
+    return this.crosswalk_cache;
   }
 }
