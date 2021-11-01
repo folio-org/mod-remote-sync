@@ -320,6 +320,7 @@ class SourceRegisterService {
       acs.vocabUri = k
       acs.vocabType = v.type
       acs.serviceUrl = v.service
+      acs.label = v.label
       acs.save(flush:true)
     }
   }

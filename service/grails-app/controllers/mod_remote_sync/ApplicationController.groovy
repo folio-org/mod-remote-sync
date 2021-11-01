@@ -9,6 +9,7 @@ class ApplicationController implements PluginManagerAware {
 
   GrailsApplication grailsApplication
   GrailsPluginManager pluginManager
+  SourceRegisterService sourceRegisterService
 
   private static String RESOURCE_COUNT_QRY = '''
 select count(sr.id)
@@ -88,5 +89,10 @@ group by tpr.transformationStatus
     }
 
     render result as JSON
+  }
+
+  def crosswalks() {
+    def result = sourceRegisterService.getCrosswalks();
+    render result as JSON;
   }
 }
