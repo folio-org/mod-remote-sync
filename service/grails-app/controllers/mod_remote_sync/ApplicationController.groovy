@@ -91,8 +91,10 @@ group by tpr.transformationStatus
     render result as JSON
   }
 
+  // Return something the same shape as simple lookup
   def crosswalks() {
-    def result = sourceRegisterService.getCrosswalks();
+    List<Map> crosswalks = sourceRegisterService.getCrosswalks();
+    def result = [ result: crosswalks, totalRecords: crosswalks.size() ]
     render result as JSON;
   }
 }
