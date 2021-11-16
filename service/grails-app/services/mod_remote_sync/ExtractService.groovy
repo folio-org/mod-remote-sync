@@ -59,6 +59,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   def transformationRunnerService
 
   public Map start() {
+    log.debug("ExtractService::start()");
     runSourceTasks()
     runExtractTasks()
     runTransformationTasks()
