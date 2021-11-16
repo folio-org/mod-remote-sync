@@ -59,7 +59,18 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   def transformationRunnerService
 
   public Map start() {
+    return start(false);
+  }
+
+  public Map start(boolean full_harvest) {
     log.debug("ExtractService::start()");
+
+    if ( full_harvest ) {
+      log.debug("Full harvest specified - clear all cursors");
+      Source.executeUpdate('update Source set nextDue = null');
+      ResourceStream.executeUpdate('update ResourceStream set nextDue = null');
+    }
+
     runSourceTasks()
     runExtractTasks()
     runTransformationTasks()
@@ -69,6 +80,12 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
   def runSourceTasks() {
     log.debug("ExtractService::runSourceTasks()");
+
+    log.debug("known sources");
+    Source.list().each { s ->
+      log.debug("Source: ${s.id} name:${s.name} enabled:${s.enabled} nextDue:${s.nextDue} status:${s.status} remaining(ms):${(s.nextDue?:0)-System.currentTimeMillis()}");
+    }
+
     Source.executeQuery(PENDING_SOURCE_JOBS,
                         [ 'systime': System.currentTimeMillis(), 'enabled': true, 'idle':'IDLE'],
                         [readOnly:true, lock:false]).each { source_id ->
@@ -118,6 +135,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
       }
     }
+    log.debug("All due sources completed");
   }
 
   /**
@@ -215,6 +233,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
       }
     }
+    log.debug("Completed pending extract tasks");
   }
 
   def runTransformationTasks() {
