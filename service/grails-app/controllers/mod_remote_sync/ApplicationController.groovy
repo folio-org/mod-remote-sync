@@ -64,7 +64,10 @@ group by tpr.transformationStatus
             id:extract.id,
             name:extract.name,
             status:extract.streamStatus,
-            target:extract.streamId?.id
+            target:extract.streamId?.id,
+            nextDue: extract.nextDue,
+            nextDueString: extract.nextDue != null ? isosdf.format(new Date(extract.nextDue)) : 'Now',
+            timeRemaining: extract.nextDue != null ? System.currentTimeMillis() - extract.nextDue : 0
           ]
 
           source_row.extractors.add(extractor)
