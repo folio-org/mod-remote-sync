@@ -52,7 +52,8 @@ from TransformationProcessRecord as tpr
 where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR tpr.transformationStatus=:failed
 '''
 
-  private static Long DEFAULT_INTERVAL = 1000 * 60 * 60 * 24;
+  // Default -extract- interval - 30m
+  private static Long DEFAULT_INTERVAL = 1000 * 60 * 30;
 
 
   def grailsApplication
@@ -126,7 +127,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
           Source.withNewTransaction {
             Source src = Source.get(source_id)
             src.status = 'IDLE';
-            src.nextDue = System.currentTimeMillis() + src.interval
+            src.nextDue = System.currentTimeMillis() + ( src.interval ?: DEFAULT_INTERVAL)
             log.debug("Completed processing on src ${src} return status to IDLE and set next due to ${src.nextDue}");
             src.save(flush:true, failOnError:true)
           }
