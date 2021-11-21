@@ -122,6 +122,7 @@ class SourceRegisterService {
           rs.name = descriptor.extractName;
           rs.source = s
           rs.streamId = tp
+          rs.interval = descriptor.interval ?: 1000*60*30
           // We're updating the config - so set next due to now
           rs.nextDue = null;
           rs.save(flush:true, failOnError:true);
