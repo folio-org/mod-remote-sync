@@ -128,10 +128,11 @@ class FolioClientImpl implements FolioClient {
       request.uri.query = params
       request.body = o
       response.failure{ FromServer fs, Object body ->
-        log.error("Problem in put: ${body}");
+        log.error("Problem in put: ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
+        log.debug("okapiPut: success");
         result = body;
       }
 
@@ -163,10 +164,11 @@ class FolioClientImpl implements FolioClient {
       request.uri.query = params
 
       response.failure{ FromServer fs, Object body ->
-        log.error("Problem in get: ${body}");
+        log.error("Problem in get: ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
+        log.debug("okapiGet: success");
         result = body;
       }
 
@@ -198,10 +200,11 @@ class FolioClientImpl implements FolioClient {
       request.body = o
       request.uri.query=params
       response.failure{ FromServer fs, Object body ->
-        log.warn("Problem in post: ${body}");
+        log.warn("Problem in post: ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
+        log.debug("okapiPost: success");
         result = body;
       }
 
