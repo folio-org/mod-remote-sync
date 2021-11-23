@@ -82,6 +82,7 @@ class FolioClientImpl implements FolioClient {
 
       response.failure{ FromServer fs, Object body ->
         log.warn("Problem logging into FOLIO ${body}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
@@ -127,11 +128,14 @@ class FolioClientImpl implements FolioClient {
       request.contentType='application/json'
       request.uri.query = params
       request.body = o
+
       response.failure{ FromServer fs, Object body ->
-        log.error("Problem in put: ${body}");
+        log.error("Problem in put: ${body} ${fs}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
+        log.debug("okapiPut: success");
         result = body;
       }
 
@@ -163,10 +167,12 @@ class FolioClientImpl implements FolioClient {
       request.uri.query = params
 
       response.failure{ FromServer fs, Object body ->
-        log.error("Problem in get: ${body}");
+        log.error("Problem in get: ${body} ${fs}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
+        log.debug("okapiGet: success");
         result = body;
       }
 
@@ -197,11 +203,14 @@ class FolioClientImpl implements FolioClient {
       request.contentType='application/json'
       request.body = o
       request.uri.query=params
+
       response.failure{ FromServer fs, Object body ->
-        log.warn("Problem in post: ${body}");
+        log.warn("Problem in post: ${body} ${fs}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
+        log.debug("okapiPost: success");
         result = body;
       }
 
@@ -212,6 +221,12 @@ class FolioClientImpl implements FolioClient {
     return result;
   }
 
+  public boolean checkPermissionGranted(String[] perm) {
+    ensureLogin();
+
+    boolean result = true;
+    return result;
+  }
 
 
   // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
