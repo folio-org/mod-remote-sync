@@ -74,7 +74,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
     if ( reprocess ) {
       log.debug("Reprocess flag given - zero out resource stream cursor");
-      ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson', [ emptyObjectJson: '{}' ] );
+      ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null', [ emptyObjectJson: '{}' ] );
     }
 
     runSourceTasks()
