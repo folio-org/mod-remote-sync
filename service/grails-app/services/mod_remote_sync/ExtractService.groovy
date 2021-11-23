@@ -66,20 +66,25 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   public Map start(boolean full_harvest, boolean reprocess) {
     log.debug("ExtractService::start()");
 
-    if ( full_harvest ) {
-      log.debug("Full harvest specified - clear all cursors");
-      Source.executeUpdate('update Source set nextDue = null');
-      ResourceStream.executeUpdate('update ResourceStream set nextDue = null');
-    }
+    try {
+      if ( full_harvest ) {
+        log.debug("Full harvest specified - clear all cursors");
+        Source.executeUpdate('update Source set nextDue = null');
+        ResourceStream.executeUpdate('update ResourceStream set nextDue = null');
+      }
 
-    if ( reprocess ) {
-      log.debug("Reprocess flag given - zero out resource stream cursor");
-      ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null', [ emptyObjectJson: '{}' ] );
-    }
+      if ( reprocess ) {
+        log.debug("Reprocess flag given - zero out resource stream cursor");
+        ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null', [ emptyObjectJson: '{}' ] );
+      }
 
-    runSourceTasks()
-    runExtractTasks()
-    runTransformationTasks()
+      runSourceTasks()
+      runExtractTasks()
+      runTransformationTasks()
+    }
+    catch ( Exception e ) {
+      log.error("Exception starting processing chain",e);
+    }
 
     return [ status:'OK' ]
   }
@@ -159,6 +164,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
       // In an isolated transaction, see if we can lock the source and set it's status to in-process
       ResourceStream.withNewTransaction {
+        log.debug("Locking resource stream ${ext_id}");
         ResourceStream rs = ResourceStream.get(ext_id)
         rs.lock()
         if ( rs.streamStatus == 'IDLE' ) {
@@ -170,6 +176,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
       }
 
       if ( continue_processing ) {
+        log.debug("Processing resource stream ${ext_id}");
         ResourceStream.withNewTransaction {
           try{
             ResourceStream rs = ResourceStream.get(ext_id)
@@ -236,7 +243,9 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             log.error("Problem processing source",e);
           }
         }
-
+      }
+      else {
+        log.debug("Resource stream was not in IDLE state - skipping");
       }
     }
     log.debug("Completed pending extract tasks");
