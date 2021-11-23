@@ -194,3 +194,6 @@ okapi:
     register: false
     deploy: false
 
+remoteSync:
+  security:
+    requireSigendCode: "${require.signed.code?:'OFF'}"

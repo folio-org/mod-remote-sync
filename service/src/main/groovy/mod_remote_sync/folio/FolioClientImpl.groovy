@@ -82,6 +82,7 @@ class FolioClientImpl implements FolioClient {
 
       response.failure{ FromServer fs, Object body ->
         log.warn("Problem logging into FOLIO ${body}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
@@ -127,8 +128,10 @@ class FolioClientImpl implements FolioClient {
       request.contentType='application/json'
       request.uri.query = params
       request.body = o
+
       response.failure{ FromServer fs, Object body ->
         log.error("Problem in put: ${body} ${fs}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
@@ -165,6 +168,7 @@ class FolioClientImpl implements FolioClient {
 
       response.failure{ FromServer fs, Object body ->
         log.error("Problem in get: ${body} ${fs}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
@@ -199,8 +203,10 @@ class FolioClientImpl implements FolioClient {
       request.contentType='application/json'
       request.body = o
       request.uri.query=params
+
       response.failure{ FromServer fs, Object body ->
         log.warn("Problem in post: ${body} ${fs}");
+        throw new RuntimeException("Error logging on ${body} ${fs}");
       }
 
       response.success{ FromServer fs, Object body ->
