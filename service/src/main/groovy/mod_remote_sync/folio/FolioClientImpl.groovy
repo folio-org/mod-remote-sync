@@ -221,6 +221,12 @@ class FolioClientImpl implements FolioClient {
     return result;
   }
 
+  public boolean checkPermissionGranted(String[] perm) {
+    ensureLogin();
+
+    boolean result = true;
+    return result;
+  }
 
 
   // See https://gitlab.com/knowledge-integration/folio/middleware/folio-laser-erm-legacy/-/blob/master/spike/process.groovy#L207
