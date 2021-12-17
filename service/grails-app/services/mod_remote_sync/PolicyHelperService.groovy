@@ -51,7 +51,7 @@ class PolicyHelperService {
     }
     else {
 
-      local_context.processLog?.add([ts:System.currentTimeMillis(), msg:"Failed to locate resource mapping ${source}/${resource_id}/${mapping_context}/${target_context}"]);
+      local_context.processLog?.add([ts:System.currentTimeMillis(), msg:"Failed to locate resource mapping src:${source}/res:${resource_id}/ctx:${mapping_context}/target:${target_context}"]);
 
       // Unknown - fail - here we should check the "ImportKB" to see if we have already been told what to do
       // in this circumstance
