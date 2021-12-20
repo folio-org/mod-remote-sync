@@ -24,6 +24,10 @@ class TenantAdminService {
         RefdataValue.lookupOrCreate('YN', 'Yes');
         RefdataValue.lookupOrCreate('YN', 'No');
 
+        RefdataValue.lookupOrCreate('YNO', 'Yes')
+        RefdataValue.lookupOrCreate('YNO', 'No')
+        RefdataValue.lookupOrCreate('YNO', 'Other')
+
         AppSetting cert_st = AppSetting.findByKey('PublicKey') ?: new AppSetting(section: 'Secure Mode',
                                        key: 'PublicKey',
                                        settingType: 'String').save(flush:true, failOnError:true);
