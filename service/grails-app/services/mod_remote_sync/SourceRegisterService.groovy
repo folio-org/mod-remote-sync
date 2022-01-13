@@ -13,6 +13,9 @@ import com.k_int.web.toolkit.refdata.RefdataValue
 import mod_remote_sync.source.RemoteSyncActivity
 import mod_remote_sync.source.TransformProcess
 import com.k_int.web.toolkit.settings.AppSetting
+import java.security.*;
+import java.security.spec.*;
+import java.security.interfaces.*;
 
 @Transactional
 class SourceRegisterService {
@@ -317,7 +320,6 @@ class SourceRegisterService {
       Class clazz = new DynamicClassLoader().parseClass(code)
       log.debug("Got class ${clazz}");
 
-      // if ( RemoteSyncActivity.class.isAssignableFrom(clazz) ) {
       if ( required_interface.isAssignableFrom(clazz) ) {
         log.debug("${clazz.getName()} implements RemoteSyncActivity interface");
         result = true;
@@ -383,4 +385,27 @@ class SourceRegisterService {
 
     return this.crosswalk_cache;
   }
+
+  public static RSAPublicKey getPublicKey(String key) throws Exception {
+
+    String publicKeyPEM = key
+      .replace("-----BEGIN PUBLIC KEY-----", "")
+      .replaceAll(System.lineSeparator(), "")
+      .replace("-----END PUBLIC KEY-----", "");
+
+    byte[] encoded = Base64.decodeBase64(publicKeyPEM);
+
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+    return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+  }
+
+
+  private boolean verifySignature(byte[] bytes, byte[] sig, PublicKey pub_key) {
+    Signature sig_inst = Signature.getInstance( "SHA1withRSA" );
+    sig_inst.initVerify( pub_key );
+    sig_inst.update( bytes );
+    ret = sig_inst.verify( sig );
+  }
+
 }
