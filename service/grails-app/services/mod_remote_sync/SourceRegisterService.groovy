@@ -79,6 +79,7 @@ class SourceRegisterService {
       }
     }
 
+    log.info("Final result of SourceRegisterService::load(${url}) is ${result}");
     return result;
   }
 
