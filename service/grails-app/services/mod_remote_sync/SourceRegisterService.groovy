@@ -16,6 +16,8 @@ import com.k_int.web.toolkit.settings.AppSetting
 import java.security.*;
 import java.security.spec.*;
 import java.security.interfaces.*;
+import org.apache.commons.codec.binary.Base64;
+
 
 @Transactional
 class SourceRegisterService {
@@ -282,28 +284,54 @@ class SourceRegisterService {
           }
           else {
             state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - PASS");
-          }
-
-          if ( !passed_security ) {
-            state.messages.add("${source_url} Failed security");
-          }
-        }
-
-        // Step 2 - Validate the script
-        switch ( language ) {
-          case 'groovy':
-            result.is_valid = validateGroovyScript(result.plugin_content, required_interface, state)
-            if ( result.is_valid ) {
-              state.messages.add("${source_url} : Validated")
+            if ( signedBy != null ) {
+              CodeSigningAuthority csa = CodeSigningAuthority.findByName(signedBy)
+              if ( csa != null ) {
+                RSAPublicKey pk = getPublicKey(csa.publicKey)
+                log.info("Decoded public key ${pk}");
+                byte[] decoded_sig = Base64.decodeBase64(signature)
+                if ( verifySignature(result.plugin_content.toString().getBytes(), decoded_sig, pk) ) {
+                  state.messages.add("${source_url} - signature validated");
+                }
+                else {
+                  state.messages.add("${source_url} - signature did not validate");
+                  passed_security = false;
+                }
+              }
+              else {
+                state.messages.add("${source_url} - unable to lookup signing authority ${signedBy}");
+                passed_security = false;
+              }
             }
             else {
-              state.messages.add("${source_url} : FAIL")
-              state.status='ERROR'
+              state.messages.add("${source_url} - has no signedBy property - unable to validate");
+              passed_security = false;
             }
-            break;
-          default:
-            log.warn("unhandled language: ${descriptor.language}");
-            break;
+          }
+
+        }
+
+        if ( passed_security ) {
+          // Step 2 - Validate the script
+          switch ( language ) {
+            case 'groovy':
+              result.is_valid = validateGroovyScript(result.plugin_content, required_interface, state)
+              if ( result.is_valid ) {
+                state.messages.add("${source_url} : Validated")
+              }
+              else {
+                state.messages.add("${source_url} : FAIL")
+                state.status='ERROR'
+              }
+              break;
+            default:
+              log.warn("unhandled language: ${descriptor.language}");
+              break;
+          }
+        }
+        else {
+          state.messages.add("${source_url} did not pass security constraints. Not processed.");
+          state.status='ERROR'
         }
       }
     }
@@ -405,7 +433,7 @@ class SourceRegisterService {
     Signature sig_inst = Signature.getInstance( "SHA1withRSA" );
     sig_inst.initVerify( pub_key );
     sig_inst.update( bytes );
-    ret = sig_inst.verify( sig );
+    return sig_inst.verify( sig );
   }
 
 }
