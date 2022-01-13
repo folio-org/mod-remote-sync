@@ -244,4 +244,13 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "i202201111103-001") {
+    createTable(tableName: "mrs_code_signing_authority") {
+      column(name: "csa_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "csa_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "csa_name", type: "VARCHAR(255)")
+      column(name: "csa_public_key", type: "TEXT")
+    }
+  }
+
 }

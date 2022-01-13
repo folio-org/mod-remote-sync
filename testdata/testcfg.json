@@ -1,68 +1,155 @@
+mod-remote-sync sign Config
+sign.groovy
+Find and sign TestLicenseSource.groovy
+encoded signature: CQj8vfi349q++vcO1/HDwQEaePdjyK895Xfe4r6aULWdhA10oPtVIG+b5cO3yqW334sear44EolJlyk29aGUuw==
+Find and sign TestLicenseProcess.groovy
+encoded signature: e+f34ozG6UpCNvDGmEOhQh2+Rv205MnpnU5RxTFoMt7hKqwxOHHR2jk4zeMBaIefivPLcbMQJUxY1Di6KZmVtQ==
 [
-  { 
-    "recordType":"source",
-    "authority":"TEST",
-    "sourceName":"TestLicenses",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/TestLicenseSource.groovy",
-    "language":"groovy",
-    "packaging":"script",
-    "sourceMD5":"",
-    "sourceSignedBy":null,
-    "sourceSignature":null,
-    "interval":1000,
-    "parameters":{
+    {
+        "recordType": "source",
+        "authority": "TEST",
+        "sourceName": "TestLicenses",
+        "sourceFile": "TestLicenseSource.groovy",
+        "sourceUrl": "https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/TestLicenseSource.groovy",
+        "language": "groovy",
+        "packaging": "script",
+        "sourceMD5": "9E900E9FA50B4DB221D6FCD62A5C699E",
+        "sourceSignedBy": "k-int",
+        "sourceSignature": "CQj8vfi349q++vcO1/HDwQEaePdjyK895Xfe4r6aULWdhA10oPtVIG+b5cO3yqW334sear44EolJlyk29aGUuw==",
+        "interval": 1000,
+        "parameters": {
+            
+        },
+        "emits": "TEST::LICENSE"
     },
-    "emits":"TEST::LICENSE"
-  },
-  {
-    "recordType":"process",
-    "processName":"TestLicenseImport",
-    "sourceUrl":"https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/source_scripts/TestLicenseProcess.groovy",
-    "language":"groovy",
-    "packaging":"script",
-    "sourceMD5":"",
-    "sourceSignedBy":null,
-    "sourceSignature":null,
-    "accepts":"TEST::LICENSE"
-  },
-  { 
-    "recordType":"extract",
-    "extractName":"TestLicenseExtract",
-    "source":"TestLicenses",
-    "process":"TestLicenseImport",
-    "parameters":{
-              "widget":{ "section":"Testing", "key":"widget.number",            "type": "String",  "required":true, "label":"Test Param For Extract Task" },
-          "widgetType":{ "section":"Testing", "key":"widget.type",              "type": "Refdata", "required":true, "label":"Test Param For Extract Task",
-                         "category":"EnumerationTest", "values":["One", "Two", "Three" ] }
+    {
+        "recordType": "process",
+        "processName": "TestLicenseImport",
+        "sourceFile": "TestLicenseProcess.groovy",
+        "sourceUrl": "https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/TestLicenseProcess.groovy",
+        "language": "groovy",
+        "packaging": "script",
+        "sourceMD5": "26A9D7C2FF4D3A5DE509E18D8F76509E",
+        "sourceSignedBy": "k-int",
+        "sourceSignature": "e+f34ozG6UpCNvDGmEOhQh2+Rv205MnpnU5RxTFoMt7hKqwxOHHR2jk4zeMBaIefivPLcbMQJUxY1Di6KZmVtQ==",
+        "accepts": "TEST::LICENSE"
+    },
+    {
+        "recordType": "extract",
+        "extractName": "TestLicenseExtract",
+        "source": "TestLicenses",
+        "process": "TestLicenseImport",
+        "parameters": {
+            "widget": {
+                "section": "Testing",
+                "key": "widget.number",
+                "type": "String",
+                "required": true,
+                "label": "Test Param For Extract Task"
+            },
+            "widgetType": {
+                "section": "Testing",
+                "key": "widget.type",
+                "type": "Refdata",
+                "required": true,
+                "label": "Test Param For Extract Task",
+                "category": "EnumerationTest",
+                "values": [
+                    "One",
+                    "Two",
+                    "Three"
+                ]
+            }
+        }
+    },
+    {
+        "recordType": "mappings",
+        "mappings": [
+            {
+                "srcCtx": "TEST::LICENSE/REFDATA/a",
+                "srcValue": "One",
+                "mappingContext": "TEST",
+                "targetCtx": "FOLIO::LICENSE/REFDATA/a",
+                "targetValue": "One"
+            },
+            {
+                "srcCtx": "TEST::LICENSE/TYPE",
+                "srcValue": "Consortial",
+                "mappingContext": "TEST",
+                "targetCtx": "FOLIO::LICENSE/TYPE",
+                "targetValue": "Consortial"
+            },
+            {
+                "srcCtx": "TEST::LICENSE/STATUS",
+                "srcValue": "Active",
+                "mappingContext": "TEST",
+                "targetCtx": "FOLIO::LICENSE/STATUS",
+                "targetValue": "Active"
+            },
+            {
+                "srcCtx": "TEST::LICENSE/STATUS",
+                "srcValue": "Current",
+                "mappingContext": "TEST",
+                "targetCtx": "FOLIO::LICENSE/STATUS",
+                "targetValue": "Active"
+            }
+        ]
+    },
+    {
+        "recordType": "authorityControl",
+        "authorities": {
+            "TEST::LICENSE/REFDATA/a": {
+                "label": "Test License Refdata - Cat A"
+            },
+            "TEST::LICENSE/TYPE": {
+                "label": "Test License Type"
+            },
+            "TEST::LICENSE/STATUS": {
+                "label": "Test License Status"
+            },
+            "LASER::LICENSE/PROPERTY": {
+                "label": "LASER License Custom Properties"
+            },
+            "LASER::LICENSE/STATUS": {
+                "label": "Laser License Status"
+            },
+            "LASER::LICENSE/TYPE": {
+                "label": "Laser License Type"
+            },
+            "LASER::LICENSE/REFDATA/permissions": {
+                "label": "LASER Refdata - Permissions"
+            },
+            "LASER::LICENSE/REFDATA/y.n": {
+                "label": "LASER Refdata - Yes/No"
+            },
+            "LASER::LICENSE/REFDATA/y.n.o": {
+                "label": "LASER Refdata - Yes/No/Other"
+            },
+            "FOLIO::LICENSE/PROPERTY": {
+                "type": "custprop",
+                "service": "/licenses/custprops",
+                "label": "Folio License Custom Properties"
+            },
+            "FOLIO::LICENSE/REFDATA/y.n.o": {
+                "type": "refdata",
+                "service": "/licenses/refdata/Yes%2FNo%2FOther",
+                "label": "Folio Refdata - Yes/No/Other"
+            },
+            "FOLIO::LICENSE/REFDATA/permissions": {
+                "type": "refdata",
+                "service": "/licenses/refdata/Permitted%2FProhibited",
+                "label": "Folio Refdata - Permitted"
+            },
+            "FOLIO::LICENSE/STATUS": {
+                "type": "refdata",
+                "service": "/licenses/refdata/License/status",
+                "label": "Folio Refdata - License Status"
+            },
+            "FOLIO::LICENSE/TYPE": {
+                "type": "refdata",
+                "service": "/licenses/refdata/License/type",
+                "label": "Folio Refdata - License Type"
+            }
+        }
     }
-  },
-  {
-    "recordType":"mappings",
-    "mappings":[
-      { "srcCtx":"TEST::LICENSE/REFDATA/a",  "srcValue":"One",             "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/REFDATA/a",     "targetValue":"One" },
-      { "srcCtx":"TEST::LICENSE/TYPE",       "srcValue":"Consortial",      "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/TYPE",          "targetValue":"Consortial" },
-      { "srcCtx":"TEST::LICENSE/STATUS",     "srcValue":"Active",          "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/STATUS",        "targetValue":"Active" },
-      { "srcCtx":"TEST::LICENSE/STATUS",     "srcValue":"Current",         "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/STATUS",        "targetValue":"Active" }
-    ]
-  },
-  {
-    "recordType":"authorityControl",
-    "authorities":{
-                 "TEST::LICENSE/REFDATA/a":{ "label": "Test License Refdata - Cat A" },
-                      "TEST::LICENSE/TYPE":{ "label": "Test License Type" },
-                    "TEST::LICENSE/STATUS":{ "label": "Test License Status" },
-                 "LASER::LICENSE/PROPERTY":{ "label": "LASER License Custom Properties" },
-                   "LASER::LICENSE/STATUS":{ "label": "Laser License Status" },
-                     "LASER::LICENSE/TYPE":{ "label": "Laser License Type" },
-      "LASER::LICENSE/REFDATA/permissions":{ "label": "LASER Refdata - Permissions" },
-              "LASER::LICENSE/REFDATA/y.n":{ "label": "LASER Refdata - Yes/No" },
-            "LASER::LICENSE/REFDATA/y.n.o":{ "label": "LASER Refdata - Yes/No/Other" },
-                 "FOLIO::LICENSE/PROPERTY":{ "type":"custprop", "service":"/licenses/custprops", "label":"Folio License Custom Properties" },
-            "FOLIO::LICENSE/REFDATA/y.n.o":{ "type":"refdata",  "service":"/licenses/refdata/Yes%2FNo%2FOther", "label":"Folio Refdata - Yes/No/Other" },
-      "FOLIO::LICENSE/REFDATA/permissions":{ "type":"refdata",  "service":"/licenses/refdata/Permitted%2FProhibited", "label":"Folio Refdata - Permitted" },
-                   "FOLIO::LICENSE/STATUS":{ "type":"refdata",  "service":"/licenses/refdata/License/status", "label":"Folio Refdata - License Status" },
-                     "FOLIO::LICENSE/TYPE":{ "type":"refdata",  "service":"/licenses/refdata/License/type", "label":"Folio Refdata - License Type" }
-    }
-  }
-
 ]
