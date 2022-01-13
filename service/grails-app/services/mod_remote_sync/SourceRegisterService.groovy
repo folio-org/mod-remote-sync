@@ -168,7 +168,13 @@ class SourceRegisterService {
     log.debug("ingestProcessDescriptor ${descriptor.processName}");
     if (  ( descriptor.processName ) &&
           ( descriptor.sourceUrl ) ) {
-      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, descriptor.language, TransformProcess.class, state);
+      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, 
+                                           descriptor.language, 
+                                           TransformProcess.class, 
+                                           state,
+                                           descriptor.sourceMD5,
+                                           descriptor.sourceSignedBy,
+                                           descriptor.sourceSignature);
       if ( code_info?.is_valid ) {
         TransformationProcess tp = TransformationProcess.findByName(descriptor.processName) ?: new TransformationProcess()
         tp.name = descriptor.processName
@@ -195,7 +201,13 @@ class SourceRegisterService {
          ( agent_descriptor.sourceName ) ) {
 
       // Fetch the code and validate it
-      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, agent_descriptor.language, RemoteSyncActivity.class, state);
+      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, 
+                                           agent_descriptor.language, 
+                                           RemoteSyncActivity.class, 
+                                           state,
+                                           agent_descriptor.sourceMD5,
+                                           agent_descriptor.sourceSignedBy,
+                                           agent_descriptor.sourceSignature);
 
       // Step 3 - Script is valid, and signature checks out, create (Or update) record
       if ( code_info?.is_valid ) {
@@ -223,9 +235,17 @@ class SourceRegisterService {
     }
   }
 
-  private Map fetchAndValidateCode(String source_url, String language, Class required_interface, Map state) {
+  private Map fetchAndValidateCode(String source_url, 
+                                   String language, 
+                                   Class required_interface, 
+                                   Map state,
+                                   String md5,
+                                   String signedBy,
+                                   String signature) {
 
     log.debug("SourceRegisterService::fetchAndValidateCode(${source_url},${language})")
+
+    boolean secure_mode = true
 
     Map result = [
       is_valid : false,
@@ -247,6 +267,23 @@ class SourceRegisterService {
         md5_digest.update(result.plugin_content.toString().getBytes())
         byte[] md5sum = md5_digest.digest();
         result.hash = new BigInteger(1, md5sum).toString(16);
+
+        boolean passed_security = true;
+
+        if ( secure_mode ) {
+          log.info("Secure mode - assert that ${result?.hash} == ${md5}");
+          if ( ! result?.hash?.equalsIgnoreCase(md5) ) {
+            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - FAIL");
+            passed_security = false;
+          }
+          else {
+            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - PASS");
+          }
+
+          if ( !passed_security ) {
+            state.messages.add("${source_url} Failed security");
+          }
+        }
 
         // Step 2 - Validate the script
         switch ( language ) {

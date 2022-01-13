@@ -12,7 +12,7 @@ public class CodeSigningAuthority  implements MultiTenant<CodeSigningAuthority> 
 
   static constraints = {
          name (nullable : false)
-    publickey (nullable : true)
+    publicKey (nullable : true)
   }
 
   static mapping = {
