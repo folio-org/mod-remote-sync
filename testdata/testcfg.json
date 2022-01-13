@@ -1,9 +1,3 @@
-mod-remote-sync sign Config
-sign.groovy
-Find and sign TestLicenseSource.groovy
-encoded signature: CQj8vfi349q++vcO1/HDwQEaePdjyK895Xfe4r6aULWdhA10oPtVIG+b5cO3yqW334sear44EolJlyk29aGUuw==
-Find and sign TestLicenseProcess.groovy
-encoded signature: e+f34ozG6UpCNvDGmEOhQh2+Rv205MnpnU5RxTFoMt7hKqwxOHHR2jk4zeMBaIefivPLcbMQJUxY1Di6KZmVtQ==
 [
     {
         "recordType": "source",
