@@ -13,6 +13,11 @@ import com.k_int.web.toolkit.refdata.RefdataValue
 import mod_remote_sync.source.RemoteSyncActivity
 import mod_remote_sync.source.TransformProcess
 import com.k_int.web.toolkit.settings.AppSetting
+import java.security.*;
+import java.security.spec.*;
+import java.security.interfaces.*;
+import org.apache.commons.codec.binary.Base64;
+
 
 @Transactional
 class SourceRegisterService {
@@ -79,6 +84,7 @@ class SourceRegisterService {
       }
     }
 
+    log.info("Final result of SourceRegisterService::load(${url}) is ${result}");
     return result;
   }
 
@@ -100,6 +106,12 @@ class SourceRegisterService {
                                 settingType: 'Password',
                                 defValue: defn.default).save(flush:true, failOnError:true);
             break;
+          case 'Refdata':
+            st = new AppSetting(section: defn.section,
+                                key: defn.key,
+                                settingType: 'Refdata',
+                                vocab: defn.vocab,
+                                defValue: defn.default).save(flush:true, failOnError:true);
           default:
             log.warn("Unhandled setting type: ${defn.type}");
             break;
@@ -162,7 +174,13 @@ class SourceRegisterService {
     log.debug("ingestProcessDescriptor ${descriptor.processName}");
     if (  ( descriptor.processName ) &&
           ( descriptor.sourceUrl ) ) {
-      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, descriptor.language, TransformProcess.class, state);
+      Map code_info = fetchAndValidateCode(descriptor.sourceUrl, 
+                                           descriptor.language, 
+                                           TransformProcess.class, 
+                                           state,
+                                           descriptor.sourceMD5,
+                                           descriptor.sourceSignedBy,
+                                           descriptor.sourceSignature);
       if ( code_info?.is_valid ) {
         TransformationProcess tp = TransformationProcess.findByName(descriptor.processName) ?: new TransformationProcess()
         tp.name = descriptor.processName
@@ -189,7 +207,13 @@ class SourceRegisterService {
          ( agent_descriptor.sourceName ) ) {
 
       // Fetch the code and validate it
-      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, agent_descriptor.language, RemoteSyncActivity.class, state);
+      Map code_info = fetchAndValidateCode(agent_descriptor.sourceUrl, 
+                                           agent_descriptor.language, 
+                                           RemoteSyncActivity.class, 
+                                           state,
+                                           agent_descriptor.sourceMD5,
+                                           agent_descriptor.sourceSignedBy,
+                                           agent_descriptor.sourceSignature);
 
       // Step 3 - Script is valid, and signature checks out, create (Or update) record
       if ( code_info?.is_valid ) {
@@ -217,9 +241,17 @@ class SourceRegisterService {
     }
   }
 
-  private Map fetchAndValidateCode(String source_url, String language, Class required_interface, Map state) {
+  private Map fetchAndValidateCode(String source_url, 
+                                   String language, 
+                                   Class required_interface, 
+                                   Map state,
+                                   String md5,
+                                   String signedBy,
+                                   String signature) {
 
     log.debug("SourceRegisterService::fetchAndValidateCode(${source_url},${language})")
+
+    boolean secure_mode = true
 
     Map result = [
       is_valid : false,
@@ -242,21 +274,64 @@ class SourceRegisterService {
         byte[] md5sum = md5_digest.digest();
         result.hash = new BigInteger(1, md5sum).toString(16);
 
-        // Step 2 - Validate the script
-        switch ( language ) {
-          case 'groovy':
-            result.is_valid = validateGroovyScript(result.plugin_content, required_interface, state)
-            if ( result.is_valid ) {
-              state.messages.add("${source_url} : Validated")
+        boolean passed_security = true;
+
+        if ( secure_mode ) {
+          log.info("Secure mode - assert that ${result?.hash} == ${md5}");
+          if ( ! result?.hash?.equalsIgnoreCase(md5) ) {
+            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - FAIL");
+            passed_security = false;
+          }
+          else {
+            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - PASS");
+            if ( signedBy != null ) {
+              CodeSigningAuthority csa = CodeSigningAuthority.findByName(signedBy)
+              if ( csa != null ) {
+                RSAPublicKey pk = getPublicKey(csa.publicKey)
+                log.info("Decoded public key ${pk}");
+                byte[] decoded_sig = Base64.decodeBase64(signature)
+                if ( verifySignature(result.plugin_content.toString().getBytes(), decoded_sig, pk) ) {
+                  state.messages.add("${source_url} - signature validated");
+                }
+                else {
+                  state.messages.add("${source_url} - signature did not validate");
+                  passed_security = false;
+                }
+              }
+              else {
+                state.messages.add("${source_url} - unable to lookup signing authority ${signedBy}");
+                passed_security = false;
+              }
             }
             else {
-              state.messages.add("${source_url} : FAIL")
-              state.status='ERROR'
+              state.messages.add("${source_url} - has no signedBy property - unable to validate");
+              passed_security = false;
             }
-            break;
-          default:
-            log.warn("unhandled language: ${descriptor.language}");
-            break;
+          }
+
+        }
+
+        if ( passed_security ) {
+          // Step 2 - Validate the script
+          switch ( language ) {
+            case 'groovy':
+              result.is_valid = validateGroovyScript(result.plugin_content, required_interface, state)
+              if ( result.is_valid ) {
+                state.messages.add("${source_url} : Validated")
+              }
+              else {
+                state.messages.add("${source_url} : FAIL")
+                state.status='ERROR'
+              }
+              break;
+            default:
+              log.warn("unhandled language: ${descriptor.language}");
+              break;
+          }
+        }
+        else {
+          state.messages.add("${source_url} did not pass security constraints. Not processed.");
+          state.status='ERROR'
         }
       }
     }
@@ -273,7 +348,6 @@ class SourceRegisterService {
       Class clazz = new DynamicClassLoader().parseClass(code)
       log.debug("Got class ${clazz}");
 
-      // if ( RemoteSyncActivity.class.isAssignableFrom(clazz) ) {
       if ( required_interface.isAssignableFrom(clazz) ) {
         log.debug("${clazz.getName()} implements RemoteSyncActivity interface");
         result = true;
@@ -339,4 +413,27 @@ class SourceRegisterService {
 
     return this.crosswalk_cache;
   }
+
+  public static RSAPublicKey getPublicKey(String key) throws Exception {
+
+    String publicKeyPEM = key
+      .replace("-----BEGIN PUBLIC KEY-----", "")
+      .replaceAll(System.lineSeparator(), "")
+      .replace("-----END PUBLIC KEY-----", "");
+
+    byte[] encoded = Base64.decodeBase64(publicKeyPEM);
+
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+    return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+  }
+
+
+  private boolean verifySignature(byte[] bytes, byte[] sig, PublicKey pub_key) {
+    Signature sig_inst = Signature.getInstance( "SHA1withRSA" );
+    sig_inst.initVerify( pub_key );
+    sig_inst.update( bytes );
+    return sig_inst.verify( sig );
+  }
+
 }
