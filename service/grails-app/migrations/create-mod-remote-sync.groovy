@@ -225,4 +225,32 @@ databaseChangeLog = {
       column(name: "sr_label",          type: "VARCHAR(255)")
     }
   }
+
+  changeSet(author: "ianibbo (generated)", id: "i202110280943-002") {
+    createTable(tableName: "mrs_authority_control_src") {
+      column(name: "acs_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "acs_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "acs_date_created", type: "TIMESTAMP")
+      column(name: "acs_date_updated", type: "TIMESTAMP")
+      column(name: "acs_vocab_uri", type: "VARCHAR(255)")
+      column(name: "acs_vocab_type", type: "VARCHAR(255)")
+      column(name: "acs_service_url", type: "VARCHAR(255)")
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "i202111011030-001") {
+    addColumn (tableName: "mrs_authority_control_src" ) {
+      column(name: "acs_label", type: "VARCHAR(255)")
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "i202201111103-001") {
+    createTable(tableName: "mrs_code_signing_authority") {
+      column(name: "csa_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "csa_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "csa_name", type: "VARCHAR(255)")
+      column(name: "csa_public_key", type: "TEXT")
+    }
+  }
+
 }

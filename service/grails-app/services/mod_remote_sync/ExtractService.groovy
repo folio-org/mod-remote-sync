@@ -52,22 +52,51 @@ from TransformationProcessRecord as tpr
 where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR tpr.transformationStatus=:failed
 '''
 
-  private static Long DEFAULT_INTERVAL = 1000 * 60 * 60 * 24;
+  // Default -extract- interval - 30m
+  private static Long DEFAULT_INTERVAL = 1000 * 60 * 30;
 
 
   def grailsApplication
   def transformationRunnerService
 
   public Map start() {
-    runSourceTasks()
-    runExtractTasks()
-    runTransformationTasks()
+    return start(false, false);
+  }
+
+  public Map start(boolean full_harvest, boolean reprocess) {
+    log.debug("ExtractService::start()");
+
+    try {
+      if ( full_harvest ) {
+        log.debug("Full harvest specified - clear all cursors");
+        Source.executeUpdate('update Source set nextDue = null');
+        ResourceStream.executeUpdate('update ResourceStream set nextDue = null');
+      }
+
+      if ( reprocess ) {
+        log.debug("Reprocess flag given - zero out resource stream cursor");
+        ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null', [ emptyObjectJson: '{}' ] );
+      }
+
+      runSourceTasks()
+      runExtractTasks()
+      runTransformationTasks()
+    }
+    catch ( Exception e ) {
+      log.error("Exception starting processing chain",e);
+    }
 
     return [ status:'OK' ]
   }
 
   def runSourceTasks() {
     log.debug("ExtractService::runSourceTasks()");
+
+    log.debug("known sources");
+    Source.list().each { s ->
+      log.debug("Source: ${s.id} name:${s.name} enabled:${s.enabled} nextDue:${s.nextDue} status:${s.status} remaining(ms):${(s.nextDue?:0)-System.currentTimeMillis()}");
+    }
+
     Source.executeQuery(PENDING_SOURCE_JOBS,
                         [ 'systime': System.currentTimeMillis(), 'enabled': true, 'idle':'IDLE'],
                         [readOnly:true, lock:false]).each { source_id ->
@@ -108,15 +137,16 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
           Source.withNewTransaction {
             Source src = Source.get(source_id)
             src.status = 'IDLE';
-            src.nextDue = System.currentTimeMillis() + src.interval
+            src.nextDue = System.currentTimeMillis() + ( src.interval ?: DEFAULT_INTERVAL)
             log.debug("Completed processing on src ${src} return status to IDLE and set next due to ${src.nextDue}");
             src.save(flush:true, failOnError:true)
           }
-          log.debug("Completed processing");
+          log.debug("Source ${source_id} Completed processing");
         }
 
       }
     }
+    log.debug("All due sources completed");
   }
 
   /**
@@ -134,6 +164,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
       // In an isolated transaction, see if we can lock the source and set it's status to in-process
       ResourceStream.withNewTransaction {
+        log.debug("Locking resource stream ${ext_id}");
         ResourceStream rs = ResourceStream.get(ext_id)
         rs.lock()
         if ( rs.streamStatus == 'IDLE' ) {
@@ -145,12 +176,13 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
       }
 
       if ( continue_processing ) {
+        log.debug("Processing resource stream ${ext_id}");
         ResourceStream.withNewTransaction {
           try{
             ResourceStream rs = ResourceStream.get(ext_id)
             log.debug("Process source ${rs}");
 
-            Map parsed_cursor = JSON.parse(rs.cursor)
+            Map parsed_cursor = JSON.parse(rs.cursor ?: '{}')
 
             // use rs.cursor to get any new resources
             // Create or update TransformationProcessRecord for that record in the target context
@@ -211,9 +243,12 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             log.error("Problem processing source",e);
           }
         }
-
+      }
+      else {
+        log.debug("Resource stream was not in IDLE state - skipping");
       }
     }
+    log.debug("Completed pending extract tasks");
   }
 
   def runTransformationTasks() {

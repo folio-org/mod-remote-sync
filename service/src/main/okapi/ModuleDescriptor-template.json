@@ -13,6 +13,16 @@
         },
         {
           "methods": [ "GET" ],
+          "pathPattern": "/remote-sync/extendedStatusReport",
+          "permissionsRequired": [ "remote-sync.statusReport.get" ]
+        },
+        {
+          "methods": [ "GET" ],
+          "pathPattern": "/remote-sync/crosswalks",
+          "permissionsRequired": [ "remote-sync.settings.get" ]
+        },
+        {
+          "methods": [ "GET" ],
           "pathPattern": "/remote-sync/settings*",
           "permissionsRequired": [ "remote-sync.settings.get" ]
         },

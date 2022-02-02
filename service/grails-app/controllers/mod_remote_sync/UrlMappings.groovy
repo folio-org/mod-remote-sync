@@ -5,6 +5,8 @@ class UrlMappings {
   static mappings = {
     "/"(controller: 'application', action:'index');
     "/remote-sync/statusReport" (controller: 'application', action:'statusReport');
+    "/remote-sync/extendedStatusReport" (controller: 'application', action:'extendedStatusReport');
+    "/remote-sync/crosswalks" (controller: 'application', action:'crosswalks');
 
     '/remote-sync/refdata'(resources: 'refdata') {
       collection {

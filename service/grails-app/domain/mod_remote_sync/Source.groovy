@@ -61,6 +61,6 @@ public abstract class Source implements MultiTenant<Source> {
   public abstract Long getRecordCount();
 
   public String toString() {
-    return "Source::${id}/${name}/${status}".toString()
+    return "Source::id:${id}/name:${name}/status:${status}".toString()
   }
 }

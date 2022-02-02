@@ -119,7 +119,7 @@ class BespokeSourceRunnerService implements RecordSourceController {
       log.debug("Made new source record: ${existing_record}");
     }
     else {
-      log.debug("Found existing source record - creating ${resource_id}/hash:${hash} vs ${existing_record.checksum}");
+      log.debug("Found existing source record - checking stored hash against new hash ${resource_id}/hash:${hash} vs ${existing_record.checksum}");
       if ( existing_record.checksum != hash ) {
         log.debug("Checksum different - updating record");
         existing_record.record = record;
