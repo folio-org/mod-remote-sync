@@ -151,9 +151,7 @@ public class TestLicenseProcess extends BaseTransformProcess implements Transfor
      
         // If we didn't have a mapping for this resource, and resource creation worked then
         // remember how we map this resource going forwards
-        if ( ( local_resource_id == null ) && 
-             ( post_result != null ) &&
-             ( post_result.id != null ) ) {
+        if ( local_resource_id == null ) {
           // Store the record mapping to the new ID
           def post_result = folioHelper.okapiPost('/licenses/licenses', record_to_post);
           log.debug("post result: ${post_result}");

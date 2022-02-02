@@ -103,8 +103,12 @@
           "methods": ["DELETE"],
           "pathPattern": "/remote-sync/records/{id}",
           "permissionsRequired": [ "remote-sync.records.item.delete" ]
+        },
+        {
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/sourceRecords",
+          "permissionsRequired": [ "remote-sync.records.collection.get" ]
         }
-
       ]
     },
     {

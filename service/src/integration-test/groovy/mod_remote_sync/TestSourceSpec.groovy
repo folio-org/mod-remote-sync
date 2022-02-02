@@ -255,6 +255,16 @@ class TestSourceSpec extends HttpSpec {
       }
   }
 
+  void "test the source record endpoint"() {
+    when:'We list all the active records'
+      def records_response = doGet('/remote-sync/sourceRecords')
+
+    then:'There should be 3 records'
+      records_response.each { r ->
+        log.debug("SourceRecord: ${r}");
+      }
+      records_response.size() == 1
+  }
 
 }
 
