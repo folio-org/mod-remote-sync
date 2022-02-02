@@ -16,7 +16,7 @@ class SourceRecordController extends OkapiTenantAwareController<SourceRecord> {
   static responseFormats = ['json', 'xml']
   
   SourceRecordController() {
-    super(Source)
+    super(SourceRecord)
   }
 
 }
