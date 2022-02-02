@@ -50,13 +50,14 @@ logger ('com.k_int.web.toolkit', WARN)
  
 
 if (Environment.currentEnvironment == Environment.TEST) {
+  logger 'mod_remote_sync', DEBUG
   // logger 'groovy.net.http.JavaHttpBuilder', DEBUG
   // logger 'groovy.net.http.JavaHttpBuilder.content', DEBUG
   // logger 'groovy.net.http.JavaHttpBuilder.headers', DEBUG
 }
 
 def targetDir = BuildSettings.TARGET_DIR
-if (Environment.isDevelopmentMode() && targetDir != null) {
+if ( ( Environment.isDevelopmentMode() || (Environment.currentEnvironment == Environment.TEST) ) && targetDir != null) {
     appender("FULL_STACKTRACE", FileAppender) {
         file = "${targetDir}/stacktrace.log"
         append = true

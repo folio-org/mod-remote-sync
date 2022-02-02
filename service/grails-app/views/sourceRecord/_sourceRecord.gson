@@ -4,6 +4,7 @@ import mod_remote_sync.SourceRecord
 @Field SourceRecord sourceRecord
 
 // Special template returns shallow copy of both ends.
-json g.render (sourceRecord, [expand:[], excludes:[]]) {
+json g.render (sourceRecord, [expand:[], excludes:['record']]) {
+  record new String(sourceRecord.record)
 }
 

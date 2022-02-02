@@ -233,6 +233,17 @@ class TestSourceSpec extends HttpSpec {
       }
   }
 
+  void "test the source record endpoint"() {
+    when:'We list all the active records'
+      def source_records_response = doGet('/remote-sync/sourceRecords')
+
+    then:'There should be 3 records'
+      source_records_response.each { r ->
+        log.debug("SourceRecord...: ${r}");
+      }
+      source_records_response.size() == 3
+  }
+
   void "ReProcess with feedback in place"() {
     when:'we call the worker task'
       def resp = doGet('/remote-sync/settings/worker')
@@ -248,22 +259,11 @@ class TestSourceSpec extends HttpSpec {
     when:'We list all the active records'
       def records_response = doGet('/remote-sync/records')
 
-    then:'All should be in status BLOCKED'
+    then:'All should be processed'
       records_response.each { r ->
         log.debug("Checking that record ${r.id} has status COMPLETE ${r.transformationStatus}");
         assert r.transformationStatus == 'COMPLETE'
       }
-  }
-
-  void "test the source record endpoint"() {
-    when:'We list all the active records'
-      def records_response = doGet('/remote-sync/sourceRecords')
-
-    then:'There should be 3 records'
-      records_response.each { r ->
-        log.debug("SourceRecord: ${r}");
-      }
-      records_response.size() == 1
   }
 
 }
