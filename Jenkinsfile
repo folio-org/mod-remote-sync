@@ -3,7 +3,7 @@
 pipeline {
 
   environment {
-    ORG_GRADLE_PROJECT_appName = 'mod-oa'
+    ORG_GRADLE_PROJECT_appName = 'mod-remote-sync'
     GRADLEW_OPTS = '--console plain --no-daemon'
     BUILD_DIR = "${env.WORKSPACE}/service"
     MD = "${env.WORKSPACE}/service/build/resources/main/okapi/ModuleDescriptor.json"
