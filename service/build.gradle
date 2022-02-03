@@ -213,9 +213,10 @@ task generateDescriptors(type: Copy) {
   }
 }
 
-jar {
-  version "${version.replaceAll(version_regex, '$2')}"
-}
+// Ian : removing this to make build compatible with FOLIO Jenkinsfile - hope it doesn't mess up our local CI/CD
+// jar {
+//   version "${version.replaceAll(version_regex, '$2')}"
+// }
 
 buildProperties.doLast {
 
@@ -324,8 +325,8 @@ task buildImage(type: DockerBuildImage, dependsOn: createDockerfile) {
   group = 'Docker'
 
   inputDir = file(dockerBuildDir)
+  images.add(dockerTag)
 }
-
 
 tasks.withType(GroovyCompile) {
   configure(groovyOptions) {
