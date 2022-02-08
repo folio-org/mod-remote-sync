@@ -279,11 +279,11 @@ class SourceRegisterService {
         if ( secure_mode ) {
           log.info("Secure mode - assert that ${result?.hash} == ${md5}");
           if ( ! result?.hash?.equalsIgnoreCase(md5) ) {
-            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - FAIL");
+            state.messages.add("${source_url} - calculated MD5: ${result?.hash} stated MD5: ${md5} - FAIL");
             passed_security = false;
           }
           else {
-            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - PASS");
+            state.messages.add("${source_url} - calculated MD5: ${result?.hash} stated MD5: ${md5} - PASS");
             if ( signedBy != null ) {
               CodeSigningAuthority csa = CodeSigningAuthority.findByName(signedBy)
               if ( csa != null ) {
@@ -320,7 +320,7 @@ class SourceRegisterService {
                 state.messages.add("${source_url} : Validated")
               }
               else {
-                state.messages.add("${source_url} : FAIL")
+                state.messages.add("${source_url} : FAIL (Script validation)")
                 state.status='ERROR'
               }
               break;
