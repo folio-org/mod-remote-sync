@@ -94,7 +94,7 @@ public abstract class BaseTransformProcess implements TransformProcess {
     else if ( policyHelper.manualResourceMapping(resource_type, resource_id, context, target_context, 'MANUAL-VALUE-MAPPING', local_context)  == false ) {
       result=false;
       local_context.processLog.add([ts:System.currentTimeMillis(),
-                                      msg:"Need map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
+                                      msg:"${mandatory?'BLOCKER':'optional'} Need map/create/ignore decision - ${resource_type}:${resource_id}:${context}"]);
 
       Map extended_details = details + [
         mandatory: mandatory,
