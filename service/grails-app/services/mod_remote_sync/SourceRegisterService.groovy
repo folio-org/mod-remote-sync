@@ -329,6 +329,7 @@ class SourceRegisterService {
                 state.messages.add("${source_url} : Validated")
               }
               else {
+                log.error("Invalid groovy script");
                 state.messages.add("${source_url} : FAIL (Script validation)")
                 state.status='ERROR'
               }
@@ -345,6 +346,7 @@ class SourceRegisterService {
       }
     }
 
+    log.debug("fetchAndValidateCode returns ${result}")
     return result;
   }
 
@@ -374,6 +376,7 @@ class SourceRegisterService {
       state.status='ERROR'
     }
 
+    log.debug("validateGroovyScript returns ${result}");
     return result;
   }
 
