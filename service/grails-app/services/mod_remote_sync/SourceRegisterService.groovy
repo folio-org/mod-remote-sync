@@ -165,6 +165,7 @@ class SourceRegisterService {
         log.warn("unhandled packaging: ${agent_descriptor.packaging}");
         break;
     }
+    println("processSourceEntry complete");
   }
 
   private void processProcessEntry(Map descriptor, Map state) {
@@ -224,8 +225,11 @@ class SourceRegisterService {
                                            agent_descriptor.sourceSignedBy,
                                            agent_descriptor.sourceSignature);
 
+      
       // Step 3 - Script is valid, and signature checks out, create (Or update) record
       if ( code_info?.is_valid ) {
+        log.debug("Create or update bespoke source record");
+
         // create record
         BespokeSource bs = BespokeSource.findByName(agent_descriptor.sourceName) ?: new BespokeSource()
         bs.name = agent_descriptor.sourceName
@@ -248,6 +252,8 @@ class SourceRegisterService {
     else {
       log.error("malformed agent_descriptor (${agent_descriptor.sourceUrl}/${agent_descriptor.authority}/${agent_descriptor.sourceName})");
     }
+
+    println("processScript complete");
   }
 
   private Map fetchAndValidateCode(String source_url, 
