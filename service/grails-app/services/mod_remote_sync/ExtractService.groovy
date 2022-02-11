@@ -64,7 +64,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   }
 
   public Map start(boolean full_harvest, boolean reprocess) {
-    log.debug("ExtractService::start()");
+    log.debug("ExtractService::start(${full_harvest},${reprocess})");
 
     try {
       if ( full_harvest ) {
