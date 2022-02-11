@@ -137,6 +137,8 @@ class TestSourceSpec extends HttpSpec {
              [
                url:'https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/testcfg.json'
              ]);
+      log.debug("Response to post new source: ${auth_record}");
+      assert auth_record != null;
 
     then:'that source is listed'
       def resp = doGet('/remote-sync/sources/bespoke', [
@@ -190,6 +192,7 @@ class TestSourceSpec extends HttpSpec {
       def resp = doGet('/remote-sync/records')
     then:
       log.debug("Got transformation records: ${resp}");
+      assert resp != null
       resp.each { r ->
         log.debug("Checking that record ${r.id} has status PENDING or BLOCKED ${r.transformationStatus}");
         assert r.transformationStatus == 'PENDING' || r.transformationStatus == 'BLOCKED'

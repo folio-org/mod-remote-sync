@@ -15,7 +15,7 @@
             
         },
         "emits": "TEST::LICENSE",
-        "pubDate": "Wed Feb 02 10:19:23 GMT 2022",
+        "pubDate": "Fri Feb 11 15:00:47 GMT 2022",
         "version": 1
     },
     {
@@ -25,11 +25,11 @@
         "sourceUrl": "https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/TestLicenseProcess.groovy",
         "language": "groovy",
         "packaging": "script",
-        "sourceMD5": "4CBE5A0DD3425D71749123FD60A1391C",
+        "sourceMD5": "95DFEE4B06E20869BD3015D6CC6DAC3D",
         "sourceSignedBy": "k-int",
-        "sourceSignature": "LjymWpG89UtZrdaT/cFlpbRfhnMex3mX9AOB0UZfN0t4JVN3t4FaBh5uEUjnjNdMDTQTEY0rwjWuVM/+XpOp2A==",
+        "sourceSignature": "unrUkR8ScU0v4HzpMar0BVUPbeCxd9wpPtyPCTZe8k3wlYoUKuTz50yRin5G5hbIWdB0qnofK3npFHfR9drmGQ==",
         "accepts": "TEST::LICENSE",
-        "pubDate": "Wed Feb 02 10:19:23 GMT 2022",
+        "pubDate": "Fri Feb 11 15:00:47 GMT 2022",
         "version": 1
     },
     {
