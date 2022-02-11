@@ -29,62 +29,71 @@ class SourceRegisterService {
   private List<Map> crosswalk_cache = null;
 
   public Map load(String url) {
+
     log.debug("Load: ${url}");
     Map result = [status:'OK',messages:[]]
 
-    HttpBuilder http_client = HttpBuilder.configure {
-      request.uri = url
-      // request.uri.query = [name: 'Bob']
-      // request.cookie('user-session', 'SDF@$TWEFSDT', new Date()+30)
-      request.contentType = 'application/json'
-      request.accept = ['application/json']
-    }
-
-    Object response_content = http_client.get()
-
-    if ( response_content != null ) {
-      def parsed_register = JSON.parse(response_content)
-      if ( parsed_register ) {
-
-        parsed_register.each { entry ->
-          log.debug("Process entry: ${entry.recordType}")
-
-          if ( ( entry?.parameters != null ) && 
-               ( entry?.parameters instanceof Map ) ) {
-            log.debug("Definition states parameters - checking....");
-            ensureSettings(entry.parameters, result)
+    try {
+  
+      HttpBuilder http_client = HttpBuilder.configure {
+        request.uri = url
+        // request.uri.query = [name: 'Bob']
+        // request.cookie('user-session', 'SDF@$TWEFSDT', new Date()+30)
+        request.contentType = 'application/json'
+        request.accept = ['application/json']
+      }
+  
+      Object response_content = http_client.get()
+  
+      if ( response_content != null ) {
+        def parsed_register = JSON.parse(response_content)
+        if ( parsed_register ) {
+  
+          parsed_register.each { entry ->
+            log.debug("Process entry: ${entry.recordType} / pubDate ${entry.pubDate}")
+  
+            if ( ( entry?.parameters != null ) && 
+                 ( entry?.parameters instanceof Map ) ) {
+              log.debug("Definition states parameters - checking....");
+              ensureSettings(entry.parameters, result)
+            }
+  
+            switch ( entry.recordType ) {
+              case 'source':
+                processSourceEntry(entry, result)
+                break;
+              case 'process':
+                processProcessEntry(entry, result)
+                break;
+              case 'extract':
+                processExtractEntry(entry, result)
+                break;
+              case 'mappings':
+                processMappings(entry, result)
+                break;
+              case 'authorityControl':
+                processAuthorityControlSources(entry, result)
+                break;
+              default:
+                log.warn("Unhandled record type: ${entry}");
+            }
           }
-
-          switch ( entry.recordType ) {
-            case 'source':
-              processSourceEntry(entry, result)
-              break;
-            case 'process':
-              processProcessEntry(entry, result)
-              break;
-            case 'extract':
-              processExtractEntry(entry, result)
-              break;
-            case 'mappings':
-              processMappings(entry, result)
-              break;
-            case 'authorityControl':
-              processAuthorityControlSources(entry, result)
-              break;
-            default:
-              log.warn("Unhandled record type: ${entry}");
-          }
+  
+          // Clear the compiled process cache to adopt any changed handlers
+          transformationRunnerService.clearProcessCache()
+  
+          // Clear the crosswalk cache to force it to be rebuilt
+          this.crosswalk_cache = null;
         }
-
-        // Clear the compiled process cache to adopt any changed handlers
-        transformationRunnerService.clearProcessCache()
-
-        // Clear the crosswalk cache to force it to be rebuilt
-        this.crosswalk_cache = null;
       }
     }
+    catch ( Exception e ) {
+      log.error("Unexpected error processing definitions file",e);
+    }
+    finally {
+      log.info("Final result of SourceRegisterService::load(${url}) is ${result}");
+    } 
 
-    log.info("Final result of SourceRegisterService::load(${url}) is ${result}");
     return result;
   }
 

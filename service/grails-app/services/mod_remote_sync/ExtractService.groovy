@@ -85,6 +85,10 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
     catch ( Exception e ) {
       log.error("Exception starting processing chain",e);
     }
+    finally {
+      log.info("ExtractService::start completed");
+      println("ExtractService::start completed");
+    }
 
     return [ status:'OK' ]
   }
@@ -94,7 +98,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
     log.debug("known sources");
     Source.list().each { s ->
-      log.debug("Source: ${s.id} name:${s.name} enabled:${s.enabled} nextDue:${s.nextDue} status:${s.status} remaining(ms):${(s.nextDue?:0)-System.currentTimeMillis()}");
+      println("Source: ${s.id} name:${s.name} enabled:${s.enabled} nextDue:${s.nextDue} status:${s.status} remaining(ms):${(s.nextDue?:0)-System.currentTimeMillis()}");
     }
 
     Source.executeQuery(PENDING_SOURCE_JOBS,
@@ -254,7 +258,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   def runTransformationTasks() {
     log.debug("ExtractService::runTransformationTasks()");
     TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING',blocked:'BLOCKED',failed:'FAIL'],[readonly:true]).each { tr ->
-      log.debug("attemptProcess(${tr})");
+      println("attemptProcess(${tr})");
       transformationRunnerService.attemptProcess(tr);
     }
     log.debug("All done");
