@@ -17,7 +17,7 @@ import java.security.*;
 import java.security.spec.*;
 import java.security.interfaces.*;
 import org.apache.commons.codec.binary.Base64;
-
+import javax.xml.bind.DatatypeConverter;
 
 @Transactional
 class SourceRegisterService {
@@ -287,7 +287,8 @@ class SourceRegisterService {
         MessageDigest md5_digest = MessageDigest.getInstance("MD5");
         md5_digest.update(result.plugin_content.toString().getBytes())
         byte[] md5sum = md5_digest.digest();
-        result.hash = new BigInteger(1, md5sum).toString(16);
+        // result.hash = new BigInteger(1, md5sum).toString(16);
+        result.hash = DatatypeConverter.printHexBinary(md5sum).toUpperCase()
 
         boolean passed_security = true;
 
