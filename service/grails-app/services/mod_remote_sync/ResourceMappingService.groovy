@@ -44,7 +44,9 @@ and rm.mappingContext = :ctx
                                          String mappingContext,
                                          String mappingStatus,
                                          String folioContext,
-                                         String folioId) {
+                                         String folioId,
+                                         String additional = null,
+                                         String mappingType = null) {
     log.debug("ResourceMappingService::registerMapping(${source},${source_id},${mappingContext},${mappingStatus},${folioContext},${folioId}");
 
     ResourceMapping existing = lookupMapping(source,source_id,mappingContext);
@@ -56,7 +58,9 @@ and rm.mappingContext = :ctx
                                                       mappingContext: mappingContext,
                                                       mappingStatus: mappingStatus,
                                                       folioContext: folioContext,
-                                                      folioId: folioId).save(flush:true, failOnError:true)
+                                                      folioId: folioId,
+                                                      additional: additional,
+                                                      mappingType: mappingType).save(flush:true, failOnError:true)
 
     log.debug("ResourceMappingService::registerMapping returns ${new_mapping}");
 

@@ -1,6 +1,7 @@
 package mod_remote_sync
 
 import grails.gorm.MultiTenant;
+import groovy.json.JsonSlurper
 
 /**
  */
@@ -8,6 +9,7 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
 
   String id
 
+  String mappingType
   String source
   String sourceId
 
@@ -22,8 +24,12 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
   Date dateCreated
   Date lastUpdated
 
+  String additional
+
   static constraints = {
     source (nullable : false)
+    mappingType (nullable : true)
+    additional (nullable : true)
   }
 
   static mapping = {
@@ -38,9 +44,19 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
     mappingStatus          column : 'rm_mapping_status'
     folioContext           column : 'rm_folio_context'
     folioId                column : 'rm_folio_id'
+    additional             column : 'rm_additional_info'
+    mappingType            column : 'rm_mapping_type'
   }
 
   public String toString() {
     return "ResourceMapping:${id} ${source}:${sourceId} -(${mappingContext})-> ${folioContext}:${folioId} (${mappingStatus})"
   }
+
+  static transients = ['parsedAdditional']
+
+  Object getParsedAdditional() {
+    def jsonSlurper = new JsonSlurper()
+    return jsonSlurper.parseText(additional)
+  }
+
 }

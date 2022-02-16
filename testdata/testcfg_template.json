@@ -41,7 +41,7 @@
   {
     "recordType":"mappings",
     "mappings":[
-      { "srcCtx":"TEST::LICENSE/REFDATA/a",  "srcValue":"One",             "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/REFDATA/a",     "targetValue":"One" },
+      { "srcCtx":"TEST::LICENSE/REFDATA/a",  "srcValue":"One",             "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/REFDATA/a",     "targetValue":"One",       "mappingType":"Refdata", "additional":{ "any":"value"}  },
       { "srcCtx":"TEST::LICENSE/TYPE",       "srcValue":"Consortial",      "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/TYPE",          "targetValue":"Consortial" },
       { "srcCtx":"TEST::LICENSE/STATUS",     "srcValue":"Active",          "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/STATUS",        "targetValue":"Active" },
       { "srcCtx":"TEST::LICENSE/STATUS",     "srcValue":"Current",         "mappingContext":"TEST",    "targetCtx":"FOLIO::LICENSE/STATUS",        "targetValue":"Active" }

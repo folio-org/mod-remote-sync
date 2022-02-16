@@ -253,4 +253,10 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "202202161750-001") {
+    addColumn (tableName: "mrs_resource_mapping" ) {
+      column(name: "rm_additional_info", type: "TEXT")
+      column(name: "rm_mapping_type", type: "VARCHAR(255)")
+    }
+  }
 }
