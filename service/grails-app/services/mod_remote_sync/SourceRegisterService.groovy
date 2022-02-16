@@ -18,6 +18,8 @@ import java.security.spec.*;
 import java.security.interfaces.*;
 import org.apache.commons.codec.binary.Base64;
 import javax.xml.bind.DatatypeConverter;
+import groovy.json.JsonOutput
+
 
 @Transactional
 class SourceRegisterService {
@@ -392,12 +394,18 @@ class SourceRegisterService {
       // log.debug("Process mapping: ${mapping}");
       if ( mapping ) {
         if ( resourceMappingService.lookupMapping(mapping.srcCtx, mapping.srcValue, mapping.mappingContext) == null ) {
+          String additional_json = null;
+          if ( mapping.additional != null ) {
+            additional_json = String JsonOutput.toJson(mapping.additional)
+          }
           ResourceMapping rm = resourceMappingService.registerMapping(mapping.srcCtx,
                                                                       mapping.srcValue,
                                                                       mapping.mappingContext,
                                                                       mapping.mappingStatus?:'M',
                                                                       mapping.targetCtx,
-                                                                      mapping.targetValue);
+                                                                      mapping.targetValue,
+                                                                      additional_json,
+                                                                      mapping.mappingType);
           log.debug("Created resource mapping: ${rm}");
         }
       }
