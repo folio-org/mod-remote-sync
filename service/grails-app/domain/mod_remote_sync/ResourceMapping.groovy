@@ -55,8 +55,14 @@ public class ResourceMapping implements MultiTenant<ResourceMapping> {
   static transients = ['parsedAdditional']
 
   Object getParsedAdditional() {
-    def jsonSlurper = new JsonSlurper()
-    return jsonSlurper.parseText(additional)
+    Object result = null;
+
+    if ( additional != null ) {
+      def jsonSlurper = new JsonSlurper()
+      result = jsonSlurper.parseText(additional)
+    }
+
+    return result;
   }
 
 }
