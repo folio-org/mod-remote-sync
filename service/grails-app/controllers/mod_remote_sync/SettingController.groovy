@@ -62,7 +62,7 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
       log.info "WORKER Promise returned $rt"
     }
 
-    log.debug("Worker thread complete (${p})");
+    log.debug("Worker action complete (${p})");
     render result as JSON
   }
 

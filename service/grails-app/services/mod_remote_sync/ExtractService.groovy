@@ -85,6 +85,9 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
     catch ( Exception e ) {
       log.error("Exception starting processing chain",e);
     }
+    finally {
+      log.info("ExtractService::start() completed");
+    }
 
     return [ status:'OK' ]
   }
