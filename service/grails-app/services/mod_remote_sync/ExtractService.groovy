@@ -173,6 +173,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
           continue_processing = true;
           rs.save(flush:true, failOnError:true);
         }
+        log.debug("resource stream ${ext_id} locked");
       }
 
       if ( continue_processing ) {
