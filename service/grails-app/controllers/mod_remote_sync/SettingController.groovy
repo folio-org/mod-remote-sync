@@ -31,7 +31,7 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     def result = [result:'OK']
     // String tenant_header = request.getHeader('X-OKAPI-TENANT')
     String tenantId = Tenants.currentId()
-    log.debug("Worker thread invoked....${tenantId} ${params}");
+    log.debug("WORKER thread invoked....${tenantId} ${params}");
 
     // May need to RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true) in order to get request attrs into
     // promise. The true makes the request attributes inheritable by spawned threads. We will try setting it manually instead::
@@ -39,9 +39,9 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
 
     def p = WithPromises.task {
       // this means the request will be available to the worker thread - in particular the OKAPI TOKEN
-      log.debug("Setting request attributes to ${gwr}");
+      log.debug("WORKER Setting request attributes to ${gwr}");
       RequestContextHolder.setRequestAttributes(gwr);
-      log.info("Starting.... context: ${RequestContextHolder.requestAttributes}");
+      log.info("WORKER Starting.... context: ${RequestContextHolder.requestAttributes}");
 
       Tenants.withId(tenantId) {
         Source.withTransaction {
@@ -51,14 +51,15 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
       }
 
       // In theory this will clear out the request context and not leave threadlocals hanging around.....
+      log.info("WORKER clear request attrs");
       RequestContextHolder.resetRequestAttributes()
     }
 
     p.onError { Throwable err ->
-      log.error "An error occured ${err.message}"
+      log.error "WORKER An error occured ${err.message}"
     }
     p.onComplete { rt ->
-      log.info "Promise returned $rt"
+      log.info "WORKER Promise returned $rt"
     }
 
     log.debug("controller call complete promise says:(${p})");
