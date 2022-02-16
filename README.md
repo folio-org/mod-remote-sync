@@ -6,6 +6,11 @@ The module is generic in the sense that without configuration it has no utility.
 
 For example, a systems librarian wishes to keep a copy of their LASER licenses in FOLIO and to keep that subset of licenses up to date. For historical reasons, licenses may already exist in FOLIO and whenever FOLIO encounters a new license, the systems librarian wishes to have a choice to create a new FOLIO license to track the LASER license, or to map to an existing FOLIO license. mod-remote-sync provides a generic "Resource-Mapping-Feedback" process whereby an agent can request that the user provide such mappings and halts processing until the condition is satisfied.
 
+# IMPORTANT NOTE
+
+This module now uses code signing by default. This means that in order to upload a configuration with executable code the code needs to be signed by an approved
+certificate. This is to prevent arbitrary / malicious code execution. 
+
 THis is an EXPLORATORY MODULE : 
 
 Backend Module to provide data synchronisation with arbitrary sources - initially focussed on LASER resources into Subscriptions and Agreements for Leipzig but with wider scope if we get it right.

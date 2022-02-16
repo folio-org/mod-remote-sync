@@ -25,6 +25,7 @@ class UrlMappings {
     }
     "/remote-sync/authorities" (resources: 'authorities');
     "/remote-sync/records" (resources: 'transformationRecord');
+    "/remote-sync/sourceRecords" (resources: 'sourceRecord');
     "/remote-sync/feedback" (resources: 'feedbackItem') {
       collection {
         "/todo" ( action:'todo', method: 'GET')

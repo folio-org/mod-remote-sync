@@ -17,7 +17,7 @@ import java.security.*;
 import java.security.spec.*;
 import java.security.interfaces.*;
 import org.apache.commons.codec.binary.Base64;
-
+import javax.xml.bind.DatatypeConverter;
 
 @Transactional
 class SourceRegisterService {
@@ -29,62 +29,71 @@ class SourceRegisterService {
   private List<Map> crosswalk_cache = null;
 
   public Map load(String url) {
+
     log.debug("Load: ${url}");
     Map result = [status:'OK',messages:[]]
 
-    HttpBuilder http_client = HttpBuilder.configure {
-      request.uri = url
-      // request.uri.query = [name: 'Bob']
-      // request.cookie('user-session', 'SDF@$TWEFSDT', new Date()+30)
-      request.contentType = 'application/json'
-      request.accept = ['application/json']
-    }
-
-    Object response_content = http_client.get()
-
-    if ( response_content != null ) {
-      def parsed_register = JSON.parse(response_content)
-      if ( parsed_register ) {
-
-        parsed_register.each { entry ->
-          log.debug("Process entry: ${entry.recordType}")
-
-          if ( ( entry?.parameters != null ) && 
-               ( entry?.parameters instanceof Map ) ) {
-            log.debug("Definition states parameters - checking....");
-            ensureSettings(entry.parameters, result)
+    try {
+  
+      HttpBuilder http_client = HttpBuilder.configure {
+        request.uri = url
+        // request.uri.query = [name: 'Bob']
+        // request.cookie('user-session', 'SDF@$TWEFSDT', new Date()+30)
+        request.contentType = 'application/json'
+        request.accept = ['application/json']
+      }
+  
+      Object response_content = http_client.get()
+  
+      if ( response_content != null ) {
+        def parsed_register = JSON.parse(response_content)
+        if ( parsed_register ) {
+  
+          parsed_register.each { entry ->
+            log.debug("Process entry: ${entry.recordType} / pubDate ${entry.pubDate}")
+  
+            if ( ( entry?.parameters != null ) && 
+                 ( entry?.parameters instanceof Map ) ) {
+              log.debug("Definition states parameters - checking....");
+              ensureSettings(entry.parameters, result)
+            }
+  
+            switch ( entry.recordType ) {
+              case 'source':
+                processSourceEntry(entry, result)
+                break;
+              case 'process':
+                processProcessEntry(entry, result)
+                break;
+              case 'extract':
+                processExtractEntry(entry, result)
+                break;
+              case 'mappings':
+                processMappings(entry, result)
+                break;
+              case 'authorityControl':
+                processAuthorityControlSources(entry, result)
+                break;
+              default:
+                log.warn("Unhandled record type: ${entry}");
+            }
           }
-
-          switch ( entry.recordType ) {
-            case 'source':
-              processSourceEntry(entry, result)
-              break;
-            case 'process':
-              processProcessEntry(entry, result)
-              break;
-            case 'extract':
-              processExtractEntry(entry, result)
-              break;
-            case 'mappings':
-              processMappings(entry, result)
-              break;
-            case 'authorityControl':
-              processAuthorityControlSources(entry, result)
-              break;
-            default:
-              log.warn("Unhandled record type: ${entry}");
-          }
+  
+          // Clear the compiled process cache to adopt any changed handlers
+          transformationRunnerService.clearProcessCache()
+  
+          // Clear the crosswalk cache to force it to be rebuilt
+          this.crosswalk_cache = null;
         }
-
-        // Clear the compiled process cache to adopt any changed handlers
-        transformationRunnerService.clearProcessCache()
-
-        // Clear the crosswalk cache to force it to be rebuilt
-        this.crosswalk_cache = null;
       }
     }
+    catch ( Exception e ) {
+      log.error("Unexpected error processing definitions file",e);
+    }
+    finally {
+      log.info("Final result of SourceRegisterService::load(${url}) is ${result}");
+    } 
 
-    log.info("Final result of SourceRegisterService::load(${url}) is ${result}");
     return result;
   }
 
@@ -156,6 +165,7 @@ class SourceRegisterService {
         log.warn("unhandled packaging: ${agent_descriptor.packaging}");
         break;
     }
+    println("processSourceEntry complete");
   }
 
   private void processProcessEntry(Map descriptor, Map state) {
@@ -215,8 +225,11 @@ class SourceRegisterService {
                                            agent_descriptor.sourceSignedBy,
                                            agent_descriptor.sourceSignature);
 
+      
       // Step 3 - Script is valid, and signature checks out, create (Or update) record
       if ( code_info?.is_valid ) {
+        log.debug("Create or update bespoke source record");
+
         // create record
         BespokeSource bs = BespokeSource.findByName(agent_descriptor.sourceName) ?: new BespokeSource()
         bs.name = agent_descriptor.sourceName
@@ -239,6 +252,8 @@ class SourceRegisterService {
     else {
       log.error("malformed agent_descriptor (${agent_descriptor.sourceUrl}/${agent_descriptor.authority}/${agent_descriptor.sourceName})");
     }
+
+    println("processScript complete");
   }
 
   private Map fetchAndValidateCode(String source_url, 
@@ -272,18 +287,19 @@ class SourceRegisterService {
         MessageDigest md5_digest = MessageDigest.getInstance("MD5");
         md5_digest.update(result.plugin_content.toString().getBytes())
         byte[] md5sum = md5_digest.digest();
-        result.hash = new BigInteger(1, md5sum).toString(16);
+        // result.hash = new BigInteger(1, md5sum).toString(16);
+        result.hash = DatatypeConverter.printHexBinary(md5sum).toUpperCase()
 
         boolean passed_security = true;
 
         if ( secure_mode ) {
           log.info("Secure mode - assert that ${result?.hash} == ${md5}");
           if ( ! result?.hash?.equalsIgnoreCase(md5) ) {
-            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - FAIL");
+            state.messages.add("${source_url} - calculated MD5: ${result?.hash} stated MD5: ${md5} - FAIL");
             passed_security = false;
           }
           else {
-            state.messages.add("${source_url} - calculated MD5: ${md5sum} stated MD5: ${md5} - PASS");
+            state.messages.add("${source_url} - calculated MD5: ${result?.hash} stated MD5: ${md5} - PASS");
             if ( signedBy != null ) {
               CodeSigningAuthority csa = CodeSigningAuthority.findByName(signedBy)
               if ( csa != null ) {
@@ -320,7 +336,8 @@ class SourceRegisterService {
                 state.messages.add("${source_url} : Validated")
               }
               else {
-                state.messages.add("${source_url} : FAIL")
+                log.error("Invalid groovy script");
+                state.messages.add("${source_url} : FAIL (Script validation)")
                 state.status='ERROR'
               }
               break;
@@ -336,6 +353,7 @@ class SourceRegisterService {
       }
     }
 
+    log.debug("fetchAndValidateCode returns ${result}")
     return result;
   }
 
@@ -365,6 +383,7 @@ class SourceRegisterService {
       state.status='ERROR'
     }
 
+    log.debug("validateGroovyScript returns ${result}");
     return result;
   }
 
