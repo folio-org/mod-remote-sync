@@ -390,7 +390,7 @@ class SourceRegisterService {
 
   private void processMappings(Map descriptor, Map state) {
     descriptor.mappings?.each { mapping ->
-      // log.debug("Process mapping: ${mapping}");
+      log.debug("Process mapping: ${mapping}");
       if ( mapping ) {
         if ( resourceMappingService.lookupMapping(mapping.srcCtx, mapping.srcValue, mapping.mappingContext) == null ) {
           ResourceMapping rm = resourceMappingService.registerMapping(mapping.srcCtx,
