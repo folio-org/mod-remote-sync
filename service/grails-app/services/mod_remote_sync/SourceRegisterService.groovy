@@ -52,6 +52,7 @@ class SourceRegisterService {
         if ( parsed_register ) {
   
           parsed_register.each { entry ->
+            result.messages.add("processing ${entry.recordType} last modified ${entry.pubDate}");
             log.debug("Process entry: ${entry.recordType} / pubDate ${entry.pubDate}")
   
             if ( ( entry?.parameters != null ) && 
