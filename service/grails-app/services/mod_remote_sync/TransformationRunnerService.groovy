@@ -69,6 +69,8 @@ class TransformationRunnerService {
             tpr.processControlStatus = 'OPEN'
           }
 
+          processing_result.processLog.add([ts:System.currentTimeMillis(), msg:"attempt process completed at ${new Date()} - ${tpr.processControlStatus}/${tpr.transformationStatus}"])
+
           // Stash the processing log in the process record so we can view it in the UI
           if ( processing_result?.processLog)
             tpr.statusReport = JsonOutput.toJson(processing_result.processLog)
