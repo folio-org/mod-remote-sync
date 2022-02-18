@@ -1,5 +1,7 @@
 # mod-remote-sync
 
+![Development 2021-2022 funded by European Regional Development Fund (EFRE)](https://github.com/folio-org/mod-remote-sync/raw/master/assets/EFRE_2015_quer_RGB.jpg)
+
 Mod-remote-sync is a generic FOLIO module for system librarians which helps reconcile and keep in sync a remote set of resources with a local FOLIO system. 
 
 The module is generic in the sense that without configuration it has no utility. System librarians must develop and upload "Agent" modules for fetching data from remote systems and processing that data. mod-remote-sync provides services to these agents such as scheduling, error reporting, and feedback case management which makes the reconcilliation process interactive.
