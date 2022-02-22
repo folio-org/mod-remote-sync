@@ -31,6 +31,9 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
   // The input data
   byte[] inputData
 
+  // The input data saved from any previous run - so we can do a 3-way diff of the data
+  byte[] previousInputData
+
   // Date of last attempt to process this record
   Date lastProcessAttempt
 
@@ -44,6 +47,7 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
   static constraints = {
                   owner (nullable : false)
               inputData (nullable : true)
+      previousInputData (nullable : true)
            statusReport (nullable : true)
                   label (nullable : true)
      lastProcessAttempt (nullable : true)
@@ -60,6 +64,7 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
          processControlStatus column:'mtr_process_control_status'
                sourceRecordId column:'mtr_source_record_id'
                     inputData column:'mtr_input_data'
+            previousInputData column:'mtr_previous_input_data'
                         label column:'mtr_label'
                  statusReport column:'mtr_status_report'
            lastProcessAttempt column:'mtr_last_process_attempt'
@@ -67,11 +72,14 @@ public class TransformationProcessRecord implements MultiTenant<TransformationPr
             associatedMapping column:'mtr_associated_mapping_fk'
   }
 
-  static transients = ['inputDataString']
+  static transients = ['inputDataString', 'prevousInputDataString']
 
   public String getInputDataString() {
     return new String(inputData);
   }
 
+  public String getPrevousInputDataString() {
+    return new String(previousInputData);
+  }
 
 }

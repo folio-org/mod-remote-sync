@@ -226,6 +226,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
                 // ToDo this section should lock the tpr before updating it
                 log.debug("Updating existing tpr: ${tpr}");
 
+                tpr.previousInputData = tpr.inputData
                 tpr.inputData = new String(sr.record)
                 tpr.label = sr.label ?: "${sr.recType}/${sr.seqts}"
 		tpr.transformationStatus='PENDING'

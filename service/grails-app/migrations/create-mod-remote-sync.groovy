@@ -259,4 +259,11 @@ databaseChangeLog = {
       column(name: "rm_mapping_type", type: "VARCHAR(255)")
     }
   }
+
+  changeSet(author: "ianibbo (generated)", id: "202202221309-001") {
+    addColumn (tableName: "mrs_tp_record" ) {
+      column(name: "mtr_previous_input_data", type: "TEXT")
+    }
+  }
+
 }
