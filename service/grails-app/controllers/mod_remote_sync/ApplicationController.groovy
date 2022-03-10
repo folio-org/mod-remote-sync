@@ -82,6 +82,7 @@ group by tpr.transformationStatus
       source_row.interval = src.interval
       source_row.nextDueTS = src.nextDue
       source_row.emits = src.emits
+      source_row.lastError = src.lastError
       source_row.status = src.status
       source_row.nextDueString = src.nextDue != null ? isosdf.format(new Date(src.nextDue)) : 'Now';
       source_row.timeRemaining = src.nextDue != null ? src.nextDue - System.currentTimeMillis() : 0
