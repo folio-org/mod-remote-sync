@@ -22,7 +22,7 @@ select s.id
 from Source as s
 where ( s.nextDue is null OR s.nextDue < :systime )
   and ( s.enabled = :enabled or s.enabled is null )
-  and ( s.status = :idle or s.status is null )
+  and ( s.status = :idle or s.status is null or s.status = :error )
 '''
 
   private static String PENDING_EXTRACT_JOBS='''
@@ -102,7 +102,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
     }
 
     Source.executeQuery(PENDING_SOURCE_JOBS,
-                        [ 'systime': System.currentTimeMillis(), 'enabled': true, 'idle':'IDLE'],
+                        [ 'systime': System.currentTimeMillis(), 'enabled': true, 'idle':'IDLE', 'error':'ERROR'],
                         [readOnly:true, lock:false]).each { source_id ->
 
       boolean continue_processing = false;
@@ -124,6 +124,10 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
         }
       }
 
+      // If we catch an exception, set status to ERROR instead
+      String new_status = 'IDLE';
+      String last_error = null;
+
       if ( continue_processing ) {
         log.debug("updated source to be in-progress- continuing");
         try{
@@ -136,11 +140,14 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
         }
         catch ( Exception e ) {
           log.error("Problem processing source",e);
+          new_status = "ERROR"
+          last_error = e?.message?.toString().take(255);
         }
         finally {
           Source.withNewTransaction {
             Source src = Source.get(source_id)
-            src.status = 'IDLE';
+            src.status = new_status;
+            src.lastError = last_error;
             src.nextDue = System.currentTimeMillis() + ( src.interval ?: DEFAULT_INTERVAL)
             log.debug("Completed processing on src ${src} return status to IDLE and set next due to ${src.nextDue}");
             src.save(flush:true, failOnError:true)
