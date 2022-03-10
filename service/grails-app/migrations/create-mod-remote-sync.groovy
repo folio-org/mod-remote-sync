@@ -266,4 +266,10 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "202203101523-001") {
+    addColumn (tableName: "mrs_source" ) {
+      column(name: "src_last_error", type: "VARCHAR(255)")
+    }
+  }
+
 }
