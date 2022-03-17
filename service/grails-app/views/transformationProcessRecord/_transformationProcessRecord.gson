@@ -4,7 +4,7 @@ import mod_remote_sync.TransformationProcessRecord
 @Field TransformationProcessRecord transformationProcessRecord
 
 // Special template returns shallow copy of both ends.
-json g.render (transformationProcessRecord, [expand:['associatedMapping'], excludes:['inputData']]) {
+json g.render (transformationProcessRecord, [expand:['associatedMapping'], excludes:['inputData','previousInputData']]) {
   // Only include the full input record if the element "setname" full is passed as a parameter
   if ( params.get('setname', 'brief') == 'full' ) {
     inputDataString transformationProcessRecord.inputDataString
