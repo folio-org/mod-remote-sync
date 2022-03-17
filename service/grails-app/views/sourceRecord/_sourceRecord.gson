@@ -5,6 +5,8 @@ import mod_remote_sync.SourceRecord
 
 // Special template returns shallow copy of both ends.
 json g.render (sourceRecord, [expand:[], excludes:['record']]) {
-  record new String(sourceRecord.record)
+  if ( params.get('setname', 'brief') == 'full' ) {
+    record new String(sourceRecord.record)
+  }
 }
 
