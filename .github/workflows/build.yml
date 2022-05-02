@@ -37,20 +37,20 @@ jobs:
           echo "is_snapshot=$(grep info.app.version ./service/build/resources/main/META-INF/grails.build.info | grep -i SNAPSHOT | wc -l)" >> $GITHUB_ENV
       - name: Pre build info
         run: echo "ref:${{github.REF}} module:${{env.module_name}} ver:${{env.module_version}} snap:${{env.is_snapshot}}"
-      - name: Docker Build
-        run: docker build --pull=true --no-cache=true -t ${{ env.module_name }}:${{ env.module_version }} .
-      - if: github.REF == 'refs/heads/master' && env.is_snapshot=='1'
-        run: |
-          echo "Publishing Docker images"
-          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-          echo "Tag"
-          docker tag ${{ env.module_name }}:${{ env.module_version }} $dockerRepo/${{ env.module_name }}:${{ env.module_version }}
-          docker tag ${{ env.module_name }}:${{ env.module_version }} $dockerRepo/${{ env.module_name }}:snapshot-latest
-          echo "Push"
-          docker push $dockerRepo/${{ env.module_name }}:${{ env.module_version }}
-          docker push $dockerRepo/${{ env.module_name }}:snapshot-latest
-        env:
-          dockerRepo: folioci
+      # - name: Docker Build
+      #   run: docker build --pull=true --no-cache=true -t ${{ env.module_name }}:${{ env.module_version }} .
+      # - if: github.REF == 'refs/heads/master' && env.is_snapshot=='1'
+      #   run: |
+      #     echo "Publishing Docker images"
+      #     docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      #     echo "Tag"
+      #     docker tag ${{ env.module_name }}:${{ env.module_version }} $dockerRepo/${{ env.module_name }}:${{ env.module_version }}
+      #     docker tag ${{ env.module_name }}:${{ env.module_version }} $dockerRepo/${{ env.module_name }}:snapshot-latest
+      #     echo "Push"
+      #     docker push $dockerRepo/${{ env.module_name }}:${{ env.module_version }}
+      #     docker push $dockerRepo/${{ env.module_name }}:snapshot-latest
+      #   env:
+      #     dockerRepo: folioci
    
           
 
