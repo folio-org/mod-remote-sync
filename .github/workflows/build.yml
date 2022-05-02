@@ -39,7 +39,7 @@ jobs:
         run: echo "ref:${{github.REF}} module:${{env.module_name}} ver:${{env.module_version}} snap:${{env.is_snapshot}}"
       - name: Docker Build
         run: docker build --pull=true --no-cache=true -t ${{ env.module_name }}:${{ env.module_version }} .
-      - if: github.REF == 'master' && env.is_snapshot=='1'
+      - if: github.REF == 'refs/heads/master' && env.is_snapshot=='1'
         run: |
           echo "Publishing Docker images"
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
