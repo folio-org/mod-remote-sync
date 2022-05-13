@@ -314,7 +314,7 @@ task createDockerfile(type: Dockerfile, dependsOn: prepareDocker) {
   from 'folioci/alpine-jre-openjdk11:latest'
   instruction 'LABEL maintainer="Knowledge Integration"'
 
-  exposePort 8079
+  exposePort 8080
 
   // Copying straight into the default directory should be enough
   copyFile jar.archiveName, '/usr/verticles/application.jar'
