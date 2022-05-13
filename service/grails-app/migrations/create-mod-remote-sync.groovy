@@ -272,4 +272,8 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ibbo (generated)", id: "202205141415-001") {
+    addUniqueConstraint(columnNames: "st_section, st_key", constraintName: "APP_SETTING_UNIQUE", tableName: "app_setting")
+  }
+
 }

@@ -1,6 +1,5 @@
 buildscript {
   repositories {
-    jcenter()
     maven { url "https://repo.grails.org/grails/core" }
   }
   dependencies {
@@ -60,7 +59,6 @@ eclipse {
 
 repositories {
   maven { url 'https://maven.k-int.com/content/repositories/public' }
-  jcenter()
   mavenLocal()
   maven { url 'https://repo.grails.org/grails/core' }
   maven { url 'https://maven.indexdata.com/' }
