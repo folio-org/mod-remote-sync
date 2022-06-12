@@ -14,29 +14,57 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+
       - name: Start containers
         run: |
           cd tools/testing
           docker-compose up -d
+
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
           arguments: build
           build-root-directory: service
+
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
           files: "service/build/test-results/**/*.xml"
+
       - name: Prepare env for docker build
         run: | 
           echo "module_name=$(grep info.app.name ./service/build/resources/main/META-INF/grails.build.info | cut -f2 -d=)" >> $GITHUB_ENV
           echo "module_version=$(grep info.app.version ./service/build/resources/main/META-INF/grails.build.info | cut -f2 -d=)" >> $GITHUB_ENV
           echo "is_snapshot=$(grep info.app.version ./service/build/resources/main/META-INF/grails.build.info | grep -i SNAPSHOT | wc -l)" >> $GITHUB_ENV
+
       - name: Pre build info
         run: echo "ref:${{github.REF}} module:${{env.module_name}} ver:${{env.module_version}} snap:${{env.is_snapshot}}"
+
+      - name: Publish Docker Image
+        if: github.ref == 'refs/heads/master'
+        run: |
+          cd ..
+          cat ./service/gradle.properties
+          APP_VERSION=$(grep appVersion ./service/gradle.properties| cut -f2 -d=)
+          echo "APP_VERSION_2=`grep appVersion ./service/gradle.properties| cut -f2 -d=`" >> $GITHUB_ENV
+          echo "See https://github.com/marketplace/actions/build-and-push-docker-images"
+          echo "Also https://www.prestonlamb.com/blog/creating-a-docker-image-with-github-actions"
+          echo "Run number is $GITHUB_RUN_NUMBER"
+          echo "Parsed APP_VERSION to ${APP_VERSION}"
+          if [[ "${APP_VERSION}" =~ .*SNAPSHOT.* ]]; then
+            echo Publish as snapshot
+            docker build . --file Dockerfile --tag knowledgeintegration/mod-remote-sync:${APP_VERSION}
+            docker build . --file Dockerfile --tag knowledgeintegration/mod-remote-sync:snapshot-latest
+          else
+            echo Publish as release
+            docker build . --file Dockerfile --tag knowledgeintegration/mod-remote-sync:${APP_VERSION}
+            docker build . --file Dockerfile --tag knowledgeintegration/mod-remote-sync:latest
+          fi
+
       # - name: Docker Build
       #   run: docker build --pull=true --no-cache=true -t ${{ env.module_name }}:${{ env.module_version }} .
       # - if: github.REF == 'refs/heads/master' && env.is_snapshot=='1'
