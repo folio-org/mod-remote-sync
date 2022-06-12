@@ -56,21 +56,21 @@ jobs:
           echo "Parsed APP_VERSION to ${APP_VERSION}"
           if [[ "${APP_VERSION}" =~ .*SNAPSHOT.* ]]; then
             echo Publish as snapshot
-            docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} $dockerRepo
+            # docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} $dockerRepo
             docker build . --file Dockerfile --tag $dockerRepo/folioci/mod-remote-sync:${APP_VERSION}
             docker build . --file Dockerfile --tag $dockerRepo/folioci/mod-remote-sync:snapshot-latest
             # docker push $dockerRepo/folioci/mod-remote-sync:${APP_VERSION}
-            docker push --all-tags $dockerRepo/folioci/mod-remote-sync
+            # docker push --all-tags $dockerRepo/folioci/mod-remote-sync
           else
             echo Publish as release
-            docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} $dockerRepo
+            # docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} $dockerRepo
             docker build . --file Dockerfile --tag $dockerRepo/folioorg/mod-remote-sync:${APP_VERSION} --tag $dockerRepo/folioorg/mod-remote-sync:latest
             # docker push $dockerRepo/folioorg/mod-remote-sync:${APP_VERSION}
             # docker push $dockerRepo/folioorg/mod-remote-sync:snapshot-latest
             #docker push --all-tags $dockerRepo/folioorg/mod-remote-sync
           fi
         env:
-          dockerRepo: folioci
+          dockerRepo: https://hub.docker.com
 
       # - name: Docker Build
       #   run: docker build --pull=true --no-cache=true -t ${{ env.module_name }}:${{ env.module_version }} .
