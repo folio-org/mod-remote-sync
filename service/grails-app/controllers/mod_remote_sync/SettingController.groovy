@@ -31,7 +31,7 @@ class SettingController extends OkapiTenantAwareController<AppSetting> {
     def result = [result:'OK']
     // String tenant_header = request.getHeader('X-OKAPI-TENANT')
     String tenantId = Tenants.currentId()
-    log.debug("WORKER thread invoked....${tenantId} ${params}");
+    log.info("WORKER thread invoked....${tenantId} ${params}");
 
     // May need to RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true) in order to get request attrs into
     // promise. The true makes the request attributes inheritable by spawned threads. We will try setting it manually instead::
