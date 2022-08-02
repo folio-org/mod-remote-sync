@@ -13,6 +13,9 @@ import com.k_int.web.toolkit.refdata.RefdataValue
 import mod_remote_sync.source.RemoteSyncActivity
 import mod_remote_sync.source.TransformProcess
 import mod_remote_sync.TransformationProcessRecord
+import java.text.NumberFormat;
+import java.lang.management.ManagementFactory;
+
 
 @Transactional
 class ExtractService {
@@ -66,16 +69,30 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   public Map start(boolean full_harvest, boolean reprocess) {
     log.debug("ExtractService::start(${full_harvest},${reprocess})");
 
+    Runtime runtime = Runtime.getRuntime();
+    NumberFormat format = NumberFormat.getInstance();
+    long maxMemory = runtime.maxMemory();
+    long allocatedMemory = runtime.totalMemory();
+    long freeMemory = runtime.freeMemory();
+    long jvmUpTime = ManagementFactory.getRuntimeMXBean().getUptime();
+
+    log.info("free memory: " + format.format(freeMemory / 1024));
+    log.info("allocated memory: " + format.format(allocatedMemory / 1024));
+    log.info("max memory: " + format.format(maxMemory / 1024));
+    log.info("total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024));
+    log.info("JVM uptime: " + format.format(jvmUpTime));
+
+
     try {
       if ( full_harvest ) {
         log.debug("Full harvest specified - clear all cursors");
-        Source.executeUpdate('update Source set nextDue = null');
-        ResourceStream.executeUpdate('update ResourceStream set nextDue = null');
+        Source.executeUpdate('update Source set nextDue=null, status=:idle',[idle:'IDLE']);
+        ResourceStream.executeUpdate('update ResourceStream set nextDue = null, streamStatus=:idle',[idle:'IDLE']);
       }
 
       if ( reprocess ) {
         log.debug("Reprocess flag given - zero out resource stream cursor");
-        ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null', [ emptyObjectJson: '{}' ] );
+        ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null, streamStatus=:idle', [ emptyObjectJson: '{}', idle:'IDLE' ] );
       }
 
       runSourceTasks()
