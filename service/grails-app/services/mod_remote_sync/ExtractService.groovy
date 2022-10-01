@@ -86,13 +86,17 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
     try {
       if ( full_harvest ) {
         log.debug("Full harvest specified - clear all cursors");
-        Source.executeUpdate('update Source set nextDue = null, status = :idle',[idle:'IDLE']);
-        ResourceStream.executeUpdate('update ResourceStream set nextDue = null, streamStatus=:idle',[idle:'IDLE']);
+        Source.withTransaction { status ->
+          Source.executeUpdate('update Source set nextDue = null, status = :idle',[idle:'IDLE']);
+          ResourceStream.executeUpdate('update ResourceStream set nextDue = null, streamStatus=:idle',[idle:'IDLE']);
+        }
       }
 
       if ( reprocess ) {
-        log.debug("Reprocess flag given - zero out resource stream cursor");
-        ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null, streamStatus=:idle', [ emptyObjectJson: '{}', idle:'IDLE' ] );
+        Source.withTransaction { status ->
+          log.debug("Reprocess flag given - zero out resource stream cursor");
+          ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null, streamStatus=:idle', [ emptyObjectJson: '{}', idle:'IDLE' ] );
+        }
       }
 
       runSourceTasks()
