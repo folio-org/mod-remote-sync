@@ -86,7 +86,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
     try {
       if ( full_harvest ) {
         log.debug("Full harvest specified - clear all cursors");
-        Source.executeUpdate('update Source set nextDue=null, status=:idle',[idle:'IDLE']);
+        Source.executeUpdate('update Source set nextDue = null, status = :idle',[idle:'IDLE']);
         ResourceStream.executeUpdate('update ResourceStream set nextDue = null, streamStatus=:idle',[idle:'IDLE']);
       }
 
@@ -206,8 +206,8 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
       if ( continue_processing ) {
         log.debug("Processing resource stream ${ext_id}");
-        ResourceStream.withNewTransaction {
-          try{
+        try{
+          ResourceStream.withNewTransaction {
             ResourceStream rs = ResourceStream.get(ext_id)
             log.debug("Process source ${rs}");
 
@@ -269,8 +269,16 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             log.debug("  -> Completed processing on resourceStream ${rs} return status to IDLE and set next due to ${rs.nextDue} cursor is ${rs.cursor}");
             rs.save(flush:true, failOnError:true)
           }
-          catch ( Exception e ) {
-            log.error("Problem processing source",e);
+        }
+        catch ( Exception e ) {
+          log.error("Problem processing source",e);
+        }
+        finally {
+          log.debug("In finally block for resource stream ${ext_id}. Set state to idle");
+          ResourceStream.withNewTransaction {
+            ResourceStream rs = ResourceStream.get(ext_id)
+            rs.streamStatus = 'IDLE';
+            rs.save(flush:true, failOnError:true)
           }
         }
       }
