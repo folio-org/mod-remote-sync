@@ -24,7 +24,10 @@ BILvnE5yNfQun1uI8UgsAiCzwH72jItjqSXyQLRVXN3vuW1LCz5eDR8CAwEAAQ==
                                     final boolean upgrading, 
                                     final String toVersion, 
                                     final String fromVersion) {
-    log.debug("TenantAdminService::onTenantLoadReference");
+
+    log.debug("TenantAdminService::onTenantLoadReference(${tenantId},${value},${existing_tenant},${upgrading})");
+
+    try {
       final String schemaName = OkapiTenantResolver.getTenantSchemaName(tenantId)
       Tenants.withId(schemaName) {
         // A category for Yes/No answers
@@ -51,6 +54,10 @@ BILvnE5yNfQun1uI8UgsAiCzwH72jItjqSXyQLRVXN3vuW1LCz5eDR8CAwEAAQ==
                                        name:'k-int',
                                        publicKey:DEFAULT_PUBLIC_KEY).save(flush:true, failOnError:true);
       }
+    }
+    catch ( Exception e ) {
+      log.error("Problem loading refdata",e);
+    }
   }
 
 }

@@ -48,9 +48,15 @@ class SourceRegisterService {
       Object response_content = http_client.get()
   
       if ( response_content != null ) {
-        def parsed_register = JSON.parse(response_content)
+        def parsed_register = null;
+        if ( response_content instanceof ArrayList ) {
+          response_content = parsed_register
+        }
+        else {
+          parsed_register = JSON.parse(response_content)
+        }
+
         if ( parsed_register ) {
-  
           parsed_register.each { entry ->
             if ( entry.pubDate != null ) {
               result.messages.add("processing ${entry.recordType} last modified ${entry.pubDate}");
@@ -126,6 +132,7 @@ class SourceRegisterService {
                                 settingType: 'Refdata',
                                 vocab: defn.vocab,
                                 defValue: defn.default).save(flush:true, failOnError:true);
+            break;
           default:
             log.warn("Unhandled setting type: ${defn.type}");
             break;

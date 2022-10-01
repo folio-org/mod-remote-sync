@@ -39,6 +39,9 @@ logger ('mod_remote_sync', DEBUG)
 logger ('folio.modrs.scripts', DEBUG)
 logger ('com.k_int.okapi', WARN)
 logger ('com.k_int.web.toolkit', WARN)
+logger ('com.zaxxer.hikari.HikariConfig', DEBUG)
+logger ('com.zaxxer.hikari.pool.HikariPool', WARN)
+
 // logger ('com.k_int.web.toolkit', TRACE)
 // logger ('org.olf.okapi.modules.directory.CustomBinders', WARN)
 

@@ -18,6 +18,11 @@ class BootStrap {
     log.info("            build host -> ${grailsApplication.metadata['build.host']}");
     log.info("         Base JDBC URL -> ${grailsApplication.config.dataSource.url}");
 
+    Map<String, String> env = System.getenv();
+    env.each { name,value ->
+      log.info("    ENV: ${name}=\"${value}\"");
+    }
+
     // Check that the migrations file is present - it's absence indicates a build time failure
     def resFile = this.class.classLoader.getResource('module-tenant-changelog.groovy')
     if ( resFile == null ) {

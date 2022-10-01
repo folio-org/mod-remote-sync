@@ -57,14 +57,14 @@ jobs:
           if [[ "${APP_VERSION}" =~ .*SNAPSHOT.* ]]; then
             echo Publish as snapshot
             # docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} $dockerRepo
-            docker build . --file Dockerfile --tag $dockerRepo/folioci/mod-remote-sync:${APP_VERSION}
-            docker build . --file Dockerfile --tag $dockerRepo/folioci/mod-remote-sync:snapshot-latest
+            # docker build . --file Dockerfile --tag $dockerRepo/folioci/mod-remote-sync:${APP_VERSION}
+            # docker build . --file Dockerfile --tag $dockerRepo/folioci/mod-remote-sync:snapshot-latest
             # docker push $dockerRepo/folioci/mod-remote-sync:${APP_VERSION}
             # docker push --all-tags $dockerRepo/folioci/mod-remote-sync
           else
             echo Publish as release
             # docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} $dockerRepo
-            docker build . --file Dockerfile --tag $dockerRepo/folioorg/mod-remote-sync:${APP_VERSION} --tag $dockerRepo/folioorg/mod-remote-sync:latest
+            # docker build . --file Dockerfile --tag $dockerRepo/folioorg/mod-remote-sync:${APP_VERSION} --tag $dockerRepo/folioorg/mod-remote-sync:latest
             # docker push $dockerRepo/folioorg/mod-remote-sync:${APP_VERSION}
             # docker push $dockerRepo/folioorg/mod-remote-sync:snapshot-latest
             #docker push --all-tags $dockerRepo/folioorg/mod-remote-sync
