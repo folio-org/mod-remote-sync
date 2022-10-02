@@ -58,6 +58,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   // Default -extract- interval - 30m
   private static Long DEFAULT_INTERVAL = 1000 * 60 * 30;
 
+  private static boolean RUNNING = false
 
   def grailsApplication
   def transformationRunnerService
@@ -67,6 +68,15 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   }
 
   public Map start(boolean full_harvest, boolean reprocess) {
+
+    if ( RUNNING ) {
+      log.warn("Extract attempted when process already running - aborting");
+      return;
+    }
+    else {
+      RUNNING=true
+    }
+
     log.debug("ExtractService::start(${full_harvest},${reprocess})");
 
     Runtime runtime = Runtime.getRuntime();
@@ -86,14 +96,14 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
     try {
       if ( full_harvest ) {
         log.debug("Full harvest specified - clear all cursors");
-        Source.withTransaction { status ->
+        Source.withNewTransaction { status ->
           Source.executeUpdate('update Source set nextDue = null, status = :idle',[idle:'IDLE']);
           ResourceStream.executeUpdate('update ResourceStream set nextDue = null, streamStatus=:idle',[idle:'IDLE']);
         }
       }
 
       if ( reprocess ) {
-        Source.withTransaction { status ->
+        Source.withNewTransaction { status ->
           log.debug("Reprocess flag given - zero out resource stream cursor");
           ResourceStream.executeUpdate('update ResourceStream set cursor = :emptyObjectJson, nextDue = null, streamStatus=:idle', [ emptyObjectJson: '{}', idle:'IDLE' ] );
         }
@@ -109,6 +119,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
     finally {
       log.info("ExtractService::start completed");
       println("ExtractService::start completed");
+      RUNNING=false
     }
 
     return [ status:'OK' ]
@@ -275,15 +286,15 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
           }
         }
         catch ( Exception e ) {
-          log.error("Problem processing source",e);
-        }
-        finally {
-          log.debug("In finally block for resource stream ${ext_id}. Set state to idle");
+          log.error("Problem processing source, set stream status to IDLE",e);
           ResourceStream.withNewTransaction {
             ResourceStream rs = ResourceStream.get(ext_id)
             rs.streamStatus = 'IDLE';
             rs.save(flush:true, failOnError:true)
           }
+        }
+        finally {
+          log.debug("Extract processing for ${ext_id} completed");
         }
       }
       else {
