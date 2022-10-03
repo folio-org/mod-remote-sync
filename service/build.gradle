@@ -65,6 +65,13 @@ repositories {
   maven { url 'https://maven.indexdata.com/' }
 }
 
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
 sourceSets {
   main {
     resources {
@@ -76,7 +83,6 @@ sourceSets {
 
 dependencies {
 
- /**** Grails 4 *****/
   implementation "org.springframework.boot:spring-boot-starter-logging"
   implementation "org.springframework.boot:spring-boot-autoconfigure"
   implementation "org.grails:grails-core"
@@ -164,18 +170,6 @@ bootRun {
   sourceResources sourceSets.main
   String springProfilesActive = 'spring.profiles.active'
   systemProperty springProfilesActive, System.getProperty(springProfilesActive)
-}
-
-tasks.withType(Test) {
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
-    if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
-        systemProperty 'webdriver.chrome.driver', System.getProperty('webdriver.chrome.driver')
-        systemProperty 'webdriver.gecko.driver', System.getProperty('webdriver.gecko.driver')
-    } else {
-        systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
-        systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
-    }
 }
 
 task generateDescriptors(type: Copy) {
@@ -337,6 +331,10 @@ tasks.withType(GroovyCompile) {
   }
 }
 
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
 webdriverBinaries {
     if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
         chromedriver {
@@ -350,7 +348,11 @@ webdriverBinaries {
 tasks.withType(Test) {
   systemProperty "geb.env", System.getProperty('geb.env')
   systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
-  systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
-  systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
+  if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
+    systemProperty 'webdriver.chrome.driver', System.getProperty('webdriver.chrome.driver')
+    systemProperty 'webdriver.gecko.driver', System.getProperty('webdriver.gecko.driver')
+  } else {
+    systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
+    systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
+  }
 }
-
