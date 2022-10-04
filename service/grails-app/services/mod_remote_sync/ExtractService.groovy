@@ -220,7 +220,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
       }
 
       if ( continue_processing ) {
-        log.debug("Processing resource stream ${ext_id}");
+        log.debug("Processing resource stream ${ext_id} - Free memory=${Runtime.getRuntime().freeMemory()}");
         try{
           ResourceStream.withNewTransaction {
             ResourceStream rs = ResourceStream.get(ext_id)

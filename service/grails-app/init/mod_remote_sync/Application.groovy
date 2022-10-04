@@ -55,6 +55,7 @@ class Application extends GrailsAutoConfiguration {
         // builder.setServerOption(UndertowOptions.ENABLE_HTTP2, true)
 
         println "Runtime memory reported ${Runtime.getRuntime().maxMemory() / 1024 / 1024} mb"
+        println "Current free memory: ${Runtime.getRuntime().freeMemory()}"
         println "Runtime CPUs reported ${Runtime.getRuntime().availableProcessors()}"
         println "Allocated ${ioThreadCount} IO Threads"
         println "Allocated ${workerThreadCount} worker threads"
