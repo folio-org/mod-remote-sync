@@ -36,10 +36,11 @@ and ( rs.streamStatus = :idle or rs.streamStatus is null )
 '''
 
   private static String SOURCE_RECORD_QUERY='''
-select sr
+select sr.id
 from SourceRecord as sr
 where sr.owner = :owner
 and sr.seqts > :cursor
+order by sr.seqts
 '''
 
   private static String FIND_TPR_QUERY='''
@@ -224,7 +225,11 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
         try{
           ResourceStream.withNewTransaction {
             ResourceStream rs = ResourceStream.get(ext_id)
-            log.debug("Process source ${rs}");
+
+            // Bad naming here - ResourceStream.streamId is the transformation process being run on this source
+            // A resource stream is the result of applying a transformation process to a record source
+            String transformation_process_id = rs.streamId.id;
+            log.debug("Process source ${rs}, transformation process is ${transformation_process_id}");
 
             Map parsed_cursor = JSON.parse(rs.cursor ?: '{}')
 
@@ -233,51 +238,16 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             long cursor_value = parsed_cursor.maxts ? Long.parseLong("${parsed_cursor.maxts}".toString()) : 0
             long highest_seqts = cursor_value;
 
-            Long num_source_records = SourceRecord.executeQuery('select count(sr.id) from SourceRecord as sr where sr.owner = :owner',[owner: rs.source])[0]
+            SourceRecord.executeQuery(SOURCE_RECORD_QUERY,[owner:rs.source,cursor:cursor_value]).each { sr_id ->
+              long seqts = evaluateSourceRecord(sr_id, cursor_value, transformation_process_id)
 
-            log.debug("  -> Resource stream current has ${num_source_records} records");
-
-            log.debug("Find all ${rs.id} records where ts > ${cursor_value}");
-            SourceRecord.executeQuery(SOURCE_RECORD_QUERY,[owner:rs.source,cursor:cursor_value]).each { sr ->
-
-              log.debug("    -> Process record ${sr.id}/${sr.seqts} (owner: ${rs.streamId}, cursor:${cursor_value})");
-              List<TransformationProcessRecord> tprqr = TransformationProcessRecord.executeQuery(FIND_TPR_QUERY,[owner:rs.streamId, srid:sr.resourceUri])
-
-              if ( tprqr.size() == 0 ) {
-                log.debug("Create new tpr");
-                TransformationProcessRecord tpr = new TransformationProcessRecord( 
-                                                       owner: rs.streamId,
-                                                       transformationStatus:'PENDING',
-                                                       processControlStatus:'OPEN',
-                                                       sourceRecordId:sr.resourceUri,
-                                                       label:sr.label ?: "${sr.recType}/${sr.seqts}",
-                                                       inputData:sr.record )
-                if ( tpr.owner != null ) {
-                  log.debug("Saving new tpr, owner is ${tpr.owner}");
-                  tpr.save(flush:true, failOnError:true);
-                }
-                else {
-                  log.error("Cant save TransformationProcessRecord without owning transformation process");
-                }
-              }
-              else {
-                TransformationProcessRecord tpr = tprqr[0]
-                // ToDo this section should lock the tpr before updating it
-                log.debug("Updating existing tpr: ${tpr}");
-
-                tpr.previousInputData = tpr.inputData
-                tpr.inputData = new String(sr.record)
-                tpr.label = sr.label ?: "${sr.recType}/${sr.seqts}"
-		tpr.transformationStatus='PENDING'
-                tpr.processControlStatus='OPEN'
-                tpr.save(flush:true, failOnError:true);
-              }
-
-              if ( sr.seqts > highest_seqts ) {
-                highest_seqts = sr.seqts
+              // If the timestamp on the source record is > than the highest one we have seen, advance the cursor
+              if ( seqts > highest_seqts ) {
+                highest_seqts = seqts
               }
             }
 
+            rs.refresh()
             rs.streamStatus = 'IDLE';
             rs.cursor = "{ \"maxts\":\"${highest_seqts}\" } ".toString()
             rs.nextDue = new Long ( System.currentTimeMillis() + ( rs.interval?:DEFAULT_INTERVAL ) )
@@ -302,6 +272,61 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
       }
     }
     log.debug("Completed pending extract tasks");
+  }
+
+  private long evaluateSourceRecord(String source_record_id, long cursor_value, String transformation_process_id) {
+
+    long result = 0;
+
+    // Do our work inside a new stand alone session so we can completely clear the cache and make sure
+    // we release any memory used to hold the (possibly large) source and transformation records.
+    SourceRecord.withNewSession { session ->
+      SourceRecord.withNewTransaction { status ->
+
+        SourceRecord sr = SourceRecord.get(source_record_id);
+        result = sr.seqts
+        TransformationProcess tp = TransformationProcess.get(transformation_process_id)
+
+        log.debug("    -> Process record ${sr.id}/${sr.seqts} (owner: ${tp}, cursor:${cursor_value})");
+        List<TransformationProcessRecord> tprqr = TransformationProcessRecord.executeQuery(FIND_TPR_QUERY,[owner:tp, srid:sr.resourceUri])
+
+        if ( tprqr.size() == 0 ) {
+          log.debug("Create new tpr");
+          TransformationProcessRecord tpr = new TransformationProcessRecord(
+                                                         owner: tp,
+                                                         transformationStatus:'PENDING',
+                                                         processControlStatus:'OPEN',
+                                                         sourceRecordId:sr.resourceUri,
+                                                         label:sr.label ?: "${sr.recType}/${sr.seqts}",
+                                                         inputData:sr.record )
+          if ( tpr.owner != null ) {
+            log.debug("Saving new tpr, owner is ${tp}");
+            tpr.save(flush:true, failOnError:true);
+          }
+          else {
+            log.error("Cant save TransformationProcessRecord without owning transformation process");
+          }
+        }
+        else {
+          TransformationProcessRecord tpr = tprqr[0]
+          // ToDo this section should lock the tpr before updating it
+          log.debug("Updating existing tpr: ${tpr}");
+  
+          tpr.previousInputData = tpr.inputData
+          tpr.inputData = new String(sr.record)
+          tpr.label = sr.label ?: "${sr.recType}/${sr.seqts}"
+          tpr.transformationStatus='PENDING'
+          tpr.processControlStatus='OPEN'
+          tpr.save(flush:true, failOnError:true);
+        }
+
+      }
+
+      session.flush();
+      session.clear();
+    }
+
+    return result;
   }
 
   def runTransformationTasks() {
