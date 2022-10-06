@@ -237,8 +237,10 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
             // Create or update TransformationProcessRecord for that record in the target context
             long cursor_value = parsed_cursor.maxts ? Long.parseLong("${parsed_cursor.maxts}".toString()) : 0
             long highest_seqts = cursor_value;
-
+          
+            int ctr = 0;
             SourceRecord.executeQuery(SOURCE_RECORD_QUERY,[owner:rs.source,cursor:cursor_value]).each { sr_id ->
+              log.debug("Inside source record loop [${ctr++}] - Free memory=${Runtime.getRuntime().freeMemory()}");
               long seqts = evaluateSourceRecord(sr_id, cursor_value, transformation_process_id)
 
               // If the timestamp on the source record is > than the highest one we have seen, advance the cursor
@@ -277,6 +279,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
   private long evaluateSourceRecord(String source_record_id, long cursor_value, String transformation_process_id) {
 
     long result = 0;
+    log.debug("evaluateSourceRecord ${source_record_id},${cursor_value},${transformation_process_id} - Free memory=${Runtime.getRuntime().freeMemory()}");
 
     // Do our work inside a new stand alone session so we can completely clear the cache and make sure
     // we release any memory used to hold the (possibly large) source and transformation records.
@@ -319,11 +322,16 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
           tpr.processControlStatus='OPEN'
           tpr.save(flush:true, failOnError:true);
         }
-
       }
 
       session.flush();
+
+      log.debug("before clear - Free memory=${Runtime.getRuntime().freeMemory()}");
       session.clear();
+      // Give the VM some breathing space
+      Thread.yield();
+      log.debug("after clear - Free memory=${Runtime.getRuntime().freeMemory()}");
+
     }
 
     return result;
