@@ -106,7 +106,6 @@ hibernate:
         use_second_level_cache: false
         use_query_cache: false
     allow_update_outside_transaction: true 
-    osiv: true
     enable_lazy_load_no_trans: true
 
 dataSource:
