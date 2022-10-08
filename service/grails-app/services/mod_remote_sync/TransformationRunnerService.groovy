@@ -29,58 +29,67 @@ class TransformationRunnerService {
 
       boolean continue_to_process = false;
 
-      TransformationProcessRecord.withNewTransaction() {
-        TransformationProcessRecord tpr = TransformationProcessRecord.lock(tpr_id)
-        if ( tpr.processControlStatus == 'OPEN' ) {
-          log.debug("TransformProcess is in state OPEN - move to IN-PROCESS");
-          continue_to_process=true;
-          tpr.processControlStatus = 'IN-PROCESS'
-          tpr.save();
-        }
-      }
-
-      if ( continue_to_process ) {
-        log.debug("Process");
-
+      TransformationProcessRecord.withNewSession { session ->
+  
         TransformationProcessRecord.withNewTransaction() {
-          log.debug("Close out - return to OPEN");
           TransformationProcessRecord tpr = TransformationProcessRecord.lock(tpr_id)
-
-          tpr.lastProcessAttempt = new Date();
-
-          Map processing_result = this.process(tpr);
-         
-          if ( processing_result.processStatus != null ) {
-            switch ( processing_result.processStatus ) {
-              case 'COMPLETE':
-                log.debug("processing completed: ${processing_result}");
-                tpr.lastProcessComplete = new Date()
-                tpr.processControlStatus = 'CLOSED'
-                log.debug("Assigning associated mapping ${processing_result.resource_mapping}");
-                tpr.associatedMapping = processing_result.resource_mapping
-                break;
-              default:
-                tpr.processControlStatus = 'OPEN'
-                break;
+          if ( tpr.processControlStatus == 'OPEN' ) {
+            log.debug("TransformProcess is in state OPEN - move to IN-PROCESS");
+            continue_to_process=true;
+            tpr.processControlStatus = 'IN-PROCESS'
+            tpr.save();
+          }
+        }
+  
+        if ( continue_to_process ) {
+          log.debug("Process");
+  
+          TransformationProcessRecord.withNewTransaction() {
+            log.debug("Close out - return to OPEN");
+            TransformationProcessRecord tpr = TransformationProcessRecord.lock(tpr_id)
+  
+            tpr.lastProcessAttempt = new Date();
+  
+            Map processing_result = this.process(tpr);
+           
+            if ( processing_result.processStatus != null ) {
+              switch ( processing_result.processStatus ) {
+                case 'COMPLETE':
+                  log.debug("processing completed: ${processing_result}");
+                  tpr.lastProcessComplete = new Date()
+                  tpr.processControlStatus = 'CLOSED'
+                  log.debug("Assigning associated mapping ${processing_result.resource_mapping}");
+                  tpr.associatedMapping = processing_result.resource_mapping
+                  break;
+                default:
+                  tpr.processControlStatus = 'OPEN'
+                  break;
+              }
+              tpr.transformationStatus = processing_result.processStatus;
             }
-            tpr.transformationStatus = processing_result.processStatus;
-          }
-          else {
-            tpr.processControlStatus = 'OPEN'
-          }
+            else {
+              tpr.processControlStatus = 'OPEN'
+            }
+  
+            processing_result.processLog.add([ts:System.currentTimeMillis(), msg:"attempt process completed at ${new Date()} - ${tpr.processControlStatus}/${tpr.transformationStatus}"])
+  
+            // Stash the processing log in the process record so we can view it in the UI
+            if ( processing_result?.processLog)
+              tpr.statusReport = JsonOutput.toJson(processing_result.processLog)
+  
+            tpr.save(flush:true,failOnError:true);
+          }   
+        }
+        else {
+          log.debug("Record is not in a processControlStatus of OPEN - skipping");
+        }
 
-          processing_result.processLog.add([ts:System.currentTimeMillis(), msg:"attempt process completed at ${new Date()} - ${tpr.processControlStatus}/${tpr.transformationStatus}"])
-
-          // Stash the processing log in the process record so we can view it in the UI
-          if ( processing_result?.processLog)
-            tpr.statusReport = JsonOutput.toJson(processing_result.processLog)
-
-          tpr.save(flush:true,failOnError:true);
-        }   
-
-      }
-      else {
-        log.debug("Record is not in a processControlStatus of OPEN - skipping");
+        // Make sure we flush
+        session.flush();
+        // Release anything remaining
+        session.clear();
+        // Give the GC a chance to tidy up
+        Thread.yield();
       }
     }
     catch ( Exception e ) {
