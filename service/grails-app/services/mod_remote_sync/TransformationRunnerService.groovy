@@ -37,8 +37,12 @@ class TransformationRunnerService {
             log.debug("TransformProcess is in state OPEN - move to IN-PROCESS");
             continue_to_process=true;
             tpr.processControlStatus = 'IN-PROCESS'
-            tpr.save();
+            tpr.save(flush:true, failOnError:true);
           }
+          else {
+            log.debug("TransformProcess is in state ${tpr.processControlStatus} - skip");
+          }
+          tpr = null;
         }
   
         if ( continue_to_process ) {
@@ -55,13 +59,14 @@ class TransformationRunnerService {
             if ( processing_result.processStatus != null ) {
               switch ( processing_result.processStatus ) {
                 case 'COMPLETE':
-                  log.debug("processing completed: ${processing_result}");
+                  log.debug("processing COMPLETE....."); //: ${processing_result}");
                   tpr.lastProcessComplete = new Date()
                   tpr.processControlStatus = 'CLOSED'
                   log.debug("Assigning associated mapping ${processing_result.resource_mapping}");
                   tpr.associatedMapping = processing_result.resource_mapping
                   break;
                 default:
+                  log.debug("processing result:: ${processing_result?.processStatus}.....");
                   tpr.processControlStatus = 'OPEN'
                   break;
               }
@@ -158,10 +163,11 @@ class TransformationRunnerService {
     TransformProcess result = transform_process_cache.get(tp.id)
 
     if ( result == null ) {
-      log.debug("parse transform process code and cache");
+      log.debug("${tp.id} not found in cache. Parse and complile.");
       String script_to_compile = tp.getScript()
       result = (TransformProcess) getGroovyScript(script_to_compile, TransformProcess.class).getDeclaredConstructor().newInstance()
       if ( result != null ) {
+        log.debug("Complie completed - cache...");
         transform_process_cache[tp.id] = result;
       }
     }

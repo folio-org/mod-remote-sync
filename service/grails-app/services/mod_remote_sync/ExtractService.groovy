@@ -313,7 +313,7 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
         else {
           TransformationProcessRecord tpr = tprqr[0]
           // ToDo this section should lock the tpr before updating it
-          log.debug("Updating existing tpr: ${tpr}");
+          log.debug("Updating existing tpr: ${tpr.id}");
   
           tpr.previousInputData = tpr.inputData
           tpr.inputData = new String(sr.record)
@@ -339,8 +339,9 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
 
   def runTransformationTasks() {
     log.debug("ExtractService::runTransformationTasks()");
+    int ctr=0;
     TransformationProcessRecord.executeQuery(PENDING_RECORD_TRANSFORMS,[pending:'PENDING',blocked:'BLOCKED',failed:'FAIL'],[readonly:true]).each { tr ->
-      println("attemptProcess(${tr})");
+      println("attemptProcess(${tr}) [${ctr++}]");
       transformationRunnerService.attemptProcess(tr);
     }
     log.debug("All done");
