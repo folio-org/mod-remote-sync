@@ -1,0 +1,45 @@
+##
+# This config file connects to the postgres install from a rancher desktop instance.
+# Use the flag '-Dgrails.env=rancher-desktop-db' when running
+##
+
+dataSource:
+  dbCreate: none
+  url: "jdbc:postgresql://${db.host:localhost}:${db.port:30101}/${db.database:okapi_modules}" # Port 30101 forwarded so as not to clash.
+  username: postgres
+  password: postgres
+  driverClassName: org.postgresql.Driver
+  dialect: com.k_int.hibernate.dialects.postgres.KIPostgres94Dialect
+  schemaHandler: com.k_int.okapi.OkapiSchemaHandler
+  logSql: false
+  properties:
+      jmxEnabled: false
+      initialSize: 5
+      maxActive: ${db.maxpoolsize:5}
+      minIdle: 5
+      maxIdle: 10
+      maxWait: 10000
+      maxAge: 600000
+      timeBetweenEvictionRunsMillis: 5000
+      minEvictableIdleTimeMillis: 60000
+      validationQuery: SELECT 1
+      validationInterval: 30000
+      testOnBorrow: true
+      testWhileIdle: true
+      testOnReturn: false
+      removeAbandoned: true
+      removeAbandonedTimeout: 60
+      abandonWhenPercentageFull: 50
+      jdbcInterceptors: ConnectionState
+      defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+server:
+  port: 8082
+okapi: 
+  service:
+    host: localhost
+    port: 30100
+
+#    register: true
+#    deploy: true
+        
+      
