@@ -36,6 +36,7 @@ apply plugin: 'idea'
 apply plugin: 'org.grails.grails-web'
 apply plugin: 'org.grails.plugins.views-json'
 apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'groovy'
 
 sourceSets {
   main {
@@ -171,9 +172,9 @@ dependencies {
         implementation "org.seleniumhq.selenium:selenium-firefox-driver:3.14.0"
 
         // Better test reports.
-        testImplementation( 'com.athaydes:spock-reports:2.3.2-groovy-3.0' ) {
-                transitive = false // this avoids affecting your version of Groovy/Spock
-        }
+        // testImplementation( 'com.athaydes:spock-reports:2.3.2-groovy-3.0' ) {
+        //         transitive = false // this avoids affecting your version of Groovy/Spock
+        // }
 
         // Bumping this manually to avoid potential security issue with spring-webmvc-5.3.25
         implementation 'org.springframework:spring-webmvc:5.3.28'
@@ -361,3 +362,12 @@ task buildImage(type: DockerBuildImage, dependsOn: createDockerfile) {
   inputDir = file(dockerBuildDir)
   images.add(dockerTag)
 }
+
+tasks.named('bootJarMainClassName') { it.mustRunAfter(tasks.named('compileGsonViews')) }
+tasks.named('compileIntegrationTestGroovy') { it.mustRunAfter(tasks.named('compileGsonViews')) }
+tasks.named('test') { it.mustRunAfter(tasks.named('compileGsonViews')) }
+tasks.named('integrationTest') { it.mustRunAfter(tasks.named('compileGsonViews')) }
+tasks.named('mergeTestReports') { it.mustRunAfter(tasks.named('test')) }
+tasks.named('compileTestGroovy') { it.mustRunAfter(tasks.named('compileGsonViews')) }
+    
+
