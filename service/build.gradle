@@ -37,6 +37,15 @@ apply plugin: 'org.grails.grails-web'
 apply plugin: 'org.grails.plugins.views-json'
 apply plugin: 'com.bmuschko.docker-remote-api'
 
+sourceSets {
+  main {
+    resources {
+      srcDir 'grails-app/migrations'
+      srcDir 'src/main/okapi/tenant'
+    }
+  }
+}
+
 // https://github.com/grails/grails-core/issues/12181
 bootJar {
         duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
@@ -64,19 +73,13 @@ eclipse {
 }
 
 repositories {
-  maven { url 'https://maven.k-int.com/content/repositories/public' }
-  mavenLocal()
-  maven { url 'https://repo.grails.org/grails/core' }
-  maven { url 'https://maven.indexdata.com/' }
-}
-
-sourceSets {
-  main {
-    resources {
-      srcDir 'grails-app/migrations'
-      srcDir 'src/main/okapi/tenant'
-    }
-  }
+        //mavenLocal()
+        mavenCentral()
+        maven { url "https://repo.grails.org/grails/core" }
+        maven { url "https://repo.grails.org/grails/plugins" }
+        maven { url "https://jitpack.io" }
+        maven { url 'https://maven.indexdata.com/' }
+        maven { url "https://maven.k-int.com/repository/releases" }
 }
 
 configurations {
@@ -85,6 +88,8 @@ configurations {
                 extendsFrom developmentOnly
         }
 } 
+
+
 
 dependencies {
         compileOnly "io.micronaut:micronaut-inject-groovy"
@@ -185,14 +190,6 @@ bootRun {
   sourceResources sourceSets.main
   String springProfilesActive = 'spring.profiles.active'
   systemProperty springProfilesActive, System.getProperty(springProfilesActive)
-}
-
-tasks.withType(Test) {
-  useJUnitPlatform()
-  systemProperty "geb.env", System.getProperty('geb.env')
-  systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
-  systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
-  systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
 }
 
 task generateDescriptors(type: Copy) {
@@ -303,6 +300,23 @@ buildProperties.doLast {
 
 processResources.dependsOn generateDescriptors
 
+
+tasks.withType(GroovyCompile) {
+        configure(groovyOptions) {
+                forkOptions.jvmArgs = ['-Xmx1024m']
+        }
+}
+
+
+tasks.withType(Test) {
+  useJUnitPlatform()
+  systemProperty "geb.env", System.getProperty('geb.env')
+  systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
+  systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
+  systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
+}
+
+
 /**
  * Docker build config.
  */
@@ -346,10 +360,4 @@ task buildImage(type: DockerBuildImage, dependsOn: createDockerfile) {
 
   inputDir = file(dockerBuildDir)
   images.add(dockerTag)
-}
-
-tasks.withType(GroovyCompile) {
-  configure(groovyOptions) {
-    forkOptions.jvmArgs = ['-Xmx1024m']
-  }
 }
