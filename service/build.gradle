@@ -149,8 +149,6 @@ dependencies {
 
         implementation 'com.opencsv:opencsv:5.7.1'
         implementation 'commons-io:commons-io:2.6'
-        implementation 'io.github.virtualdogbert:logback-groovy-config:1.14.1' // Grails 5 and up no longer supports groovy files for logback config
-        compileOnly 'ch.qos.logback:logback-classic:1.4.7'
 
         implementation 'uk.co.cacoethes:groovy-handlebars-engine:0.2'
         implementation 'com.github.jknack:handlebars-helpers:4.3.1'
@@ -177,6 +175,8 @@ dependencies {
 
         // Bumping this manually to avoid potential security issue with spring-webmvc-5.3.25
         implementation 'org.springframework:spring-webmvc:5.3.28'
+
+
 }
 
 bootRun {
