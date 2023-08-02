@@ -272,6 +272,11 @@ where tpr.transformationStatus=:pending OR tpr.transformationStatus=:blocked OR 
       else {
         log.debug("Resource stream was not in IDLE state - skipping");
       }
+
+      Source.withSession { session ->
+        log.debug("before clear - Free memory=${Runtime.getRuntime().freeMemory()}");
+        session.clear();
+      }
     }
     log.debug("Completed pending extract tasks");
   }
