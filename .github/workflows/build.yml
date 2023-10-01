@@ -45,7 +45,7 @@ jobs:
         run: echo "ref:${{github.REF}} module:${{env.module_name}} ver:${{env.module_version}} snap:${{env.is_snapshot}}"
 
       - name: Publish Docker Image
-        if: github.ref == 'refs/heads/master'
+        if: {{ ( github.ref == 'refs/heads/master' ) || ( github.ref == 'refs/heads/main' ) }}
         run: |
           cat ./service/gradle.properties
           APP_VERSION=$(grep appVersion ./service/gradle.properties| cut -f2 -d=)
