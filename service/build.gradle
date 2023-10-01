@@ -169,7 +169,7 @@ dependencies {
         implementation "org.seleniumhq.selenium:selenium-firefox-driver:3.14.0"
 
         // Better test reports.
-        testImplementation( 'com.athaydes:spock-reports:2.3.2-groovy-3.0' ) {
+        testImplementation( 'com.athaydes:spock-reports:2.5.1-groovy-4.0' ) {
                 transitive = false // this avoids affecting your version of Groovy/Spock
         }
 
