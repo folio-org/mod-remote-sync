@@ -332,12 +332,13 @@ task prepareDocker(type: Copy, dependsOn: assemble) {
   description = 'Copy files to build directory'
   group = 'Docker'
 
-  from project.jar
+  from project.bootJar
 
   // from otherfileLoc
 
   into dockerBuildDir
 }
+
 
 task createDockerfile(type: Dockerfile, dependsOn: prepareDocker) {
   description = 'Create a Dockerfile file'
@@ -345,13 +346,13 @@ task createDockerfile(type: Dockerfile, dependsOn: prepareDocker) {
 
   destFile = project.file("${dockerBuildDir}/Dockerfile")
 
-  from 'folioci/alpine-jre-openjdk11:latest'
+  from 'folioci/alpine-jre-openjdk17:latest'
   instruction 'LABEL maintainer="Knowledge Integration"'
 
   exposePort 8080
 
   // Copying straight into the default directory should be enough
-  copyFile jar.archiveName, '/usr/verticles/application.jar'
+  copyFile bootJar.archiveName, '/usr/verticles/application.jar'
 }
 
 task buildImage(type: DockerBuildImage, dependsOn: createDockerfile) {
@@ -368,5 +369,3 @@ tasks.named('test') { it.mustRunAfter(tasks.named('compileGsonViews')) }
 tasks.named('integrationTest') { it.mustRunAfter(tasks.named('compileGsonViews')) }
 tasks.named('mergeTestReports') { it.mustRunAfter(tasks.named('test')) }
 tasks.named('compileTestGroovy') { it.mustRunAfter(tasks.named('compileGsonViews')) }
-    
-
