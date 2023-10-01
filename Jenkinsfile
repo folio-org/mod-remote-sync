@@ -31,6 +31,8 @@ pipeline {
             def gradleVersion = foliociLib.gradleProperty('appVersion')
 
             env.name = env.ORG_GRADLE_PROJECT_appName
+
+            println("Setup: gradleVersion:${gradleVersion} isRelease:${foliociLib.isRelease()}");
         
             // if release 
             if ( foliociLib.isRelease() ) {
