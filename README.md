@@ -65,3 +65,6 @@ Standard env overrides:
 
 
 
+
+
+https://dev.folio.org/guidelines/release-procedures/
