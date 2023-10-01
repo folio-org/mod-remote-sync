@@ -137,6 +137,8 @@ class TestSourceSpec extends HttpSpec {
              [
                url:'https://raw.githubusercontent.com/folio-org/mod-remote-sync/master/testdata/testcfg.json'
              ]);
+      log.debug("Response to post new source: ${auth_record}");
+      assert auth_record != null;
 
     then:'that source is listed'
       def resp = doGet('/remote-sync/sources/bespoke', [
@@ -190,6 +192,7 @@ class TestSourceSpec extends HttpSpec {
       def resp = doGet('/remote-sync/records')
     then:
       log.debug("Got transformation records: ${resp}");
+      assert resp != null
       resp.each { r ->
         log.debug("Checking that record ${r.id} has status PENDING or BLOCKED ${r.transformationStatus}");
         assert r.transformationStatus == 'PENDING' || r.transformationStatus == 'BLOCKED'
@@ -233,6 +236,17 @@ class TestSourceSpec extends HttpSpec {
       }
   }
 
+  void "test the source record endpoint"() {
+    when:'We list all the active records'
+      def source_records_response = doGet('/remote-sync/sourceRecords')
+
+    then:'There should be 3 records'
+      source_records_response.each { r ->
+        log.debug("SourceRecord...: ${r}");
+      }
+      source_records_response.size() == 3
+  }
+
   void "ReProcess with feedback in place"() {
     when:'we call the worker task'
       def resp = doGet('/remote-sync/settings/worker')
@@ -248,13 +262,12 @@ class TestSourceSpec extends HttpSpec {
     when:'We list all the active records'
       def records_response = doGet('/remote-sync/records')
 
-    then:'All should be in status BLOCKED'
+    then:'All should be processed'
       records_response.each { r ->
         log.debug("Checking that record ${r.id} has status COMPLETE ${r.transformationStatus}");
         assert r.transformationStatus == 'COMPLETE'
       }
   }
-
 
 }
 

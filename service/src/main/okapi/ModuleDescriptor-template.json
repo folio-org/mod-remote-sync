@@ -103,8 +103,12 @@
           "methods": ["DELETE"],
           "pathPattern": "/remote-sync/records/{id}",
           "permissionsRequired": [ "remote-sync.records.item.delete" ]
+        },
+        {
+          "methods": ["GET"],
+          "pathPattern": "/remote-sync/sourceRecords",
+          "permissionsRequired": [ "remote-sync.records.collection.get" ]
         }
-
       ]
     },
     {
@@ -191,7 +195,7 @@
   "launchDescriptor": {
     "dockerImage": "${info.app.name}:${info.app.version}",
     "dockerArgs": {
-      "HostConfig": { "PortBindings": { "8079/tcp":  [{ "HostPort": "%p" }] } }
+      "HostConfig": { "PortBindings": { "8080/tcp":  [{ "HostPort": "%p" }] } }
     },
     "env": [
       { "name": "JAVA_OPTIONS", "value": "-server -XX:+UseContainerSupport -XX:MaxRAMPercentage=55.0 -XX:+PrintFlagsFinal" }

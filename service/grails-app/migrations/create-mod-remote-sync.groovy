@@ -244,4 +244,36 @@ databaseChangeLog = {
     }
   }
 
+  changeSet(author: "ianibbo (generated)", id: "i202201111103-001") {
+    createTable(tableName: "mrs_code_signing_authority") {
+      column(name: "csa_id", type: "VARCHAR(36)") { constraints(nullable: "false") }
+      column(name: "csa_version", type: "BIGINT") { constraints(nullable: "false") }
+      column(name: "csa_name", type: "VARCHAR(255)")
+      column(name: "csa_public_key", type: "TEXT")
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "202202161750-001") {
+    addColumn (tableName: "mrs_resource_mapping" ) {
+      column(name: "rm_additional_info", type: "TEXT")
+      column(name: "rm_mapping_type", type: "VARCHAR(255)")
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "202202221309-001") {
+    addColumn (tableName: "mrs_tp_record" ) {
+      column(name: "mtr_previous_input_data", type: "TEXT")
+    }
+  }
+
+  changeSet(author: "ianibbo (generated)", id: "202203101523-001") {
+    addColumn (tableName: "mrs_source" ) {
+      column(name: "src_last_error", type: "VARCHAR(255)")
+    }
+  }
+
+  changeSet(author: "ibbo (generated)", id: "202205141415-001") {
+    addUniqueConstraint(columnNames: "st_section, st_key", constraintName: "APP_SETTING_UNIQUE", tableName: "app_setting")
+  }
+
 }

@@ -12,7 +12,7 @@ import mod_remote_sync.ResourceMapping
 import mod_remote_sync.ImportFeedbackService
 import groovy.json.JsonSlurper
 import mod_remote_sync.FeedbackItem
-  
+import java.util.UUID;
   
 @Slf4j
 public class TestLicenseProcess extends BaseTransformProcess implements TransformProcess {
@@ -151,11 +151,14 @@ public class TestLicenseProcess extends BaseTransformProcess implements Transfor
      
         // If we didn't have a mapping for this resource, and resource creation worked then
         // remember how we map this resource going forwards
-        if ( ( local_resource_id == null ) && 
-             ( post_result != null ) &&
-             ( post_result.id != null ) ) {
+        if ( local_resource_id == null ) {
           // Store the record mapping to the new ID
-          def post_result = folioHelper.okapiPost('/licenses/licenses', record_to_post);
+ 
+          // In a real system we would call the actualy licenses endpoint to post the record, but in the stand alone test
+          // we don't have a local service so we mock the result.
+          // def post_result = folioHelper.okapiPost('/licenses/licenses', record_to_post);
+          def post_result = [ id: UUID.randomUUID().toString() ]
+      
           log.debug("post result: ${post_result}");
           log.debug("Stash new LICENSE id ${post_result.id} to identifier mapping service");
           def resource_mapping = rms.registerMapping('TEST-LICENSE', resource_id, 'TEST', 'M', 'LICENSES', post_result.id);

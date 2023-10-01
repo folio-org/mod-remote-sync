@@ -6,9 +6,16 @@ import grails.gorm.multitenancy.Tenants
 import com.k_int.web.toolkit.settings.AppSetting
 import com.k_int.web.toolkit.refdata.*
 import com.k_int.okapi.OkapiTenantResolver
+import mod_remote_sync.CodeSigningAuthority
 
 @Transactional
 class TenantAdminService {
+
+  private static final String DEFAULT_PUBLIC_KEY='''-----BEGIN PUBLIC KEY-----
+MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAPHjPUURsO2YAQN5tsGKVAMe9qWMqwJ/
+BILvnE5yNfQun1uI8UgsAiCzwH72jItjqSXyQLRVXN3vuW1LCz5eDR8CAwEAAQ==
+-----END PUBLIC KEY-----
+''';
 
   @Subscriber('okapi:tenant_load_reference')
   public void onTenantLoadReference(final String tenantId, 
@@ -17,7 +24,10 @@ class TenantAdminService {
                                     final boolean upgrading, 
                                     final String toVersion, 
                                     final String fromVersion) {
-    log.debug("TenantAdminService::onTenantLoadReference");
+
+    log.debug("TenantAdminService::onTenantLoadReference(${tenantId},${value},${existing_tenant},${upgrading})");
+
+    try {
       final String schemaName = OkapiTenantResolver.getTenantSchemaName(tenantId)
       Tenants.withId(schemaName) {
         // A category for Yes/No answers
@@ -28,16 +38,26 @@ class TenantAdminService {
         RefdataValue.lookupOrCreate('YNO', 'No')
         RefdataValue.lookupOrCreate('YNO', 'Other')
 
-        AppSetting cert_st = AppSetting.findByKey('PublicKey') ?: new AppSetting(section: 'Secure Mode',
+        AppSetting cert_st = AppSetting.findByKey('PublicKey') ?: new AppSetting(
+                                       section: 'Secure Mode',
                                        key: 'PublicKey',
                                        settingType: 'String').save(flush:true, failOnError:true);
 
-        AppSetting mode_st = AppSetting.findByKey('Enabled') ?: new AppSetting(section: 'Secure Mode',
+        AppSetting mode_st = AppSetting.findByKey('Enabled') ?: new AppSetting(
+                                       section: 'Secure Mode',
                                        key: 'Enabled',
                                        vocab:'YN',
                                        settingType: 'Refdata').save(flush:true, failOnError:true);
 
+
+        CodeSigningAuthority csa = CodeSigningAuthority.findByName('k-int') ?: new CodeSigningAuthority(
+                                       name:'k-int',
+                                       publicKey:DEFAULT_PUBLIC_KEY).save(flush:true, failOnError:true);
       }
+    }
+    catch ( Exception e ) {
+      log.error("Problem loading refdata",e);
+    }
   }
 
 }

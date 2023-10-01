@@ -19,6 +19,7 @@ public abstract class Source implements MultiTenant<Source> {
   Long nextDue
   String emits
   String stateInfo
+  String lastError
 
   Boolean enabled
   String status
@@ -35,6 +36,7 @@ public abstract class Source implements MultiTenant<Source> {
       enabled (nullable : true)
        status (nullable : true)
     stateInfo (nullable : true)
+    lastError (nullable : true)
   }
 
   static mapping = {
@@ -52,6 +54,7 @@ public abstract class Source implements MultiTenant<Source> {
     enabled                column : 'src_enabled'
     status                 column : 'src_status'
     stateInfo              column : 'src_state_info'
+    lastError              column : 'src_last_error'
   }
 
   static transients = [ 'activity', 'handlerServiceName', 'recordCount' ]
