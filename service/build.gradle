@@ -132,7 +132,7 @@ dependencies {
         /*  ---- Manually installed dependencies ---- */
         implementation 'org.grails.plugins:spring-security-core:5.2.1'
 
-        implementation 'com.k_int.grails:web-toolkit-ce:8.1.0-rc.4'
+        implementation 'com.k_int.grails:web-toolkit-ce:8.1.4'
         implementation 'com.k_int.okapi:grails-okapi:6.0.0-rc.4'
 
         implementation 'io.github.http-builder-ng:http-builder-ng-core:1.0.4'
