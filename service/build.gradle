@@ -147,7 +147,7 @@ dependencies {
         implementation 'org.liquibase:liquibase-core:4.17.2'
 
 
-        implementation 'com.opencsv:opencsv:5.7.1'
+        implementation 'com.opencsv:opencsv:5.9'
         implementation 'commons-io:commons-io:2.6'
 
         implementation 'uk.co.cacoethes:groovy-handlebars-engine:0.2'
