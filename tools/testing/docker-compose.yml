@@ -23,7 +23,7 @@ services:
 
   # See https://github.com/simplesteph/kafka-stack-docker-compose
   zoo1:
-    image: zookeeper:3.4.9
+    image: zookeeper:3.9.2
     hostname: zoo1
     ports:
       - "2181:2181"
