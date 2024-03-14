@@ -174,7 +174,7 @@ dependencies {
         }
 
         // Bumping this manually to avoid potential security issue with spring-webmvc-5.3.25
-        implementation 'org.springframework:spring-webmvc:5.3.28'
+        implementation 'org.springframework:spring-webmvc:5.3.33'
 
 
 }
