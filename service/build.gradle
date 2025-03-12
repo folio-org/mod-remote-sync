@@ -141,7 +141,7 @@ dependencies {
         implementation "org.hibernate:hibernate-java8:5.4.28.Final"
         runtimeOnly "com.zaxxer:HikariCP:3.4.5"                             // Replaces Tomcat JDBC pool
         runtimeOnly "org.postgresql:postgresql:42.5.3"
-        implementation ('org.grails.plugins:database-migration:4.2.0') {
+        implementation ('org.grails.plugins:database-migration:4.2.1') {
                 exclude group: 'org.liquibase', module: 'liquibase-core'
         }
         implementation 'org.liquibase:liquibase-core:4.17.2'
