@@ -154,7 +154,7 @@ dependencies {
         implementation 'com.github.jknack:handlebars-helpers:4.3.1'
         implementation 'commons-fileupload:commons-fileupload:1.4'
 
-        implementation 'com.github.zafarkhaja:java-semver:0.9.0'
+        implementation 'com.github.zafarkhaja:java-semver:0.10.2'
         implementation 'org.z3950.zing:cql-java:1.13'
         /* Newer versions of ehcache are at org.ehcache:ehcache, but do not include NamedThreadFactory */
         implementation 'net.sf.ehcache:ehcache:2.10.9.2'
