@@ -148,7 +148,7 @@ dependencies {
 
 
         implementation 'com.opencsv:opencsv:5.7.1'
-        implementation 'commons-io:commons-io:2.6'
+        implementation 'commons-io:commons-io:2.22.0'
 
         implementation 'uk.co.cacoethes:groovy-handlebars-engine:0.2'
         implementation 'com.github.jknack:handlebars-helpers:4.3.1'
