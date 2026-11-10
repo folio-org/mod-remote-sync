@@ -130,7 +130,7 @@ dependencies {
         //testImplementation "org.hibernate.validator:hibernate-validator:6.1.7.Final"
 
         /*  ---- Manually installed dependencies ---- */
-        implementation 'org.grails.plugins:spring-security-core:5.2.1'
+        implementation 'org.grails.plugins:spring-security-core:5.3.0'
 
         implementation 'com.k_int.grails:web-toolkit-ce:8.1.0-rc.4'
         implementation 'com.k_int.okapi:grails-okapi:6.0.0-rc.4'
