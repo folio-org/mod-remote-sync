@@ -144,7 +144,7 @@ dependencies {
         implementation ('org.grails.plugins:database-migration:4.2.0') {
                 exclude group: 'org.liquibase', module: 'liquibase-core'
         }
-        implementation 'org.liquibase:liquibase-core:4.17.2'
+        implementation 'org.liquibase:liquibase-core:4.33.0'
 
 
         implementation 'com.opencsv:opencsv:5.7.1'
